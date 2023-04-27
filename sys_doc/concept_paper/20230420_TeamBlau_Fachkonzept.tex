@@ -116,6 +116,15 @@ Im Spiel möchte ich:
 	\item (optional) Spiel pausieren, später fortsetzen
 \end{itemize}
 
+Als Spieler möchte ich:
+\begin{itemize}
+	\item jederzeit ein reibungsloses Spielerlebnis genießen
+	\item unabhängig von der aktuellen Spielerzahl spielen können
+	\item nicht lange auf einen Server warten
+	\item in Echtzeit gegen andere spielen (ohne merkliche Verzögerung zwischen den Zügen)
+	\item Akzeptanzkriterien: Skalierbarkeit, Cloud-Deployment, Monitoring
+\end{itemize}
+
 \subsection{Leaderboard / Dashboard}
 Als Benutzer möchte ich ein Dashboard, das Informationen über vergangene Spiele darstellt. Denkbar sind:
 \begin{itemize}
@@ -128,10 +137,14 @@ Als Benutzer möchte ich ein Dashboard, das Informationen über vergangene Spiel
 
 \section{Methoden}\label{sec:methoden}
 
-Ziel bei der Entwicklung und bei der späteren Verwendung ist eine plattformunabhängige Anwendung, die eine Schnittstelle für die \textit{Linked Open Data Cloud} als auch der Bedienoberfläche der Anwendung bereitstellt. Daraus ergeben sich folgende technische Schlüsselbausteine:
-
-Für die Repräsentation der semantischen Daten im Frontend wird das Framework Svelte verwendet. Die Daten werden voraussichtlich in einer Ontotext GraphDB Instanz persistiert. Im Backend wird FastAPI für eine REST-Schnittstelle und RDFLib zum arbeiten mit RDF verwendet. Die Kommunikation zwischen Frontend und Backend wird über die RESTful-API abgewickelt. Die einzelnen Komponenten der Anwendung (Frontend, Backend und Datenbank) werden mittels Docker \textit{containerisiert}.
-
+Das Projekt setzt sich aus drei Komponenten zusammen: Frontend, Backend und Datenbank.
+Die einzelnen Komponenten werden jeweils in einem Docker-Container ausgeliefert.
+Sie werden mit einem in der Cloud gehosteten Kubernetes-Cluster orchestriert und erreichbar gemacht.
+Für die Visualisierung des Spielgeschehens im Frontend wird das Game Framework Phaser mit JavaScript verwendet. 
+Ein Webserver stellt das Frontend für den Nutzer zur Verfügung.
+Das Backend wird in Python implementiert und stellt eine RESTful-API sowie die Spiellogik zur Verfügung.
+Diese wird mit Hilfe des Frameworks FastAPI realisiert und dient zur Kommunikation mit dem Frontend.
+Als Datenbank wird MongoDB verwendet. Die Spielverläufe werden als JSON-Objekte serialisiert und für spätere Analysen gespeichert.
 
 \printbibliography
 
