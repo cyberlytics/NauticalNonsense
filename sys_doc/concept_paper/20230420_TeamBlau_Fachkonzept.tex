@@ -55,11 +55,14 @@ Konzeptpapier: Battleship
 
 
 \section{Einleitung}\label{sec:einleitung}
-Das erste Videospiel \textit{Tennis for Two} aus dem Jahr 1958 ebnete den Weg für die Spieleindustrie. Über Jahrzehnten hinaus kamen immer mehr verschiedene Spiele auf den Markt, die sich in ihrer Art und Weise unterscheiden. Mit den heutigen Videospielen ist es möglich, sich mit Spielern aus der ganzen Welt zu messen oder gemeinsam zu spielen. Aus den unzählig veröffentlichen Videospielen ist eine breite Palette an Genres entstanden. Dabei wird in der Spieleindustrie grob in sechs Kategorien unterschieden, hierbei zählen die Strategie- und Action-Spiele zu den beliebtesten Genres~\cite{statistica}. Zu den anderen vier Kategorien zählen die Rollen-, Abenteuer-, Simulationen- und sonstige Spiele. Jedes dieser Kategorien besitzt weitere Unterkategorien, die sich in ihrer Art und Weise unterscheiden.\\
 
-Um einen Überblick zu erhalten, wie die Spiele zusammenhängen, präsentieren wir hier eine plattformunabhängige Anwendung, welche die Spiele in einem Graphen darstellt. In Abschnitt~\ref{sec:verwandte_arbeiten} des Konzeptpapiers werden bereits bestehende Anwendungen vorgestellt, die sich mit der Kategorisierung von Spielen und Darstellung von Graphen beschäftigen.
-In Abschnitt~\ref{sec:anforderungen} werden die Anforderungen in Form von User Stories beschrieben. Zum Schluss wird auf die geplanten Technologien bei der Umsetzung des Projekts eingegangen, welche in Abschnitt~\ref{sec:methoden} beschrieben werden.
+Spiele, die im Browser ausführbar sind, erfreuten sich während der Corona-Pandemie größter Beliebtheit. Die Menschen durften sich aufgrund der hohen Ansteckungsrate des Virus nicht in der Realität treffen. 
 
+Dies war der Grund, weshalb diese regelmäßigen Treffen häufig in die digitale Form wechselten. Es wurden Spielabende mit beispielsweise Skribbl.io \cite{skribblio} veranstaltet, da für die Teilnahme keine leistungsfähigen Rechner, sondern meist lediglich ein Smartphone oder Ähnliches benötigt wurde.
+
+Das Brettspiel \glqq Schiffe versenken!\grqq{} ist ein sehr beliebtes und intuitives Spiel, das seit Jahrzehnten Generationen von Spielern begeistert. Dieses Spiel bietet eine perfekte Mischung aus Strategie, Glück und Unterhaltung, die es zu einem zeitlosen Klassiker gemacht hat.
+
+Aus diesem Grund wollen wir in dieser Modularbeit das Spiel im Browser implementieren, damit unabhängig von äußeren Faktoren wie beispielsweise der Corona-Pandemie, das Gesellschaftsspiel Battleship gespielt werden kann. 
 
 \section{Verwandte Arbeiten}\label{sec:verwandte_arbeiten}
 
@@ -131,6 +134,7 @@ Als Benutzer möchte ich ein Dashboard, das Informationen über vergangene Spiel
 Das Projekt setzt sich aus drei Komponenten zusammen: Frontend, Backend und Datenbank.
 Die einzelnen Komponenten werden jeweils in einem Docker-Container ausgeliefert.
 Sie werden mit einem in der Cloud gehosteten Kubernetes-Cluster orchestriert und erreichbar gemacht.
+
 Für die Visualisierung des Spielgeschehens im Frontend wird das Game Framework Phaser mit JavaScript verwendet. 
 Ein Webserver stellt das Frontend für den Nutzer zur Verfügung.
 Das Backend wird in Python implementiert und stellt eine RESTful-API sowie die Spiellogik zur Verfügung.
