@@ -55,7 +55,6 @@ Konzeptpapier: Battleship
 
 
 \section{Einleitung}\label{sec:einleitung}
-
 Das erste Videospiel \textit{Tennis for Two} aus dem Jahr 1958 ebnete den Weg für die Spieleindustrie. Über Jahrzehnten hinaus kamen immer mehr verschiedene Spiele auf den Markt, die sich in ihrer Art und Weise unterscheiden. Mit den heutigen Videospielen ist es möglich, sich mit Spielern aus der ganzen Welt zu messen oder gemeinsam zu spielen. Aus den unzählig veröffentlichen Videospielen ist eine breite Palette an Genres entstanden. Dabei wird in der Spieleindustrie grob in sechs Kategorien unterschieden, hierbei zählen die Strategie- und Action-Spiele zu den beliebtesten Genres~\cite{statistica}. Zu den anderen vier Kategorien zählen die Rollen-, Abenteuer-, Simulationen- und sonstige Spiele. Jedes dieser Kategorien besitzt weitere Unterkategorien, die sich in ihrer Art und Weise unterscheiden.\\
 
 Um einen Überblick zu erhalten, wie die Spiele zusammenhängen, präsentieren wir hier eine plattformunabhängige Anwendung, welche die Spiele in einem Graphen darstellt. In Abschnitt~\ref{sec:verwandte_arbeiten} des Konzeptpapiers werden bereits bestehende Anwendungen vorgestellt, die sich mit der Kategorisierung von Spielen und Darstellung von Graphen beschäftigen.
@@ -64,17 +63,9 @@ In Abschnitt~\ref{sec:anforderungen} werden die Anforderungen in Form von User S
 
 \section{Verwandte Arbeiten}\label{sec:verwandte_arbeiten}
 
-Die \textit{Internet Video Games Database} (IGDB)~\cite{igdb} gibt einen Eindruck, was ein Nutzer von einer Videospieldatenbank erwarten kann. IGDB umfasst derzeit 217.233 Spiele, eine Suchfunktion, die Möglichkeit Videospiele zu entdecken (z.B.\ kürzlich veröffentlichte Videospiele), und eine Entwickler-API. Über die API können Entwickler auf die Videospieldaten mittels Protokolle wie REST oder ProtoBuf zugreifen.
+Im Jahr 2015 veröffentlichte Matheus Valadares ein simples Browserspiel namens Agar.io \cite{agario}. Das Spielprinzip ist einfach: Man steuert eine Zelle in einer Petrischale und versucht größer zu werden, indem man Agar-Pellets und kleinere Zellen verschluckt. Das Spiel erfreute sich großer Beliebtheit und die Zahl der monatlichen Spieler ist schnell in die Millionen gestiegen \cite{takahashi2017}. Um einen solch rapiden Anstieg an Spielern ohne Ausfälle oder Überlastungen bewältigen zu können, ist eine Cloud-native Architektur ideal. Dazu wird typischerweise die Anzahl der aktiven Server an die Anzahl der aktiven Spieler angepasst. Ein solcher Skalierungsmechanismus ist auch für unser Spiel vorgesehen.
 
-Wie die Visualisierung eines Graphen möglicherweise aussehen kann, demonstriert die Anwendung Obsidian. Diese erstellt aus von Nutzern kreierten Markdown Dateien eine Graphenoberfläche. Über Verlinkungen zwischen den Markdown Dateien wächst der Graph an. Der Nutzer kann den Graph filtern oder gewisse Teile daraus hervorheben (vgl. Abbildung~\ref{fig:obsidian}).
-
-\begin{figure}[thpb]
-    \centering
-    \includegraphics[scale=0.17]{obsidian}
-    \caption{Obsidian Benutzeroberfläche~\cite{obsidian}}
-    \label{fig:obsidian}
-\end{figure}
-
+Agar.io bietet mittlerweile eine Vielzahl von Features, die für Online-Spiele typisch sind. Dazu gehören verschiedene Spielmodi, eine Login-Funktion, Mikrotransaktionen und Skins. Es ist denkbar, jedes dieser Features auch in unser Spiel zu integrieren.
 
 \section{Anforderungen}\label{sec:anforderungen}
 
