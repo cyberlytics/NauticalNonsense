@@ -15,16 +15,32 @@
 
 \begin{document}
 
+\makeatletter
+\newcommand{\linebreakand}{%
+\end{@IEEEauthorhalign}
+\hfill\mbox{}\par
+\mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
+
 \title{\LARGE \bf
-SGDb: Semantic Video Game Database
+Konzeptpapier: Battleship
 }
 
 \author{
-\IEEEauthorblockN{Anastasia Chernysheva} \IEEEauthorblockA{\textit{a.chernysheva@oth-aw.de}}\and
-\IEEEauthorblockN{Jakob Götz} \IEEEauthorblockA{\textit{j.goetz@oth-aw.de}}\and
-\IEEEauthorblockN{Ardian Imeraj} \IEEEauthorblockA{\textit{a.imeraj@oth-aw.de}}\and
-\IEEEauthorblockN{Patrice Korinth} \IEEEauthorblockA{\textit{p.korinth@oth-aw.de}}\and
-\IEEEauthorblockN{Philipp Stangl} \IEEEauthorblockA{\textit{p.stangl1@oth-aw.de}}\and
+
+\IEEEauthorblockN{Jakob Götz} 
+\IEEEauthorblockA{\textit{j.goetz@oth-aw.de}}\and
+\IEEEauthorblockN{Uwe Kölbel} 
+\IEEEauthorblockA{\textit{u.koelbel@oth-aw.de}}\and
+\IEEEauthorblockN{Maximilian Schlosser} \IEEEauthorblockA{\textit{m.schlosser@oth-aw.de}}\and
+\IEEEauthorblockN{Oliver Schmidts} \IEEEauthorblockA{\textit{o.schmidts@oth-aw.de}}\linebreakand
+\IEEEauthorblockN{Jan Schuster} 
+\IEEEauthorblockA{\textit{j.schuster@oth-aw.de}}\and
+\IEEEauthorblockN{Philipp Seufert} 
+\IEEEauthorblockA{\textit{p.seufert@oth-aw.de}}\and
+\IEEEauthorblockN{Fabian Wagner} 
+\IEEEauthorblockA{\textit{f.wagner@oth-aw.de}}
 }
 
 \maketitle
@@ -40,117 +56,90 @@ SGDb: Semantic Video Game Database
 
 \section{Einleitung}\label{sec:einleitung}
 
-Das erste Videospiel \textit{Tennis for Two} aus dem Jahr 1958 ebnete den Weg für die Spieleindustrie. Über Jahrzehnten hinaus kamen immer mehr verschiedene Spiele auf den Markt, die sich in ihrer Art und Weise unterscheiden. Mit den heutigen Videospielen ist es möglich, sich mit Spielern aus der ganzen Welt zu messen oder gemeinsam zu spielen. Aus den unzählig veröffentlichen Videospielen ist eine breite Palette an Genres entstanden. Dabei wird in der Spieleindustrie grob in sechs Kategorien unterschieden, hierbei zählen die Strategie- und Action-Spiele zu den beliebtesten Genres~\cite{statistica}. Zu den anderen vier Kategorien zählen die Rollen-, Abenteuer-, Simulationen- und sonstige Spiele. Jedes dieser Kategorien besitzt weitere Unterkategorien, die sich in ihrer Art und Weise unterscheiden.\\
+Spiele, die im Browser ausführbar sind, erfreuten sich während der Corona-Pandemie größter Beliebtheit. Die Menschen durften sich aufgrund der hohen Ansteckungsrate des Virus nicht in der Realität treffen. 
 
-Um einen Überblick zu erhalten, wie die Spiele zusammenhängen, präsentieren wir hier eine plattformunabhängige Anwendung, welche die Spiele in einem Graphen darstellt. In Abschnitt~\ref{sec:verwandte_arbeiten} des Konzeptpapiers werden bereits bestehende Anwendungen vorgestellt, die sich mit der Kategorisierung von Spielen und Darstellung von Graphen beschäftigen.
-In Abschnitt~\ref{sec:anforderungen} werden die Anforderungen in Form von User Stories beschrieben. Zum Schluss wird auf die geplanten Technologien bei der Umsetzung des Projekts eingegangen, welche in Abschnitt~\ref{sec:methoden} beschrieben werden.
+Dies war der Grund, weshalb diese regelmäßigen Treffen häufig in die digitale Form wechselten. Es wurden Spielabende mit beispielsweise Skribbl.io \cite{skribblio} veranstaltet, da für die Teilnahme keine leistungsfähigen Rechner, sondern meist lediglich ein Smartphone oder Ähnliches benötigt wurde.
 
+Das Brettspiel \glqq Schiffe versenken!\grqq{} ist ein sehr beliebtes und intuitives Spiel, das seit Jahrzehnten Generationen von Spielern begeistert. Dieses Spiel bietet eine perfekte Mischung aus Strategie, Glück und Unterhaltung, die es zu einem zeitlosen Klassiker gemacht hat.
+
+Aus diesem Grund wollen wir in dieser Modularbeit das Spiel im Browser implementieren, damit unabhängig von äußeren Faktoren wie beispielsweise der Corona-Pandemie, das Gesellschaftsspiel Battleship gespielt werden kann. 
 
 \section{Verwandte Arbeiten}\label{sec:verwandte_arbeiten}
 
-Die \textit{Internet Video Games Database} (IGDB)~\cite{igdb} gibt einen Eindruck, was ein Nutzer von einer Videospieldatenbank erwarten kann. IGDB umfasst derzeit 217.233 Spiele, eine Suchfunktion, die Möglichkeit Videospiele zu entdecken (z.B.\ kürzlich veröffentlichte Videospiele), und eine Entwickler-API. Über die API können Entwickler auf die Videospieldaten mittels Protokolle wie REST oder ProtoBuf zugreifen.
+Im Jahr 2015 veröffentlichte Matheus Valadares ein simples Browserspiel namens Agar.io \cite{agario}. Das Spielprinzip ist einfach: Man steuert eine Zelle in einer Petrischale und versucht größer zu werden, indem man Agar-Pellets und kleinere Zellen verschluckt. Das Spiel erfreute sich großer Beliebtheit und die Zahl der monatlichen Spieler ist schnell in die Millionen gestiegen \cite{takahashi2017}. Um einen solch rapiden Anstieg an Spielern ohne Ausfälle oder Überlastungen bewältigen zu können, ist eine Cloud-native Architektur ideal. Dazu wird typischerweise die Anzahl der aktiven Server an die Anzahl der aktiven Spieler angepasst. Ein solcher Skalierungsmechanismus ist auch für unser Spiel vorgesehen.
 
-Wie die Visualisierung eines Graphen möglicherweise aussehen kann, demonstriert die Anwendung Obsidian. Diese erstellt aus von Nutzern kreierten Markdown Dateien eine Graphenoberfläche. Über Verlinkungen zwischen den Markdown Dateien wächst der Graph an. Der Nutzer kann den Graph filtern oder gewisse Teile daraus hervorheben (vgl. Abbildung~\ref{fig:obsidian}).
-
-\begin{figure}[thpb]
-    \centering
-    \includegraphics[scale=0.17]{obsidian}
-    \caption{Obsidian Benutzeroberfläche~\cite{obsidian}}
-    \label{fig:obsidian}
-\end{figure}
-
+Agar.io bietet mittlerweile eine Vielzahl von Features, die für Online-Spiele typisch sind. Dazu gehören verschiedene Spielmodi, eine Login-Funktion, Mikrotransaktionen und Skins. Es ist denkbar, jedes dieser Features auch in unser Spiel zu integrieren.
 
 \section{Anforderungen}\label{sec:anforderungen}
 
-In der Anforderungsanalyse wurden zwei primäre Ziele identifiziert, die es umzusetzen gilt: (1) Die Überführung von relationalen Videospieldaten aus IGDB in eine semantische Graphdatenbank, und (2) die Möglichkeit zur Suche von Videospielen per Graph oder Texteingabe.
+In der Anforderungsanalyse wurden drei primäre Komponenten identifiziert, die es umzusetzen gilt: (1) Die Menüführung (2) das Gameplay und (3) das Dashboard.
 
 
-\subsection{Suche per Graph}
-
-Als Benutzer möchte ich in eine Graphenoberfläche, welche visuell Verbindungen zu anderen Spielen aufzeigt. Somit kann ich direkt ähnliche Spiele, welche mir ebenfalls gefallen könnten, sehen. Akzeptanzkriterien sind:
+\subsection{Menüführung}
+Als Benutzer möchte ich ein intuitiv zu bedienendes Menü, in dem ich:
 \begin{itemize}
-	\item Auf der Startseite ist ein Graph vorhanden, der alle in der Datenbank vorhandenen Videospiele und deren Beziehungen zueinander anzeigt.
-    \item Schwebt man mit der Maus über einen Knoten öffnet sich ein Informationsfeld, indem angezeigt wird:
-    \begin{itemize}
-      \item Titel des Videospiels
-      \item Genre
-      \item Bewertung
-    \end{itemize}
-    \item Schwebt man mit der Maus über einen Knoten werden alle verbundenen Knotenpunkte und Kanten im Graphen hervorgehoben.
+	\item meinen Benutzernamen eingeben kann,
+	\item ein Spiel starten kann,
+	\item eine Anleitung aufrufen kann und
+	\item meinen Benutzernamen eingeben kann,
+	\item ein Dashboard mit Statistiken aufrufen kann.
 \end{itemize}
 
-
-\subsection{Suche per Texteingabe}
-
-Als Benutzer möchte ich ein Videospiel per Texteingabe suchen können, da sich ein spezielles Spiel bei einem Graphen mit vielen Knoten und Kanten ggf. nur schlecht finden lässt. Akzeptanzkriterien sind:
+Als Benutzer möchte ich zwischen verschiedenen Spielmodi wählen können:
 \begin{itemize}
-    \item Ein Eingabefeld für die textuelle Suche ist vorhanden.
-    \item Ist die Suche erfolgreich, werden relevante Knotenpunkte und Kanten im Graphen hervorgehoben.
-    \item Ist die Suche fehlerhaft oder liefert kein Ergebnis, wird der Benutzer darüber benachrichtigt.
+	\item Gegen Computer
+	\item Gegen zufälligen Gegner
+	\item Gegen Freund
 \end{itemize}
 
-
-\subsection{Detailseite für Videospiel}
-
-Als Benutzer möchte ich eine Detailseite zu einem jeweiligen Videospiel, damit ich ohne die Anwendung zu verlassen die wichtigsten Informationen zu einem Spiel einsehen kann. Akzeptanzkriterien sind:
+\subsection{Gameplay}
+Im Spiel möchte ich nach folgenden Regeln spielen:
 \begin{itemize}
-    \item Die Detailseite öffnet sich per Klick auf einen Knoten im Graphen.
-    \item Details zum Videospiel die angezeigt werden:
-    \begin{itemize}
-    	\item Titel
-    	\item Erscheinungsdatum
-    	\item Beschreibung
-    	\item Bewertung
-    	\item Genre
-    	\item (Optional) Internetpräsenz (z.B. offizielle Website)
-    \end{itemize}
-    \item (Optional) Anzeige des Videospiel-Covers.
+	\item Zu Beginn muss jeder Spieler eine festgelegte Anzahl an Schiffen unterschiedlicher Größe platzieren.
+	\item Die Spieler dürfen abwechselnd einen Schuss abfeuern.
+	\item Sind alle Schiffe eines Spielers versenkt, hat dieser Spieler verloren.
 \end{itemize}
 
-
-\subsection{Filteroption}\label{subsec:filter}
-
-Als Benutzer möchte ich mit einer Filteroption Knoten und somit Spiele im Graphen visuell hervorheben. Dadurch kann auch in einem großen Graphen der Nutzer eine Gruppe von Spielen finden. Akzeptanzkriterien sind:
+Im Spiel möchte ich:
 \begin{itemize}
-	\item Eine Schaltfläche für die Filteroption ist vorhanden.
-    \item Filtermöglichkeiten sind: 
-    \begin{itemize}
-      \item Genre
-      \item Plattform
-      \item Hersteller
-      \item Erscheinungsjahr
-    \end{itemize}
-    \item Nur das Filterergebnis soll im Graphen sichtbar sein.
-    \item Wird der Filter aufgehoben sollen alle entfernten Knoten wieder angezeigt werden.
+	\item meine Schiffe zufällig oder händisch auf dem Spielfeld platzieren können
+	\item mit den Waffen meiner Schiffe feuern können
+	\item meine Treffer und die verfehlten Schüsse auf dem Spielfeld erkennen können
+	\item ein übersichtliches Spielfeld mit allen relevanten Informationen 
+	\item (optional) mit meinem Gegner kommunizieren können
+	\item (optional) Spiel pausieren, später fortsetzen
 \end{itemize}
 
-
-\subsection{Testabdeckung}
-
-Als Entwickler möchte ich eine ausreichende Testabdeckung, damit Fehler frühzeitig erkannt werden.
-Akzeptanzkriterien sind:
+Als Spieler möchte ich:
 \begin{itemize}
-    \item Die Abdeckungsrate liegt bei mindestens 50\%.
-    \item Sowohl Frontend- als auch Backend-Code wird mit geeignetem Testwerkzeug getestet.
+	\item jederzeit ein reibungsloses Spielerlebnis genießen
+	\item unabhängig von der aktuellen Spielerzahl spielen können
+	\item nicht lange auf einen Server warten
+	\item in Echtzeit gegen andere spielen (ohne merkliche Verzögerung zwischen den Zügen)
+	\item Akzeptanzkriterien: Skalierbarkeit, Cloud-Deployment, Monitoring
 \end{itemize}
 
-
-\subsection{(Optional) Cloud-Kompatibilität}
-
-Als Entwickler möchte ich eine Cloud-kompatible Anwendung für eine Bereitstellung der Anwendung.  Akzeptanzkriterien sind:
+\subsection{Leaderboard / Dashboard}
+Als Benutzer möchte ich ein Dashboard, das Informationen über vergangene Spiele darstellt. Denkbar sind:
 \begin{itemize}
-    \item Für jede Komponente der Anwendung ist ein Dockerfile erstellt und lauffähig.
-    \item Mit Docker Compose ist eine YAML-Datei vorhanden, um mit einem einzigen Befehl alle Container zu starten und zu beenden.
-    \item (Optional) Die Anwendung ist bei einem Cloud-Anbieter (z.B. Amazon Web Services) bereitgestellt und erreichbar.
+	\item Eine Bestenliste
+	\item Anzahl der benötigten Schüsse bis zum Sieg
+	\item Beliebteste Schiffspositionen
+	\item Gewinnrate gegen Computer
 \end{itemize}
 
 
 \section{Methoden}\label{sec:methoden}
 
-Ziel bei der Entwicklung und bei der späteren Verwendung ist eine plattformunabhängige Anwendung, die eine Schnittstelle für die \textit{Linked Open Data Cloud} als auch der Bedienoberfläche der Anwendung bereitstellt. Daraus ergeben sich folgende technische Schlüsselbausteine:
+Das Projekt setzt sich aus drei Komponenten zusammen: Frontend, Backend und Datenbank.
+Die einzelnen Komponenten werden jeweils in einem Docker-Container ausgeliefert.
+Sie werden mit einem in der Cloud gehosteten Kubernetes-Cluster orchestriert und erreichbar gemacht.
 
-Für die Repräsentation der semantischen Daten im Frontend wird das Framework Svelte verwendet. Die Daten werden voraussichtlich in einer Ontotext GraphDB Instanz persistiert. Im Backend wird FastAPI für eine REST-Schnittstelle und RDFLib zum arbeiten mit RDF verwendet. Die Kommunikation zwischen Frontend und Backend wird über die RESTful-API abgewickelt. Die einzelnen Komponenten der Anwendung (Frontend, Backend und Datenbank) werden mittels Docker \textit{containerisiert}.
-
+Für die Visualisierung des Spielgeschehens im Frontend wird das Game Framework Phaser mit JavaScript verwendet. 
+Ein Webserver stellt das Frontend für den Nutzer zur Verfügung.
+Das Backend wird in Python implementiert und stellt eine RESTful-API sowie die Spiellogik zur Verfügung.
+Diese wird mit Hilfe des Frameworks FastAPI realisiert und dient zur Kommunikation mit dem Frontend.
+Als Datenbank wird MongoDB verwendet. Die Spielverläufe werden als JSON-Objekte serialisiert und für spätere Analysen gespeichert.
 
 \printbibliography
 
