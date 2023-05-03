@@ -47,7 +47,7 @@ Konzeptpapier: Battleship
 \thispagestyle{empty}
 \pagestyle{empty}
 
-
+%TODO hier noch in unser Projekt umändern
 \begin{abstract}
     Wir beschäftigen uns mit der Speicherung und Suche vernetzter Informationen von Videospielen.
     Dazu stellen wir \textit{SGDb} vor -- eine webbasierte Anwendung mit einer Graphen-basierten Suche von Videospielen.
@@ -71,56 +71,62 @@ Im Jahr 2015 veröffentlichte Matheus Valadares ein simples Browserspiel namens 
 Agar.io bietet mittlerweile eine Vielzahl von Features, die für Online-Spiele typisch sind. Dazu gehören verschiedene Spielmodi, eine Login-Funktion, Mikrotransaktionen und Skins. Es ist denkbar, jedes dieser Features auch in unser Spiel zu integrieren.
 
 \section{Anforderungen}\label{sec:anforderungen}
-
-In der Anforderungsanalyse wurden drei primäre Komponenten identifiziert, die es umzusetzen gilt: (1) Die Menüführung (2) das Gameplay und (3) das Dashboard.
+%TODO Stimmt das mit den drei primären Komponenten noch?
+In der Anforderungsanalyse wurden drei primäre Komponenten identifiziert, die es umzusetzen gilt: (1) Die Menüführung (2) das Gameplay und (3) das Dashboard. Als Stakeholder wurden Spieler und Entwickler identifiziert. Die Anforderungen werden im Folgenden als User Stories beschrieben.
 
 
 \subsection{Menüführung}
-Als Benutzer möchte ich ein intuitiv zu bedienendes Menü, in dem ich:
+Als Spieler möchte ich ein intuitives Menü haben, in dem ich folgende Funktionen auswählen kann:
 \begin{itemize}
-	\item meinen Benutzernamen eingeben kann,
-	\item ein Spiel starten kann,
-	\item eine Anleitung aufrufen kann und
-	\item meinen Benutzernamen eingeben kann,
-	\item ein Dashboard mit Statistiken aufrufen kann.
+	\item Meinen Spielernamen eingeben
+	\item Ein Spiel starten
+	\item Eine Anleitung aufrufen
+	\item Eine Bestenliste einsehen
+	\item Ein Button zum Ein- und Ausschalten der Musik
 \end{itemize}
 
-Als Benutzer möchte ich zwischen verschiedenen Spielmodi wählen können:
+\subsection{Spielmodi}
+Als Spieler möchte ich zwischen verschiedenen Spielmodi wählen können:
 \begin{itemize}
 	\item Gegen Computer
 	\item Gegen zufälligen Gegner
 	\item Gegen Freund
 \end{itemize}
 
-\subsection{Gameplay}
-Im Spiel möchte ich nach folgenden Regeln spielen:
+\subsection{Spielbeginn}
+Als Spieler möchte ich das Spiel nach folgenden Regeln vorbereiten:
 \begin{itemize}
-	\item Zu Beginn muss jeder Spieler eine festgelegte Anzahl an Schiffen unterschiedlicher Größe platzieren.
-	\item Die Spieler dürfen abwechselnd einen Schuss abfeuern.
-	\item Sind alle Schiffe eines Spielers versenkt, hat dieser Spieler verloren.
+	\item Jeder Spieler eine feste Anzahl an spezifischen Schiffen, welche auf dem Spielfeld platziert werden
+	\item Schiffe dürfen sich bei der Platzierung nicht überschneiden
+	\item Sind alle Schiffe platziert, kann der Spieler seine Spielbereitschaft über einen Button signalisieren
 \end{itemize}
 
-Im Spiel möchte ich:
+\subsection{Spielbrett}
+Als Spieler möchte aktuelle Informationen über den Spielverlauf auf dem Spielbrett angezeigt bekommen:
 \begin{itemize}
-	\item meine Schiffe zufällig oder händisch auf dem Spielfeld platzieren können
-	\item mit den Waffen meiner Schiffe feuern können
-	\item meine Treffer und die verfehlten Schüsse auf dem Spielfeld erkennen können
-	\item ein übersichtliches Spielfeld mit allen relevanten Informationen 
-	\item (optional) mit meinem Gegner kommunizieren können
-	\item (optional) Spiel pausieren, später fortsetzen
+	\item Die eigenen Schiffe werden aufgedeckt angezeigt, die gegnerischen Schiffe sind verdeckt
+	\item Treffer und verfehlte Schüsse sind auf dem Spielbrett markiert
+	\item (optional) Ein Chat mit dem Gegner angezeigt
 \end{itemize}
 
+\subsection{Aktive Phase}
+Als Spieler möchte ich in der aktiven Phase des Spiels:
+\begin{itemize}
+	\item Ein Feld auf dem Spielbrett markieren können, welches beschossen werden soll
+	\item Ein Button haben, um den Zug zu beenden
+\end{itemize}
+
+%TODO Erreichbarkeit und Verzögerung voneinander trennen? Sind beides recht große Topics für sich
+\subsection{Erreichbarkeit}
 Als Spieler möchte ich:
 \begin{itemize}
-	\item jederzeit ein reibungsloses Spielerlebnis genießen
-	\item unabhängig von der aktuellen Spielerzahl spielen können
-	\item nicht lange auf einen Server warten
-	\item in Echtzeit gegen andere spielen (ohne merkliche Verzögerung zwischen den Zügen)
-	\item Akzeptanzkriterien: Skalierbarkeit, Cloud-Deployment, Monitoring
+	\item Unabhängig von der aktuellen Spielerzahl spielen können
+	\item Keine Verzögerung zwischen den Zügen wahrnehmen
 \end{itemize}
 
-\subsection{Leaderboard / Dashboard}
-Als Benutzer möchte ich ein Dashboard, das Informationen über vergangene Spiele darstellt. Denkbar sind:
+%TODO Hier nochmal aufteilen? Bestenliste in Menü, Detailansicht direkt nach Spiel? Weitere Statistik-Reiter in Menü für sowas wie Hit-Rate usw?
+\subsection{(Optional) Detailansicht}
+Als Spieler möchte ich ein Detailansicht, dass Informationen über vergangene Spiele darstellt. Denkbar sind:
 \begin{itemize}
 	\item Eine Bestenliste
 	\item Anzahl der benötigten Schüsse bis zum Sieg
@@ -128,6 +134,35 @@ Als Benutzer möchte ich ein Dashboard, das Informationen über vergangene Spiel
 	\item Gewinnrate gegen Computer
 \end{itemize}
 
+\subsection{Testabdeckung}
+Als Entwickler möchte ich eine ausreichende Testabdeckung, um Fehler frühzeitig zu erkennen.
+\begin{itemize}
+	\item Frontend-Code Abdeckung liegt bei mindestens 50%
+	\item Backend-Code Abdeckung liegt bei mindestens 50%
+	\item Für die Testabdeckung werden jeweils geeignete Frameworks gewählt
+\end{itemize}
+
+\subsection{Dashboard}
+Als Entwickler möchte ein Dashboard, welches mir Informationen zur Infrastruktur und der Nutzung anzeigt.
+\begin{itemize}
+	\item Wahl eines geeigneten Tools zur Darstellung der Informationen
+	\item Die Informationen im Dashboard müssen aktuell sein
+	\item Die Oberfläche des Dashboards muss intuitiv zu bedienen sein
+\end{itemize}
+
+\subsection{Cloud Native}
+Als Entwickler möchte die Anwendung als Cloud Native bereitstellen.
+\begin{itemize}
+	\item Es wird eine Container-Technologie eingesetzt
+	\item Es kommt ein Orchestrierungs-Tool zum Einsatz
+\end{itemize}
+
+\subsection{(Optional) Bereitstellung in der Cloud}
+Als Entwickler möchte die Anwendung über einen Cloud-Anbieter bereitstellen.
+\begin{itemize}
+	\item Die Kosten hierfür müssen im Maße bleiben
+	\item Die Anwendung ist über das Internet zu erreichen
+\end{itemize}
 
 \section{Methoden}\label{sec:methoden}
 
@@ -138,7 +173,7 @@ Sie werden mit einem in der Cloud gehosteten Kubernetes-Cluster orchestriert und
 Für die Visualisierung des Spielgeschehens im Frontend wird das Game Framework Phaser mit JavaScript verwendet. 
 Ein Webserver stellt das Frontend für den Nutzer zur Verfügung.
 Das Backend wird in Python implementiert und stellt eine RESTful-API sowie die Spiellogik zur Verfügung.
-Diese wird mit Hilfe des Frameworks FastAPI realisiert und dient zur Kommunikation mit dem Frontend.
+Diese wird mithilfe des Frameworks FastAPI realisiert und dient zur Kommunikation mit dem Frontend.
 Als Datenbank wird MongoDB verwendet. Die Spielverläufe werden als JSON-Objekte serialisiert und für spätere Analysen gespeichert.
 
 \printbibliography
