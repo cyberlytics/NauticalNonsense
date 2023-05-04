@@ -24,7 +24,7 @@
 \makeatother
 
 \title{\LARGE \bf
-Konzeptpapier: Battleship
+Nautical Nonsense: Because Sometimes You Just Need to Sink Something
 }
 
 \author{
@@ -48,7 +48,7 @@ Konzeptpapier: Battleship
 \pagestyle{empty}
 
 \begin{abstract}
-	Wir entwickeln ein Cloud Native Browser-Game nach dem Vorbild von Schiffeversenken. Dazu stellen wir  \textit{Nautical Nonsense} vor.
+	Wir entwickeln ein Cloud Native Browser-Game nach dem Vorbild von \glqq Schiffe versenken\grqq{}. Dazu stellen wir die Webanwendung \textit{Nautical Nonsense} vor.
 \end{abstract}
 
 
@@ -58,7 +58,7 @@ Spiele, die im Browser ausführbar sind, erfreuten sich während der Corona-Pand
 
 Dies war der Grund, weshalb diese regelmäßigen Treffen häufig in die digitale Form wechselten. Es wurden Spielabende mit beispielsweise Skribbl.io \cite{skribblio} veranstaltet, da für die Teilnahme keine leistungsfähigen Rechner, sondern meist lediglich ein Smartphone oder Ähnliches benötigt wurde.
 
-Das Brettspiel \glqq Schiffe versenken!\grqq{} ist ein sehr beliebtes und intuitives Spiel, das seit Jahrzehnten Generationen von Spielern begeistert. Dieses Spiel bietet eine perfekte Mischung aus Strategie, Glück und Unterhaltung, die es zu einem zeitlosen Klassiker gemacht hat.
+Das Brettspiel \glqq Schiffe versenken\grqq{} ist ein sehr beliebtes und intuitives Spiel, das seit Jahrzehnten Generationen von Spielern begeistert. Dieses Spiel bietet eine perfekte Mischung aus Strategie, Glück und Unterhaltung, die es zu einem zeitlosen Klassiker gemacht hat.
 
 Aus diesem Grund wollen wir in dieser Modularbeit das Spiel im Browser implementieren, damit unabhängig von äußeren Faktoren wie beispielsweise der Corona-Pandemie, das Gesellschaftsspiel Battleship gespielt werden kann. 
 
@@ -74,94 +74,96 @@ In der Anforderungsanalyse wurden drei primäre Komponenten identifiziert, die e
 
 \subsection{Menüführung}
 Als Spieler möchte ich ein intuitives Menü haben, in dem ich folgende Funktionen auswählen kann:
-\begin{itemize}
+\begin{enumerate}
 	\item Meinen Spielernamen eingeben
 	\item Ein Spiel starten
 	\item Eine Anleitung aufrufen
 	\item Eine Bestenliste einsehen
 	\item Ein Button zum Ein- und Ausschalten der Musik
-\end{itemize}
+\end{enumerate}
 
 \subsection{Spielmodi}
 Als Spieler möchte ich zwischen verschiedenen Spielmodi wählen können:
-\begin{itemize}
+\begin{enumerate}
 	\item Gegen Computer
 	\item Gegen zufälligen Gegner
 	\item Gegen Freund
-\end{itemize}
+\end{enumerate}
 
 \subsection{Spielbeginn}
 Als Spieler möchte ich das Spiel nach folgenden Regeln vorbereiten:
-\begin{itemize}
+\begin{enumerate}
 	\item Jeder Spieler eine feste Anzahl an spezifischen Schiffen, welche auf dem Spielfeld platziert werden
 	\item Schiffe dürfen sich bei der Platzierung nicht überschneiden
 	\item Sind alle Schiffe platziert, kann der Spieler seine Spielbereitschaft über einen Button signalisieren
-\end{itemize}
+\end{enumerate}
 
 \subsection{Spielbrett}
 Als Spieler möchte aktuelle Informationen über den Spielverlauf auf dem Spielbrett angezeigt bekommen:
-\begin{itemize}
+\begin{enumerate}
 	\item Die eigenen Schiffe werden aufgedeckt angezeigt, die gegnerischen Schiffe sind verdeckt
 	\item Treffer und verfehlte Schüsse sind auf dem Spielbrett markiert
 	\item (optional) Ein Chat mit dem Gegner angezeigt
-\end{itemize}
+\end{enumerate}
 
 \subsection{Spielablauf}
 Als Spieler möchte ich in der aktiven Phase des Spiels:
-\begin{itemize}
+\begin{enumerate}
 	\item Ein Feld auf dem Spielbrett markieren können, welches beschossen werden soll
 	\item Ein Button haben, um den Zug zu beenden
 	\item Der Gegenspieler kann nicht agieren, bis der Zug vom aktiven Spieler beendet ist
-\end{itemize}
+\end{enumerate}
 
 \subsection{Erreichbarkeit}
 Als Spieler möchte ich, dass die Anwendung immer erreichbar ist:
-\begin{itemize}
+\begin{enumerate}
 	\item Unabhängig von der aktuellen Spielerzahl
-	\item Unabhängig von dem Endgerät
-\end{itemize}
+	\item Service Level Requirement von 99.9%
+	\item (optional) Unabhängig von dem Endgerät
+\end{enumerate}
 
 \subsection{(optional) Verzögerung}
-Als Spieler möchte ich:
-\begin{itemize}
+Als Spieler möchte ich minimale Verzögerung, damit das Spielerlebnis nicht darunter leidet:
+\begin{enumerate}
 	\item Die Verzögerung zwischen Spielbeginn und Spielablauf darf nicht mehr als 2 Sekunden betragen
 	\item Die Verzögerung zwischen beenden des Zugs und beginn des gegnerischen Zugs darf nicht mehr als 2 Sekunden dauern
 	\item Die Verzögerung bei der Auswahl der Menü-Punkte darf nicht mehr als 0.5 Sekunden betragen
-\end{itemize}
+\end{enumerate}
 
 \subsection{Cloud Native}
-Als Entwickler möchte die Anwendung als Cloud Native bereitstellen.
-\begin{itemize}
+Als Entwickler möchte die Anwendung als Cloud Native bereitstellen, damit wir skalierbar nach der Nutzeranzahl operieren können:
+\begin{enumerate}
 	\item Es wird eine Container-Technologie eingesetzt
+	\item Die Container müssen unabhängig voneinander sein
 	\item Es kommt ein Orchestrierungs-Tool zum Einsatz
-\end{itemize}
+\end{enumerate}
 
 \subsection{(optional) Dashboard}
-Als Entwickler möchte ich ein Dashboard, welches mir Informationen zur Infrastruktur und der Nutzung anzeigt.
-\begin{itemize}
+Als Entwickler möchte ich ein Dashboard, welches mir Informationen zur Infrastruktur und der Nutzung anzeigt:
+\begin{enumerate}
 	\item Wahl eines geeigneten Tools zur Darstellung der Informationen
 	\item Die Informationen im Dashboard müssen aktuell sein
-	\item Die Oberfläche des Dashboards muss intuitiv zu bedienen sein
-\end{itemize}
+\end{enumerate}
 
 \subsection{(Optional) Bereitstellung in der Cloud}
-Als Entwickler möchte die Anwendung über einen Cloud-Anbieter bereitstellen.
-\begin{itemize}
+Als Entwickler möchte die Anwendung über einen Cloud-Anbieter bereitstellen:
+\begin{enumerate}
 	\item Die Kosten hierfür müssen im Maße bleiben
 	\item Die Anwendung ist über das Internet zu erreichen
-\end{itemize}
+	\item Automatisiertes Deployment über eine CI/CD Pipeline
+\end{enumerate}
 
 \section{Methoden}\label{sec:methoden}
 
 Das Projekt setzt sich aus drei Komponenten zusammen: Frontend, Backend und Datenbank.
-Die einzelnen Komponenten werden jeweils in einem Docker-Container ausgeliefert.
-Sie werden mit einem in der Cloud gehosteten Kubernetes-Cluster orchestriert und erreichbar gemacht.
+Die einzelnen Komponenten werden jeweils in einem Docker-Container \cite{docker} ausgeliefert.
+Sie werden mit einem in der Cloud gehosteten Kubernetes-Cluster \cite{kubernetes} orchestriert und erreichbar gemacht.
 
-Für die Visualisierung des Spielgeschehens im Frontend wird das Game Framework Phaser mit JavaScript verwendet. 
+Für die Visualisierung des Spielgeschehens im Frontend wird das Game Framework Phaser \cite{phaser} mit JavaScript verwendet. 
 Ein Webserver stellt das Frontend für den Nutzer zur Verfügung.
-Das Backend wird in Python implementiert und stellt eine RESTful-API sowie die Spiellogik zur Verfügung.
-Diese wird mithilfe des Frameworks FastAPI realisiert und dient zur Kommunikation mit dem Frontend.
-Als Datenbank wird MongoDB verwendet. Die Spielverläufe werden als JSON-Objekte serialisiert und für spätere Analysen gespeichert.
+Das Backend wird in Python implementiert und stellt eine RESTful-API zur Verfügung. Zusätzlich wird für die technische Kommunikation zwischen zwei Clients eine geeignete Technologie eingesetzt.
+Dies wird mithilfe des Frameworks FastAPI \cite{fastapi} realisiert und dient zur Kommunikation mit dem Frontend.
+Als Datenbank wird MongoDB \cite{mongodb} verwendet. Die Spielverläufe werden als JSON-Objekte serialisiert und für spätere Analysen gespeichert.
 
 \printbibliography
 
