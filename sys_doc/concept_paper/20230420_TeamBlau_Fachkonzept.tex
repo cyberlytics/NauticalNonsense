@@ -47,10 +47,8 @@ Konzeptpapier: Battleship
 \thispagestyle{empty}
 \pagestyle{empty}
 
-%TODO hier noch in unser Projekt umändern
 \begin{abstract}
-    Wir beschäftigen uns mit der Speicherung und Suche vernetzter Informationen von Videospielen.
-    Dazu stellen wir \textit{SGDb} vor -- eine webbasierte Anwendung mit einer Graphen-basierten Suche von Videospielen.
+	Wir entwickeln ein Cloud Native Browser-Game nach dem Vorbild von Schiffeversenken. Dazu stellen wir  \textit{Nautical Nonsense} vor.
 \end{abstract}
 
 
@@ -71,8 +69,7 @@ Im Jahr 2015 veröffentlichte Matheus Valadares ein simples Browserspiel namens 
 Agar.io bietet mittlerweile eine Vielzahl von Features, die für Online-Spiele typisch sind. Dazu gehören verschiedene Spielmodi, eine Login-Funktion, Mikrotransaktionen und Skins. Es ist denkbar, jedes dieser Features auch in unser Spiel zu integrieren.
 
 \section{Anforderungen}\label{sec:anforderungen}
-%TODO Stimmt das mit den drei primären Komponenten noch?
-In der Anforderungsanalyse wurden drei primäre Komponenten identifiziert, die es umzusetzen gilt: (1) Die Menüführung (2) das Gameplay und (3) das Dashboard. Als Stakeholder wurden Spieler und Entwickler identifiziert. Die Anforderungen werden im Folgenden als User Stories beschrieben.
+In der Anforderungsanalyse wurden drei primäre Komponenten identifiziert, die es umzusetzen gilt: (1) das Spiel (2) die Cloud-Fähigkeit (3) das Verarbeiten der Daten von den Nutzern. Als Stakeholder wurden Spieler und Entwickler identifiziert. Die Anforderungen werden im Folgenden als User Stories beschrieben.
 
 
 \subsection{Menüführung}
@@ -109,45 +106,27 @@ Als Spieler möchte aktuelle Informationen über den Spielverlauf auf dem Spielb
 	\item (optional) Ein Chat mit dem Gegner angezeigt
 \end{itemize}
 
-\subsection{Aktive Phase}
+\subsection{Spielablauf}
 Als Spieler möchte ich in der aktiven Phase des Spiels:
 \begin{itemize}
 	\item Ein Feld auf dem Spielbrett markieren können, welches beschossen werden soll
 	\item Ein Button haben, um den Zug zu beenden
+	\item Der Gegenspieler kann nicht agieren, bis der Zug vom aktiven Spieler beendet ist
 \end{itemize}
 
-%TODO Erreichbarkeit und Verzögerung voneinander trennen? Sind beides recht große Topics für sich
 \subsection{Erreichbarkeit}
+Als Spieler möchte ich, dass die Anwendung immer erreichbar ist:
+\begin{itemize}
+	\item Unabhängig von der aktuellen Spielerzahl
+	\item Unabhängig von dem Endgerät
+\end{itemize}
+
+\subsection{(optional) Verzögerung}
 Als Spieler möchte ich:
 \begin{itemize}
-	\item Unabhängig von der aktuellen Spielerzahl spielen können
-	\item Keine Verzögerung zwischen den Zügen wahrnehmen
-\end{itemize}
-
-%TODO Hier nochmal aufteilen? Bestenliste in Menü, Detailansicht direkt nach Spiel? Weitere Statistik-Reiter in Menü für sowas wie Hit-Rate usw?
-\subsection{(Optional) Detailansicht}
-Als Spieler möchte ich ein Detailansicht, dass Informationen über vergangene Spiele darstellt. Denkbar sind:
-\begin{itemize}
-	\item Eine Bestenliste
-	\item Anzahl der benötigten Schüsse bis zum Sieg
-	\item Beliebteste Schiffspositionen
-	\item Gewinnrate gegen Computer
-\end{itemize}
-
-\subsection{Testabdeckung}
-Als Entwickler möchte ich eine ausreichende Testabdeckung, um Fehler frühzeitig zu erkennen.
-\begin{itemize}
-	\item Frontend-Code Abdeckung liegt bei mindestens 50%
-	\item Backend-Code Abdeckung liegt bei mindestens 50%
-	\item Für die Testabdeckung werden jeweils geeignete Frameworks gewählt
-\end{itemize}
-
-\subsection{Dashboard}
-Als Entwickler möchte ein Dashboard, welches mir Informationen zur Infrastruktur und der Nutzung anzeigt.
-\begin{itemize}
-	\item Wahl eines geeigneten Tools zur Darstellung der Informationen
-	\item Die Informationen im Dashboard müssen aktuell sein
-	\item Die Oberfläche des Dashboards muss intuitiv zu bedienen sein
+	\item Die Verzögerung zwischen Spielbeginn und Spielablauf darf nicht mehr als 2 Sekunden betragen
+	\item Die Verzögerung zwischen beenden des Zugs und beginn des gegnerischen Zugs darf nicht mehr als 2 Sekunden dauern
+	\item Die Verzögerung bei der Auswahl der Menü-Punkte darf nicht mehr als 0.5 Sekunden betragen
 \end{itemize}
 
 \subsection{Cloud Native}
@@ -155,6 +134,14 @@ Als Entwickler möchte die Anwendung als Cloud Native bereitstellen.
 \begin{itemize}
 	\item Es wird eine Container-Technologie eingesetzt
 	\item Es kommt ein Orchestrierungs-Tool zum Einsatz
+\end{itemize}
+
+\subsection{(optional) Dashboard}
+Als Entwickler möchte ich ein Dashboard, welches mir Informationen zur Infrastruktur und der Nutzung anzeigt.
+\begin{itemize}
+	\item Wahl eines geeigneten Tools zur Darstellung der Informationen
+	\item Die Informationen im Dashboard müssen aktuell sein
+	\item Die Oberfläche des Dashboards muss intuitiv zu bedienen sein
 \end{itemize}
 
 \subsection{(Optional) Bereitstellung in der Cloud}
