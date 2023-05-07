@@ -10,6 +10,9 @@ lint:
   script:
     - black sys_src/backend
     - ruff sys_src/backend --fix
+  rules:
+  - changes:
+    - sys_src/backend/**/*
 
 coverage:
   image: python:3.11-slim
@@ -25,3 +28,6 @@ coverage:
         coverage_format: cobertura
         path: coverage.xml
       junit: report.xml
+  rules:
+    - changes:
+      - sys_src/backend/**/*
