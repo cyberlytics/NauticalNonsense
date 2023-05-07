@@ -1,0 +1,54 @@
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Terraform.gitlab-ci.yml
+
+include:
+  - template: Terraform/Base.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.gitlab-ci.yml
+  # - template: Jobs/SAST-IaC.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
+
+stages:
+  - validate
+  # - test
+  - build
+  - deploy
+  - cleanup
+
+.get_ca_certificate:
+  before_script:
+    - apk add openssl sudo
+    - CERT_NAME=OTH-GIT
+    - URL=git.oth-aw.de
+    - openssl s_client -connect $URL:443  -showcerts < /dev/null 2>/dev/null > $CERT_NAME.crt
+    - openssl x509 -inform PEM -in $CERT_NAME.crt -out $CERT_NAME.crt
+    - sudo mv $CERT_NAME.crt /usr/local/share/ca-certificates
+    - sudo update-ca-certificates
+
+fmt:
+  extends: .terraform:fmt
+  needs: []
+
+validate:
+  extends: 
+    - .terraform:validate
+    - .get_ca_certificate
+  needs: []
+
+build:
+  extends: 
+    - .terraform:build
+    - .get_ca_certificate
+
+deploy:
+  extends: 
+    - .terraform:deploy
+    - .get_ca_certificate
+  dependencies:
+    - build
+  environment:
+    name: $TF_STATE_NAME
+
+destroy:
+  extends: 
+    - .terraform:destroy
+    - .get_ca_certificate

@@ -1,0 +1,4 @@
+include:
+  - local: sys_templates/terraaform.gitlab-ci.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "web"
