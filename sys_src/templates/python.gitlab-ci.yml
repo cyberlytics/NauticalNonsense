@@ -8,7 +8,7 @@ lint:
   before_script:
     - pip install ruff black
   script:
-    - black sys_src/backend
+    - black sys_src/backend --check --verbose --diff --color
     - ruff sys_src/backend --fix
   rules:
     - changes:
