@@ -1,5 +1,6 @@
 build-docker:
   image: docker:23.0.5
+  stage: deploy
   script:
     - docker build -t frontend:$CI_COMMIT_SHORT_SHA sys_src/frontend/Dockerfile
     - docker build -t backend:$CI_COMMIT_SHORT_SHA sys_src/backend/Dockerfile
