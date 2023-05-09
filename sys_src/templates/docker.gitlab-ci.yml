@@ -1,0 +1,11 @@
+stages:
+  - deploy
+
+build-docker:
+  image: docker:23.0.5
+  script:
+    - docker build -t frontend:$CI_COMMIT_SHORT_SHA sys_src/frontend/Dockerfile
+    - docker build -t backend:$CI_COMMIT_SHORT_SHA sys_src/backend/Dockerfile
+    # add registry later
+  rules:
+    - if: $CI_COMMIT_TAG
