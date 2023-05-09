@@ -9,6 +9,12 @@ include:
     rules:
       - if: $CI_PIPELINE_SOURCE == "push"
 
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+    
 dummy:
   stage: .pre
   script:
