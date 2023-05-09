@@ -1,7 +1,3 @@
-stages:
-  - lint
-  - test
-
 lint:
   image: python:3.11-slim
   stage: lint
