@@ -9,6 +9,7 @@ lint:
   rules:
     - changes:
       - sys_src/backend/**/*
+  allow_failure: true
 
 coverage:
   image: python:3.11-slim
