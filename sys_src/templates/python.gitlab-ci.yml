@@ -5,7 +5,7 @@ lint:
     - pip install ruff black
   script:
     - black sys_src/backend --check --verbose --diff --color
-    - ruff sys_src/backend --fix
+    - ruff sys_src/backend
   rules:
     - changes:
       - sys_src/backend/**/*
