@@ -2,10 +2,7 @@ from kafka.admin import KafkaAdminClient, NewTopic
 from kafka import KafkaProducer, KafkaConsumer
 from kafka.errors import TopicAlreadyExistsError
 
-admin_client = KafkaAdminClient(
-    bootstrap_servers="localhost:9092",
-    client_id='test2'
-)
+admin_client = KafkaAdminClient(bootstrap_servers="localhost:9092", client_id="test2")
 
 try:
     topic_list = []
@@ -14,9 +11,9 @@ try:
 except TopicAlreadyExistsError:
     print("Topic already exists")
 
-producer = KafkaProducer(bootstrap_servers='localhost:9092')
-producer.send('test', b'Hello, World!')
+producer = KafkaProducer(bootstrap_servers="localhost:9092")
+producer.send("test", b"Hello, World!")
 
-consumer = KafkaConsumer('test', auto_offset_reset='earliest')
+consumer = KafkaConsumer("test", auto_offset_reset="earliest")
 for msg in consumer:
     print(msg.value)
