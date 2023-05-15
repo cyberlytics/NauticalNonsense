@@ -430,3 +430,7 @@ TSWLatexianTemp*
 
 # glossaries
 *.glstex
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
