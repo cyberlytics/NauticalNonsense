@@ -10,10 +10,12 @@ include:
       - if: $CI_PIPELINE_SOURCE == "push"
 
 stages:
+  - validate
   - lint
-  - test
   - build
+  - test
   - deploy
+  - cleanup
     
 dummy:
   stage: .pre

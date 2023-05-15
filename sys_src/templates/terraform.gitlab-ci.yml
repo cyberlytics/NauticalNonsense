@@ -10,14 +10,6 @@ include:
 variables:
   TF_ROOT: sys_src/infrastructure
 
-stages:
-  - validate
-  # - test
-  - build
-  - deploy
-  - test
-  - cleanup
-
 .get_ca_certificate:
   before_script:
     - apk add openssl sudo
