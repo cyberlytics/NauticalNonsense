@@ -41,6 +41,8 @@ deploy:
     - .get_ca_certificate
   dependencies:
     - build
+  rules:
+    - when: manual
   environment:
     name: $TF_STATE_NAME
   artifacts:
