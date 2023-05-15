@@ -128,3 +128,26 @@ resource "aws_iam_role_policy_attachment" "additional" {
   policy_arn = aws_iam_policy.worker_policy.arn
   role       = each.value.iam_role_name
 }
+
+resource "helm_release" "ingress" {
+  depends_on = [
+    module.eks
+  ]
+  name       = "ingress"
+  chart      = "aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts"
+  version    = "1.4.6"
+
+  set {
+    name  = "autoDiscoverAwsRegion"
+    value = "true"
+  }
+  set {
+    name  = "autoDiscoverAwsVpcID"
+    value = "true"
+  }
+  set {
+    name  = "clusterName"
+    value = local.cluster_name
+  }
+}
