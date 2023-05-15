@@ -9,7 +9,7 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 locals {
-  cluster_name = "learnk8s"
+  cluster_name = "bdcc-team-blau"
 }
 
 provider "kubernetes" {
