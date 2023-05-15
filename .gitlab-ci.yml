@@ -13,8 +13,8 @@ stages:
   - validate
   - lint
   - build
-  - test
   - deploy
+  - test
   - cleanup
     
 dummy:
