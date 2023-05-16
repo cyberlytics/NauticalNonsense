@@ -10,7 +10,7 @@ WORKDIR /usr/app
 COPY package.json /usr/app
 
 # Copy your application code
-COPY ./public/ /usr/share/nginx/html
+COPY ./NauticalNonsense/ /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
 RUN npm install kafkajs
