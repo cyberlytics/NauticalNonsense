@@ -72,10 +72,10 @@ prepare-test:
     - echo $output
     # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
     - address=$(echo "$output" | grep -oP 'Address:\s*\K[^[:space:]]+')
-    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> deploy.env
+    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> url.sh
   artifacts:
-    reports:
-      dotenv: deploy.env
+    paths:
+      - sys_src/infrastructure/test/url.env
 
 smoke-test:
   image: alpine:latest
@@ -85,6 +85,8 @@ smoke-test:
   before_script:
     - apk add curl grep
   script:
+    - cd sys_src/infrastructure/test
+    - eval $(cat url.env)
     - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
     - >
       if [[ $title == *"Hello Kubernetes"* ]]; then
