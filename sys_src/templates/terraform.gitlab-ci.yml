@@ -59,8 +59,9 @@ test:
     entrypoint: [""] # override the entrypoint so we can use kubectl
   dependencies:
     - deploy
-  script:
+  before_script:
     - apt install curl
+  script:
     - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
     - cd sys_src/infrastructure/test
     - export KUBECONFIG=./kubeconfig_bdcc-team-blau
