@@ -67,6 +67,7 @@ test:
     - kubectl get pods
     - kubectl apply -f service.yaml
     - kubectl apply -f ingress.yaml
+    - kubectl describe ingress
 
 destroy:
   extends: 
