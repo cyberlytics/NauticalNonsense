@@ -88,8 +88,9 @@ smoke-test:
     - cd sys_src/infrastructure/test
     - eval $(cat url.env)
     - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
+    - echo $title
     - >
-      if [[ $title == *"Hello Kubernetes"* ]]; then
+      if [[ $title == "<title>Hello Kubernetes!</title>" ]]; then
         echo "Test passed"
       else
         echo "Test failed"
