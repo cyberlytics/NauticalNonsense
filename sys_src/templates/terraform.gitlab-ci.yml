@@ -57,10 +57,9 @@ prepare-test:
   image: 
     name: bitnami/kubectl
     entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: prepare-test
   dependencies:
     - deploy
-  before_script:
-    - apt install curl
   script:
     - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
     - cd sys_src/infrastructure/test
@@ -79,12 +78,12 @@ prepare-test:
       dotenv: deploy.env
 
 smoke-test:
-  image:
-    name: alpine:latest
+  image: alpine:latest
+  stage: test
   dependencies:
     - prepare-test
   before_script:
-    - apk add curl
+    - apk add curl grep
   script:
     - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
     - >
