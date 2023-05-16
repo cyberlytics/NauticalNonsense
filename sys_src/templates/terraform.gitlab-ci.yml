@@ -54,7 +54,9 @@ deploy:
       - ${TF_ROOT}/kubeconfig_bdcc-team-blau
 
 test:
-  image: bitnami/kubectl
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
   dependencies:
     - deploy
   script:
