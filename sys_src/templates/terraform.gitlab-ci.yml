@@ -72,7 +72,7 @@ prepare-test:
     - echo $output
     # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
     - address=$(echo "$output" | grep -oP 'Address:\s*\K[^[:space:]]+')
-    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> url.sh
+    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> url.env
   artifacts:
     paths:
       - sys_src/infrastructure/test/url.env
