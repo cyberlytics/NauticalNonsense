@@ -60,7 +60,7 @@ test:
   dependencies:
     - deploy
   script:
-    - sudo apt install curl
+    - apt install curl
     - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
     - cd sys_src/infrastructure/test
     - export KUBECONFIG=./kubeconfig_bdcc-team-blau
