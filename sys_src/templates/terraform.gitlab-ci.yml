@@ -53,7 +53,7 @@ deploy:
     paths:
       - ${TF_ROOT}/kubeconfig_bdcc-team-blau
 
-test:
+prepare-test:
   image: 
     name: bitnami/kubectl
     entrypoint: [""] # override the entrypoint so we can use kubectl
@@ -73,7 +73,20 @@ test:
     - echo $output
     # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
     - address=$(echo "$output" | grep -oP 'Address:\s*\K[^[:space:]]+')
-    - title=$(curl -s $address | grep -oP '(?s)<title\b[^>]*>.*?</title>')
+    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> deploy.env
+  artifacts:
+    reports:
+      dotenv: deploy.env
+
+smoke-test:
+  image:
+    name: alpine:latest
+  dependencies:
+    - prepare-test
+  before_script:
+    - apk add curl
+  script:
+    - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
     - >
       if [[ $title == *"Hello Kubernetes"* ]]; then
         echo "Test passed"
