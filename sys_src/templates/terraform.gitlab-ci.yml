@@ -51,14 +51,14 @@ deploy:
     name: $TF_STATE_NAME
   artifacts:
     paths:
-      - kubeconfig_bdcc-team-blau
+      - ${TF_ROOT}/kubeconfig_bdcc-team-blau
 
 test:
   image: bitnami/kubectl
   dependencies:
     - deploy
   script:
-    - KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - KUBECONFIG=${TF_ROOT}/kubeconfig_bdcc-team-blau
     - cd sys_src/infrastructure/test
     - kubectl apply -f deployment.yaml
     - kubectl get pods
