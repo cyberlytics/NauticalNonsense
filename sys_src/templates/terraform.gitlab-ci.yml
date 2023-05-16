@@ -67,7 +67,18 @@ test:
     - kubectl get pods
     - kubectl apply -f service.yaml
     - kubectl apply -f ingress.yaml
-    - kubectl describe ingress
+    - output=$(kubectl describe ingress)
+    - echo $output
+    # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
+    - address=$(echo "$output" | grep -oP 'Address:\s*\K[^[:space:]]+')
+    - $title=(curl -s $address | grep -oP '(?s)<title\b[^>]*>.*?</title>')
+    - >
+      if [[ $title == *"Hello Kubernetes"* ]]; then
+        echo "Test passed"
+      else
+        echo "Test failed"
+        exit 1
+      fi
 
 destroy:
   extends: 
