@@ -60,7 +60,8 @@ test:
   dependencies:
     - deploy
   script:
-    - KUBECONFIG=${TF_ROOT}/kubeconfig_bdcc-team-blau
+    - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
+    - KUBECONFIG=${TF_ROOT}/test/kubeconfig_bdcc-team-blau
     - cd sys_src/infrastructure/test
     - kubectl apply -f deployment.yaml
     - kubectl get pods
