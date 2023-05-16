@@ -1,0 +1,28 @@
+{
+    "section1": {
+        "files": [
+            {
+                "url": "assets/0001.png",
+                "type": "image",
+                "key": "0001"
+            },
+            {
+                "url": "assets/dino.png",
+                "key": "dino",
+                "type": "image"
+            },
+            {
+                "url": "assets/submarine.png",
+                "type": "image",
+                "key": "submarine"
+            }
+        ]
+    },
+    "meta": {
+        "app": "Phaser Editor 2D - Asset Pack Editor",
+        "contentType": "phasereditor2d.pack.core.AssetContentType",
+        "url": "https://phasereditor2d.com",
+        "version": 2,
+        "showAllFilesInBlocks": false
+    }
+}
