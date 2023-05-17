@@ -90,7 +90,7 @@ smoke-test:
     - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
     - echo $title
     - >
-      if [[ $title == "<title>Hello Kubernetes!</title>" ]]; then
+      if [[ "$title" == "<title>Hello Kubernetes!</title>" ]]; then
         echo "Test passed"
       else
         echo "Test failed"
