@@ -1,6 +1,6 @@
 lint:
   image: python:3.11-slim
-  stage: lint
+  stage: validate
   before_script:
     - pip install ruff black
   script:

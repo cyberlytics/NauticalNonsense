@@ -7,15 +7,11 @@ include:
   - template: Terraform/Base.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.gitlab-ci.yml
   # - template: Jobs/SAST-IaC.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
 
+image:
+  name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/terraform-images/releases/1.4:v1.0.0"
+
 variables:
   TF_ROOT: sys_src/infrastructure
-
-stages:
-  - validate
-  # - test
-  - build
-  - deploy
-  - cleanup
 
 .get_ca_certificate:
   before_script:
@@ -48,8 +44,58 @@ deploy:
     - .get_ca_certificate
   dependencies:
     - build
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH 
+      when: manual
   environment:
     name: $TF_STATE_NAME
+  artifacts:
+    paths:
+      - ${TF_ROOT}/kubeconfig_bdcc-team-blau
+
+prepare-test:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: prepare-test
+  dependencies:
+    - deploy
+  script:
+    - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
+    - cd sys_src/infrastructure/test
+    - export KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - kubectl apply -f deployment.yaml
+    - kubectl get pods
+    - kubectl apply -f service.yaml
+    - kubectl apply -f ingress.yaml
+    - output=$(kubectl describe ingress)
+    - echo $output
+    # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
+    - address=$(echo "$output" | grep -oP 'Address:\s*\K[^[:space:]]+')
+    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> url.env
+  artifacts:
+    paths:
+      - sys_src/infrastructure/test/url.env
+
+smoke-test:
+  image: alpine:latest
+  stage: test
+  dependencies:
+    - prepare-test
+  before_script:
+    - apk add curl grep
+  script:
+    - cd sys_src/infrastructure/test
+    - eval $(cat url.env)
+    - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
+    - echo $title
+    - >
+      if [[ "$title" == "<title>Hello Kubernetes!</title>" ]]; then
+        echo "Test passed"
+      else
+        echo "Test failed"
+        exit 1
+      fi
 
 destroy:
   extends: 
