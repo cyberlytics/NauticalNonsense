@@ -4,7 +4,7 @@ lint-js:
   script:
     - cd sys_src/frontend/NauticalNonsense
     - npm install -g eslint
-    - eslint --init
+    - npm init @eslint/config
     - eslint --ext .js,.jsx,.ts,.tsx
   # rules:
   #   - changes:
