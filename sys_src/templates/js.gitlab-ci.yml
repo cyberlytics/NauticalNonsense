@@ -31,7 +31,7 @@ coverage-js:
   image: node:latest
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   dependencies:
-    - build
+    - build-js
   script:
     - cd sys_src/frontend/NauticalNonsense
     - npm test
