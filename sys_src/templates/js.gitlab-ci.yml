@@ -1,28 +1,42 @@
-image: node:latest
-
-build:
-  stage: build
+lint-js:
+  stage: validate
+  image: node:latest
   script:
-    - yarn
+    - cd sys_src/frontend/NauticalNonsense
+    - npm install -g eslint
+    - eslint ./src
+  rules:
+    - changes:
+      - sys_src/frontend/**/*
+  allow_failure: true
+
+build-js:
+  stage: build
+  image: node:latest
+  script:
+    - cd sys_src/frontend/NauticalNonsense
+    - npm install
   cache:
     paths:
-      - node_modules/
+      - sys_src/frontend/NauticalNonsense/node_modules/
   artifacts:
     expire_in: 1 days
     when: on_success
     paths:
-      - node_modules/
+      - sys_src/frontend/NauticalNonsense/node_modules/
   rules:
     - changes:
       - sys_src/frontend/**/*
 
-test:
+coverage-js:
   stage: test
+  image: node:latest
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   dependencies:
-    - build
+    - build-js
   script:
-    - yarn test:ci
+    - cd sys_src/frontend/NauticalNonsense
+    - npm test
   artifacts:
     when: always
     reports:
