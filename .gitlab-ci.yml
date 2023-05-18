@@ -5,6 +5,9 @@ include:
   - local: sys_src/templates/python.gitlab-ci.yml
     rules:
       - if: $CI_PIPELINE_SOURCE == "push"
+  - local: sys_src/templates/js.gitlab-ci.yml
+    # rules:
+      # - if: $CI_PIPELINE_SOURCE == "push"
   - local: sys_src/templates/docker.gitlab-ci.yml
     rules:
       - if: $CI_PIPELINE_SOURCE == "push"
