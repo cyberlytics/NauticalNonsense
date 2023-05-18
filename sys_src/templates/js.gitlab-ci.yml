@@ -4,11 +4,10 @@ lint-js:
   script:
     - cd sys_src/frontend/NauticalNonsense
     - npm install -g eslint
-    - npm init @eslint/config
     - eslint ./src
-  # rules:
-  #   - changes:
-  #     - sys_src/frontend/**/*
+  rules:
+    - changes:
+      - sys_src/frontend/**/*
   allow_failure: true
 
 build-js:
@@ -25,9 +24,9 @@ build-js:
     when: on_success
     paths:
       - sys_src/frontend/NauticalNonsense/node_modules/
-  # rules:
-  #   - changes:
-  #     - sys_src/frontend/**/*
+  rules:
+    - changes:
+      - sys_src/frontend/**/*
 
 coverage-js:
   stage: test
@@ -46,6 +45,6 @@ coverage-js:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-  # rules:
-  #   - changes:
-  #     - sys_src/frontend/**/*
+  rules:
+    - changes:
+      - sys_src/frontend/**/*
