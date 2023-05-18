@@ -1,5 +1,6 @@
 lint-js:
   stage: validate
+  image: node:latest
   script:
     - npm install -g eslint
     - eslint sys_src/frontend --ext .js,.jsx,.ts,.tsx
@@ -13,7 +14,7 @@ build-js:
   image: node:latest
   script:
     - cd sys_src/frontend/NauticalNonsense
-    - npm build
+    - npm install
   cache:
     paths:
       - node_modules/
