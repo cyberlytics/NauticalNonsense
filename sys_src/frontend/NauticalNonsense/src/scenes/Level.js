@@ -46,7 +46,7 @@ class Level extends Phaser.Scene {
 		const startbutton = this.add.image(900, 550, "startbutton");
 		startbutton.setInteractive();
 		startbutton.on("pointerdown", () => {
-			//this.clickSound.play();
+			this.clickSound.play();
 			this.scene.start('Gameboard');
 		})
 
