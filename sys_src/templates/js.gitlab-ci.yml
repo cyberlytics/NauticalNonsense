@@ -2,9 +2,10 @@ lint-js:
   stage: validate
   image: node:latest
   script:
+    - cd sys_src/frontend/NauticalNonsense
     - npm install -g eslint
-    - npm init @eslint/config
-    - eslint sys_src/frontend --ext .js,.jsx,.ts,.tsx
+    - eslint --init
+    - eslint --ext .js,.jsx,.ts,.tsx
   # rules:
   #   - changes:
   #     - sys_src/frontend/**/*
