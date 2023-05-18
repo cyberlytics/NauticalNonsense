@@ -3,9 +3,9 @@ lint-js:
   script:
     - npm install -g eslint
     - eslint sys_src/frontend --ext .js,.jsx,.ts,.tsx
-  rules:
-    - changes:
-      - sys_src/frontend/**/*
+  # rules:
+  #   - changes:
+  #     - sys_src/frontend/**/*
   allow_failure: true
 
 build-js:
@@ -22,9 +22,9 @@ build-js:
     when: on_success
     paths:
       - node_modules/
-  rules:
-    - changes:
-      - sys_src/frontend/**/*
+  # rules:
+  #   - changes:
+  #     - sys_src/frontend/**/*
 
 coverage-js:
   stage: test
@@ -43,6 +43,6 @@ coverage-js:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-  rules:
-    - changes:
-      - sys_src/frontend/**/*
+  # rules:
+  #   - changes:
+  #     - sys_src/frontend/**/*
