@@ -3,6 +3,7 @@ lint-js:
   image: node:latest
   script:
     - npm install -g eslint
+    - npm init @eslint/config
     - eslint sys_src/frontend --ext .js,.jsx,.ts,.tsx
   # rules:
   #   - changes:
@@ -17,12 +18,12 @@ build-js:
     - npm install
   cache:
     paths:
-      - node_modules/
+      - sys_src/frontend/NauticalNonsense/node_modules/
   artifacts:
     expire_in: 1 days
     when: on_success
     paths:
-      - node_modules/
+      - sys_src/frontend/NauticalNonsense/node_modules/
   # rules:
   #   - changes:
   #     - sys_src/frontend/**/*
