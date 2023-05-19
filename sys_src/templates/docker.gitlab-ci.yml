@@ -7,8 +7,10 @@ build-docker:
       DOCKER_TLS_CERTDIR: ""
       DOCKER_HOST: "tcp://docker:2375"
   script:
+    - cd sys_src/frontend/
     # - docker build -t $DOCKER_USERNAME/frontend:$CI_COMMIT_TAG sys_src/frontend/Dockerfile
-    - docker build -t $DOCKER_USERNAME/frontend:latest -f sys_src/frontend/Dockerfile .
+    - docker build -t $DOCKER_USERNAME/frontend:latest .
+    - cd ../../sys_src/backend/
     # - docker build -t $DOCKER_USERNAME/backend:$CI_COMMIT_TAG sys_src/backend/Dockerfile
     - docker build -t $DOCKER_USERNAME/backend:latest -f sys_src/backend/Dockerfile .
     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
