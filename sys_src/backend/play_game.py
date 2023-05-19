@@ -11,6 +11,12 @@ def get_new_room(client_id: int, game_type: str, name: str) -> int:
     '''
     return uuid.uuid4().int
 
+def get_partner_id(room_id: int, first_client_id):
+    '''
+    With room_id and first_client_id get the partners id from db
+    '''
+    pass
+
 def new_game_init():
     # place ships
     pass
