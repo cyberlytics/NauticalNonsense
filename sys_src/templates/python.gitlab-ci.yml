@@ -1,4 +1,4 @@
-lint:
+lint-python:
   image: python:3.11-slim
   stage: validate
   before_script:
@@ -11,9 +11,9 @@ lint:
       - sys_src/backend/**/*
   allow_failure: true
 
-coverage:
+coverage-python:
   image: python:3.11-slim
-  stage: test
+  stage: unit-test
   before_script:
     - pip install -r sys_src/backend/requirements.txt
     - pip install pytest pytest-cov

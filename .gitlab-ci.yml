@@ -1,21 +1,25 @@
 include:
   - local: sys_src/templates/terraform.gitlab-ci.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "web"
+      - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   - local: sys_src/templates/python.gitlab-ci.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "push"
+  - local: sys_src/templates/js.gitlab-ci.yml
     rules:
       - if: $CI_PIPELINE_SOURCE == "push"
   - local: sys_src/templates/docker.gitlab-ci.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "push"
+      - if: $CI_COMMIT_TAG
 
 stages:
   - validate
   - lint
   - build
+  - unit-test
   - deploy
   - prepare-test
-  - test
+  - integration-test
   - cleanup
     
 dummy:

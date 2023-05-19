@@ -79,7 +79,7 @@ prepare-test:
 
 smoke-test:
   image: alpine:latest
-  stage: test
+  stage: integration-test
   dependencies:
     - prepare-test
   before_script:
