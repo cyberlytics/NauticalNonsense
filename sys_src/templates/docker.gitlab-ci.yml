@@ -5,7 +5,7 @@ build-docker:
     - docker:dind
   variables:
       DOCKER_TLS_CERTDIR: ""
-      DOCKER_HOST: "tcp://localhost:2375"
+      DOCKER_HOST: "tcp://docker:2375"
   script:
     - docker build -t $DOCKER_USERNAME/frontend:$CI_COMMIT_TAG sys_src/frontend/Dockerfile
     - docker build -t $DOCKER_USERNAME/backend:$CI_COMMIT_TAG sys_src/backend/Dockerfile
