@@ -12,17 +12,19 @@
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:8000/ws");
+            // Angepasst, um eine Sitzungs-ID zu verwenden
+            var sessionId = prompt("Bitte geben Sie Ihre Sitzungs-ID ein:", "1");
+            var ws = new WebSocket("ws://localhost:8000/ws/" + sessionId);
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
+                var content = document.createTextNode(JSON.parse(event.data)['message received in the backend']) // Daten werden als JSON empfangen
                 message.appendChild(content)
                 messages.appendChild(message)
             };
             function sendMessage(event) {
                 var input = document.getElementById("messageText")
-                ws.send(input.value)
+                ws.send(JSON.stringify(input.value)) // Daten werden als JSON gesendet
                 input.value = ''
                 event.preventDefault()
             }

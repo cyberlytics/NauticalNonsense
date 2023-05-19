@@ -71,8 +71,8 @@ async def websocket_endpoint(websocket: WebSocket, session_id: int):
             data = await websocket.receive_json()
             # validate the data
             response = {"message received in the backend": data}
-            await manager.send_personal_message(str(response), websocket)
-            await manager.broadcast(f"Client #{session_id} sent: {str(data)}")
+            await manager.send_personal_message(response, websocket)
+            await manager.broadcast(response)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"Client #{session_id} left")
