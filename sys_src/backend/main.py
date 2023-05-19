@@ -62,6 +62,7 @@ def continue_game(player_id: int):
 # room_id wird die session id
 @app.websocket("/ws/{session_id}")
 async def websocket_endpoint(websocket: WebSocket, session_id: int):
+    # check if connection is correct
     await manager.connect(websocket)
     try:
         while True:

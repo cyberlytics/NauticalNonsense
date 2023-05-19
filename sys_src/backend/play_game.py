@@ -1,6 +1,6 @@
 import uuid
 
-def get_new_room(client_id: int, game_type: str, name: str):
+def get_new_room(client_id: int, game_type: str, name: str) -> int:
     '''
     Check in Database if a map exists, which the client can use.
 
