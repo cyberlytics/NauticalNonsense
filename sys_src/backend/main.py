@@ -63,10 +63,16 @@ def continue_game(player_id: int):
 
 # hier noch nicht sicher, ob ich room_id oder client_id nutze.
 @app.websocket("/ws/{room_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
+async def websocket_endpoint(websocket: WebSocket, room_id: str):
+
+    # mock for websocket
+    # use for one client 12
+    # and for other client 21
+    client_id = room_id[:len(room_id)//2]
+    partner_id = room_id[len(room_id)//2:]
+
     # check if connection is correct
-    
-    partner_id = get_partner_id(client_id)
+    #partner_id = get_partner_id(client_id)
 
     await manager.connect(websocket, client_id)
     try:
