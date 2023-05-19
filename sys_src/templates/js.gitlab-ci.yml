@@ -29,7 +29,7 @@ build-js:
       - sys_src/frontend/**/*
 
 coverage-js:
-  stage: test
+  stage: unit-test
   image: node:latest
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   dependencies:

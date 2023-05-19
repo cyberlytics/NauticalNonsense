@@ -13,7 +13,7 @@ lint-python:
 
 coverage-python:
   image: python:3.11-slim
-  stage: test
+  stage: unit-test
   before_script:
     - pip install -r sys_src/backend/requirements.txt
     - pip install pytest pytest-cov

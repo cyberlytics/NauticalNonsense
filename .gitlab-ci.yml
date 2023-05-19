@@ -16,9 +16,10 @@ stages:
   - validate
   - lint
   - build
+  - unit-test
   - deploy
   - prepare-test
-  - test
+  - integration-test
   - cleanup
     
 dummy:
