@@ -97,6 +97,28 @@ smoke-test:
         exit 1
       fi
 
+delete-deployments:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: post-test
+  dependencies:
+    - deploy
+  script:
+    - kubectl delete -f sys_src/infrastructure/test/deployment.yaml
+    - kubectl delete -f sys_src/infrastructure/test/service.yaml
+    - kubectl delete -f sys_src/infrastructure/test/ingress.yaml
+
+deploy-dasboard:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: deploy-dashboard
+  dependencies:
+    - deploy
+  script:
+    - kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
 destroy:
   extends: 
     - .terraform:destroy
