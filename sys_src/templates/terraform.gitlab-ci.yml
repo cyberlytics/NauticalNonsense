@@ -105,9 +105,12 @@ delete-deployments:
   dependencies:
     - deploy
   script:
-    - kubectl delete -f sys_src/infrastructure/test/deployment.yaml
-    - kubectl delete -f sys_src/infrastructure/test/service.yaml
-    - kubectl delete -f sys_src/infrastructure/test/ingress.yaml
+    - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
+    - cd sys_src/infrastructure/test
+    - export KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - kubectl delete -f deployment.yaml
+    - kubectl delete -f service.yaml
+    - kubectl delete -f ingress.yaml
 
 deploy-dasboard:
   image: 
