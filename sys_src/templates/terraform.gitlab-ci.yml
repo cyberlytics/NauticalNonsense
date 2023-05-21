@@ -120,7 +120,7 @@ deploy-dasboard:
   dependencies:
     - deploy
   script:
-    - export KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - export KUBECONFIG=${TF_ROOT}/kubeconfig_bdcc-team-blau
     - kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 
 destroy:
