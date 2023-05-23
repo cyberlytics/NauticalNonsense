@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Description of your project",
   "dependencies": {
-    "kafkajs": "^1.15.0"
+    "kafkajs": "^1.15.0",
+    "ws": "^8.13.0"
   }
 }
