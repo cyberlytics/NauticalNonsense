@@ -16,6 +16,7 @@ window.addEventListener('load', function () {
 	game.scene.add("Options", Options);
 	game.scene.add("Level", Level);
 	game.scene.add("Boot", Boot, true);
+	game.scene.add("Gameboard", Gameboard);
 });
 
 class Boot extends Phaser.Scene {
@@ -23,6 +24,7 @@ class Boot extends Phaser.Scene {
 	preload() {
 		
 		this.load.pack("pack", "assets/preload-asset-pack.json");
+		this.load.image('button', 'assets/button.png');
 	}
 
 	create() {
