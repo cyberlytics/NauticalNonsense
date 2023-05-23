@@ -1,0 +1,2 @@
+[run]
+omit = tests/*, kafka-showcase.py

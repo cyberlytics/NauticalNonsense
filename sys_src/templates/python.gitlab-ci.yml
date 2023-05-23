@@ -18,7 +18,8 @@ coverage-python:
     - pip install -r sys_src/backend/requirements.txt
     - pip install pytest pytest-cov
   script:
-    - pytest --cov=sys_src/backend/ --cov-report xml --cov-report term-missing --junitxml=report.xml
+    - cd sys_src/backend
+    - pytest --cov=. --cov-report xml --cov-report term-missing --junitxml=report.xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:
