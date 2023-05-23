@@ -130,7 +130,7 @@ class Gameboard extends Phaser.Scene {
 		this.capitulateButton.fillRoundedRect(enemyBoardPos.x, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3*smallCornerRadius + 110, 220, 50, tinyCornerRadius);
 		this.capitulateButton.setInteractive(new Phaser.Geom.Rectangle(enemyBoardPos.x, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3*smallCornerRadius + 110, 220, 50), Phaser.Geom.Rectangle.Contains);
 		this.capitulateButton.on('pointerdown', () => {
-				this.scene.start('Level');
+				this.scene.start('Start');
 			});
 		this.capitulateText = this.add.text(enemyBoardPos.x + tinyCornerRadius + 5, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3*smallCornerRadius + 110 + tinyCornerRadius, 'Capitulate', { fill: '#000000', fontSize: 30, fontFamily: "Sans"});
 

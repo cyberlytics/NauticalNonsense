@@ -15,11 +15,17 @@ class Options extends Phaser.Scene {
 
 	/** @returns {void} */
 	editorCreate() {
+		
+		// background
+		this.background = this.add.image(0, 0, '0001');
+		this.background.setOrigin(0, 0);
+		this.background.scaleX = 1.2;
+		this.background.scaleY = 0.7;
 
 		// title
 		const title = this.add.text(647, 121, "", {});
-		title.scaleX = 1.5;
-		title.scaleY = 1.5;
+		title.scaleX = 1;
+		title.scaleY = 1;
 		title.setOrigin(0.5, 0.5);
 		title.text = "Nautical Nonsense \n Options";
 		title.setStyle({ "align": "center", "color": "#ffffffff", "fontFamily": "GodOfWar", "fontSize": "50px" });

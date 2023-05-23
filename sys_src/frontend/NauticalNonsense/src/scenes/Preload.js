@@ -17,17 +17,34 @@ class Preload extends Phaser.Scene {
 	editorPreload() {
 
 		this.load.pack("asset-pack", "assets/start-asset-pack.json");
-		this.load.audio("theme", ["assets/sounds/NauticalNonsense_soundtrack.mp3"]);
 		this.load.audio("click", ["assets/sounds/click_1.mp3"]);
 		this.load.audio("horn", ["assets/sounds/foghorn_3.mp3"]);
 		this.load.image("nameInput", "assets/start/nameInput.png");
 		this.load.image("matchInput", "assets/start/matchSelection.png");
 		this.load.image("matchButton", "assets/start/matchSelectionbutton.png");
+		this.load.image("background", "assets/0001.png");
 
 	}
 
 	/** @returns {void} */
 	editorCreate() {
+		
+		//theme
+		this.theme = this.sound.add("theme");
+		
+		var themeConfig = {
+		
+			mute: false,
+			volume: 1,
+			rate: 1,
+			detune: 0,
+			seek: 0,
+			loop: true,
+			delay: 0
+			
+		}
+		
+		this.theme.play(themeConfig);
 
 		// battleship
 		const battleship = this.add.image(640, 360, "battleship_logo");

@@ -18,26 +18,15 @@ class Start extends Phaser.Scene {
 		
 		const self = this;
 		
-		//theme
-		this.theme = this.sound.add("theme");
-		
-		var themeConfig = {
-		
-			mute: false,
-			volume: 1,
-			rate: 1,
-			detune: 0,
-			seek: 0,
-			loop: true,
-			delay: 0
-			
-		}
-		
-		this.theme.play(themeConfig);
-		
 		//sounds
 		this.click = this.sound.add("click");
 		this.horn = this.sound.add("horn", {volume: 0.3});
+		
+		// background
+		this.background = this.add.image(0, 0, 'background');
+		this.background.setOrigin(0, 0);
+		this.background.scaleX = 1.2;
+		this.background.scaleY = 0.7;
 
 		// logo
 		const logo = this.add.image(640, 360, "logo").setInteractive({ useHandCursor: true  });

@@ -25,6 +25,7 @@ class Boot extends Phaser.Scene {
 		
 		this.load.pack("pack", "assets/preload-asset-pack.json");
 		this.load.image('button', 'assets/button.png');
+		this.load.audio("theme", ["assets/sounds/NauticalNonsense_soundtrack.mp3"]);
 	}
 
 	create() {
