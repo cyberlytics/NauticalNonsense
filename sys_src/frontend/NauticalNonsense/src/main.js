@@ -1,4 +1,3 @@
-
 window.addEventListener('load', function () {
 
 	var game = new Phaser.Game({
@@ -13,6 +12,8 @@ window.addEventListener('load', function () {
 	});
 
 	game.scene.add("Preload", Preload);
+	game.scene.add("Start", Start);
+	game.scene.add("Options", Options);
 	game.scene.add("Level", Level);
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
@@ -21,8 +22,9 @@ window.addEventListener('load', function () {
 class Boot extends Phaser.Scene {
 
 	preload() {
-		this.load.image('button', 'assets/button.png');
+		
 		this.load.pack("pack", "assets/preload-asset-pack.json");
+		this.load.image('button', 'assets/button.png');
 	}
 
 	create() {

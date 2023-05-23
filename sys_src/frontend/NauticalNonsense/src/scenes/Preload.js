@@ -16,20 +16,31 @@ class Preload extends Phaser.Scene {
 	/** @returns {void} */
 	editorPreload() {
 
-		this.load.pack("asset-pack", "assets/asset-pack.json");
+		this.load.pack("asset-pack", "assets/start-asset-pack.json");
+		this.load.audio("theme", ["assets/sounds/NauticalNonsense_soundtrack.mp3"]);
+		this.load.audio("click", ["assets/sounds/click_1.mp3"]);
+		this.load.audio("horn", ["assets/sounds/foghorn_3.mp3"]);
+		this.load.image("nameInput", "assets/start/nameInput.png");
+		this.load.image("matchInput", "assets/start/matchSelection.png");
+		this.load.image("matchButton", "assets/start/matchSelectionbutton.png");
+
 	}
 
 	/** @returns {void} */
 	editorCreate() {
 
-		// guapen
-		const guapen = this.add.image(505.0120544433594, 360, "guapen");
-		guapen.scaleX = 0.32715486817515643;
-		guapen.scaleY = 0.32715486817515643;
+		// battleship
+		const battleship = this.add.image(640, 360, "battleship_logo");
+		battleship.scaleX = 0.7;
+		battleship.scaleY = 0.71;
+
+		// water
+		const water = this.add.image(640, 440, "water_logo");
+		water.scaleX = 0.6;
+		water.scaleY = 0.5;
 
 		// progressBar
-		const progressBar = this.add.rectangle(553.0120849609375, 361, 256, 20);
-		progressBar.setOrigin(0, 0);
+		const progressBar = this.add.rectangle(750, 490, 256, 20);
 		progressBar.isFilled = true;
 		progressBar.fillColor = 14737632;
 
@@ -37,13 +48,13 @@ class Preload extends Phaser.Scene {
 		new PreloadBarUpdaterScript(progressBar);
 
 		// progressBarBg
-		const progressBarBg = this.add.rectangle(553.0120849609375, 361, 256, 20);
-		progressBarBg.setOrigin(0, 0);
+		const progressBarBg = this.add.rectangle(750, 490, 256, 20);
 		progressBarBg.fillColor = 14737632;
 		progressBarBg.isStroked = true;
 
 		// loadingText
-		const loadingText = this.add.text(552.0120849609375, 329, "", {});
+		const loadingText = this.add.text(550, 490, "", {});
+		loadingText.setOrigin(0.5, 0.5);
 		loadingText.text = "Loading...";
 		loadingText.setStyle({ "color": "#e0e0e0", "fontFamily": "arial", "fontSize": "20px" });
 
@@ -60,7 +71,7 @@ class Preload extends Phaser.Scene {
 
 		this.editorPreload();
 
-		this.load.on(Phaser.Loader.Events.COMPLETE, () => this.scene.start("Level"));
+		this.load.on(Phaser.Loader.Events.COMPLETE, () => this.scene.start("Start"));
 	}
 
 	/* END-USER-CODE */

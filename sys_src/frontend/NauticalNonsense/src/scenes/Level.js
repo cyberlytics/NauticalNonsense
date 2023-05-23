@@ -15,7 +15,7 @@ class Level extends Phaser.Scene {
 
 	/** @returns {void} */
 	editorCreate() {
-
+		
 		// image_1
 		const image_1 = this.add.image(647, 361, "0001");
 		image_1.scaleX = 1.2;
@@ -64,6 +64,7 @@ class Level extends Phaser.Scene {
 		this.textField = this.add.text(50, 500, '', { fontFamily: 'Arial', fontSize: '24px', fill: '#ffffff' });
 		this.textField.text = 'Hello, Phaser!';
 
+>>>>>>> sys_src/frontend/NauticalNonsense/src/scenes/Level.js
 
 		this.events.emit("scene-awake");
 	}
