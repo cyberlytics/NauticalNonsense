@@ -4,6 +4,8 @@ from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from database import get_leaderboard, add_rank #Noch richtigen Pfad für "database.py" wählen
+from models import LeaderboardWithRank #Noch richtigen Pfad für "models.py" wählen
 
 app = FastAPI()
 
@@ -87,3 +89,13 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
         manager.disconnect(websocket)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
+
+
+#Route for leaderboard
+@app.get("/leaderboard", response_model = LeaderboardWithRank)
+def get_leaderboard_api():
+    leaders_human = get_leaderboard(againstComputer=False)
+    leaders_human_rank = add_rank(leaders_human)
+    leaders_computer = get_leaderboard(againstComputer=True)
+    leaders_computer_rank = add_rank(leaders_computer)
+    return LeaderboardWithRank(leadersHuman=leaders_human_rank, leadersComputer=leaders_computer_rank)
