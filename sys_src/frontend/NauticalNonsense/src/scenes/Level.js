@@ -38,6 +38,19 @@ class Level extends Phaser.Scene {
 		text_1.setOrigin(0.5, 0.5);
 		text_1.text = "Nautical Nonsense";
 		text_1.setStyle({ "align": "center", "color": "#ffffffff", "fontFamily": "GodOfWar", "fontSize": "50px" });
+		
+		// add clicksound
+		this.clickSound = this.sound.add('clicksound');
+
+		// startbutton
+		const startbutton = this.add.image(900, 550, "startbutton");
+		startbutton.setInteractive();
+		startbutton.on("pointerdown", () => {
+			this.clickSound.play();
+			this.scene.start('Gameboard');
+		})
+
+
 
 		// Create a button sprite
 		var button = this.add.sprite(50, 650, 'button');

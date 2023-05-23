@@ -15,6 +15,16 @@
                 "url": "assets/submarine.png",
                 "type": "image",
                 "key": "submarine"
+            },
+            {
+                "url": "assets/startbutton.png",
+                "type": "image",
+                "key": "startbutton"
+            },
+            {
+                "url": "assets/select.mp3",
+                "type": "audio",
+                "key": "clicksound"
             }
         ]
     },
