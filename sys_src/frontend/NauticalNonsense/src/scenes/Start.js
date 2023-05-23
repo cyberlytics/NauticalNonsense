@@ -142,7 +142,7 @@ class Start extends Phaser.Scene {
 			this.clearTint();
 			self.stopHorn();
 			self.playClick();
-			self.scene.start("Level");
+			self.scene.start("Gameboard");
 		
         });
 
@@ -162,6 +162,8 @@ class Start extends Phaser.Scene {
 
 		this.load.pack("asset-pack", "assets/asset-pack.json");
 		this.load.pack("asset-pack", "assets/options-asset-pack.json");
+		this.load.audio("clicksound", ["assets/select.mp3"]);
+		this.load.image("0001", "assets/0001.png");
 		
 	}
 	
