@@ -3,10 +3,10 @@
 
 /* START OF COMPILED CODE */
 
-class Level extends Phaser.Scene {
+class Options extends Phaser.Scene {
 
 	constructor() {
-		super("Level");
+		super("Options");
 
 		/* START-USER-CTR-CODE */
 		// Write your code here.
@@ -21,7 +21,7 @@ class Level extends Phaser.Scene {
 		title.scaleX = 1.5;
 		title.scaleY = 1.5;
 		title.setOrigin(0.5, 0.5);
-		title.text = "Nautical Nonsense \n Level";
+		title.text = "Nautical Nonsense \n Options";
 		title.setStyle({ "align": "center", "color": "#ffffffff", "fontFamily": "GodOfWar", "fontSize": "50px" });
 
 		this.events.emit("scene-awake");
@@ -37,6 +37,7 @@ class Level extends Phaser.Scene {
 	}
 
 	/* END-USER-CODE */
+	
 }
 
 /* END OF COMPILED CODE */

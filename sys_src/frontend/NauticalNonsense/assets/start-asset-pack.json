@@ -1,0 +1,64 @@
+{
+    "section1": {
+        "files": [
+            {
+                "url": [
+                    "assets/sounds/click_1.mp3"
+                ],
+                "type": "audio",
+                "key": "click_1"
+            },
+            {
+                "url": [
+                    "assets/sounds/foghorn_3.mp3"
+                ],
+                "type": "audio",
+                "key": "foghorn_3"
+            },
+            {
+                "url": "assets/start/logo.png",
+                "type": "image",
+                "key": "logo"
+            },
+            {
+                "url": "assets/start/matchSelection.png",
+                "type": "image",
+                "key": "matchSelection"
+            },
+            {
+                "url": "assets/start/matchSelectionbutton.png",
+                "type": "image",
+                "key": "matchSelectionbutton"
+            },
+            {
+                "url": "assets/start/nameInput.png",
+                "type": "image",
+                "key": "nameInput"
+            },
+            {
+                "url": [
+                    "assets/sounds/NauticalNonsense_soundtrack.mp3"
+                ],
+                "type": "audio",
+                "key": "NauticalNonsense_soundtrack"
+            },
+            {
+                "url": "assets/start/optionsButton.png",
+                "type": "image",
+                "key": "optionsButton"
+            },
+            {
+                "url": "assets/start/startButton.png",
+                "type": "image",
+                "key": "startButton"
+            }
+        ]
+    },
+    "meta": {
+        "app": "Phaser Editor 2D - Asset Pack Editor",
+        "contentType": "phasereditor2d.pack.core.AssetContentType",
+        "url": "https://phasereditor2d.com",
+        "version": 2,
+        "showAllFilesInBlocks": false
+    }
+}

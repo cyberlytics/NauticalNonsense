@@ -2,9 +2,19 @@
     "section1": {
         "files": [
             {
+                "url": "assets/start/battleship_logo.png",
+                "type": "image",
+                "key": "battleship_logo"
+            },
+            {
                 "url": "assets/guapen.png",
                 "type": "image",
                 "key": "guapen"
+            },
+            {
+                "url": "assets/start/water_logo.png",
+                "type": "image",
+                "key": "water_logo"
             }
         ]
     },
