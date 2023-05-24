@@ -154,6 +154,7 @@ class Start extends Phaser.Scene {
 		this.load.audio("clicksound", ["assets/select.mp3"]);
 		this.load.image("0001", "assets/0001.png");
 		
+		
 	}
 	
 	playClick() {
