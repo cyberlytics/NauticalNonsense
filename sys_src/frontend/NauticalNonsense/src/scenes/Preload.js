@@ -29,6 +29,8 @@ class Preload extends Phaser.Scene {
 	/** @returns {void} */
 	editorCreate() {
 		
+		const backgroundColor = 0x3c3845
+		
 		//theme
 		this.theme = this.sound.add("theme");
 		
@@ -45,19 +47,26 @@ class Preload extends Phaser.Scene {
 		}
 		
 		this.theme.play(themeConfig);
-
-		// battleship
-		const battleship = this.add.image(640, 360, "battleship_logo");
-		battleship.scaleX = 0.7;
-		battleship.scaleY = 0.71;
-
-		// water
-		const water = this.add.image(640, 440, "water_logo");
-		water.scaleX = 0.6;
-		water.scaleY = 0.5;
+		
+		// background
+		this.background = this.add.image(0, 0, 'background');
+		this.background.setOrigin(0, 0);
+		this.background.scaleX = 1.2;
+		this.background.scaleY = 0.7;
+		
+		//preloadBoard
+		const preloadBoard = this.add.graphics();
+		preloadBoard.lineStyle(5, 0xffffff);
+		preloadBoard.fillStyle(backgroundColor, 1);
+		preloadBoard.fillRoundedRect((1280-950)/2 + 2, 100, 950, 450, 50);
+		
+		//logo
+		const logo = this.add.image(1280/2, 720/2 - 50, "logo");
+		logo.scaleX = 0.9;
+		logo.scaleY = 0.9;
 
 		// progressBar
-		const progressBar = this.add.rectangle(750, 490, 256, 20);
+		const progressBar = this.add.rectangle(750, 520, 256, 20);
 		progressBar.isFilled = true;
 		progressBar.fillColor = 14737632;
 
@@ -65,15 +74,15 @@ class Preload extends Phaser.Scene {
 		new PreloadBarUpdaterScript(progressBar);
 
 		// progressBarBg
-		const progressBarBg = this.add.rectangle(750, 490, 256, 20);
+		const progressBarBg = this.add.rectangle(750, 520, 256, 20);
 		progressBarBg.fillColor = 14737632;
 		progressBarBg.isStroked = true;
 
 		// loadingText
-		const loadingText = this.add.text(550, 490, "", {});
+		const loadingText = this.add.text(550, 520, "", {});
 		loadingText.setOrigin(0.5, 0.5);
 		loadingText.text = "Loading...";
-		loadingText.setStyle({ "color": "#e0e0e0", "fontFamily": "arial", "fontSize": "20px" });
+		loadingText.setStyle({ "color": "#e0e0e0", "fontFamily": "GodofWar", "fontSize": "20px" });
 
 		this.events.emit("scene-awake");
 	}
