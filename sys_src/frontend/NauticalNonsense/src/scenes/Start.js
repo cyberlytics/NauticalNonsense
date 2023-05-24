@@ -3,9 +3,10 @@
 
 /* START OF COMPILED CODE */
 
-class Start extends Phaser.Scene {
-
-	constructor() {
+class Start extends Phaser.Scene 
+{
+	constructor() 
+	{
 		super("Start");
 
 		/* START-USER-CTR-CODE */
@@ -14,8 +15,8 @@ class Start extends Phaser.Scene {
 	}
 
 	/** @returns {void} */
-	editorCreate() {
-		
+	editorCreate() 
+	{
 		const self = this;
 		const backgroundColor = 0x3c3845
 		
@@ -42,9 +43,7 @@ class Start extends Phaser.Scene {
 		
 		logo.on('pointerdown', function (event)
         {
-
 			self.playHorn();
-		
         });
 
 		// optionsButton
@@ -54,26 +53,20 @@ class Start extends Phaser.Scene {
 		
 		optionsButton.on('pointerover', function (event)
         {
-
             this.setTint(0x808080);
-
         });
 
         optionsButton.on('pointerout', function (event)
         {
-
             this.clearTint();
-
         });
 		
 		optionsButton.on('pointerdown', function (event)
         {
-
 			this.clearTint();
 			self.playClick();
 			self.stopHorn();
 			self.scene.start("Options");
-		
         });
 		
 		//nameInput
@@ -89,39 +82,9 @@ class Start extends Phaser.Scene {
 		nameInputText.text = "Name";
 		nameInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
-		const nameText = this.add.text(450, 535, "", {});
-		nameText.setOrigin(0, 0);
-		nameText.setStyle({"color": "#000000", "fontSize": "20px"});
+		//nameInputField
 		
-		let name = "";
-		
-		nameInput.on('pointerover', function (event)
-        {
-			
-			this.setTint(0x808080);
 
-            self.input.keyboard.on('keydown', function (event)
-			{
-			
-				const key = event.key;
-				
-				if (key.length === 1)
-				{
-					name += key;
-					nameText.text = name;
-				}
-				
-			});
-
-        });
-		
-		nameInput.on('pointerout', function (event)
-        {
-
-            this.clearTint();
-
-        });
-		
 		//matchInput
 		const matchInput = this.add.image(540, 595, "matchInput");
 		matchInput.scaleX = 0.5;
@@ -135,25 +98,19 @@ class Start extends Phaser.Scene {
 		matchInputText.text = "Match";
 		matchInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
-		//matchButton
-		const matchButton = this.add.image(687, 595, "matchButton").setInteractive({ useHandCursor: true  });
-		matchButton.scaleX = 0.5;
-		matchButton.scaleY = 0.5;
+		//matchSelectionText
+		const matchSelectionText = this.add.text(500, 595, "", {});
+		matchSelectionText.scaleX = 1;
+		matchSelectionText.scaleY = 1;
+		matchSelectionText.setOrigin(0.5, 0.5);
+		matchSelectionText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
-		matchButton.on('pointerover', function (event)
-        {
-
-            this.setTint(0x808080);
-
-        });
-
-        matchButton.on('pointerout', function (event)
-        {
-
-            this.clearTint();
-
-        });
-
+		//matchDropdown
+		const matchDropdown = new DropdownMenu(this, 450, 596, ['Random', 'Friend', 'A.I.'], selectedOption => 
+		{
+			matchSelectionText.text = selectedOption;
+		});
+		
 		// startButton
 		const startButton = this.add.image(840, 570, "startButton").setInteractive({ useHandCursor: true  });
 		startButton.scaleX = 0.5;
@@ -161,26 +118,20 @@ class Start extends Phaser.Scene {
 		
 		startButton.on('pointerover', function (event)
         {
-
             this.setTint(0x1ed013);
-
         });
 
         startButton.on('pointerout', function (event)
         {
-
             this.clearTint();
-
         });
 		
 		startButton.on('pointerdown', function (event)
         {
-
 			this.clearTint();
 			self.stopHorn();
 			self.playClick();
 			self.scene.start("Gameboard");
-		
         });
 		
 		//startButtonText
@@ -198,42 +149,37 @@ class Start extends Phaser.Scene {
 
 	// Write more your code here
 
-	create() {
-
+	create() 
+	{
 		this.editorCreate();
 	}
 	
-	preload() {
-
+	preload() 
+	{
 		this.load.pack("asset-pack", "assets/asset-pack.json");
 		this.load.pack("asset-pack", "assets/options-asset-pack.json");
 		this.load.audio("clicksound", ["assets/select.mp3"]);
 		this.load.image("0001", "assets/0001.png");
-		
 	}
 	
-	playClick() {
-	
+	playClick() 
+	{
 		this.click.play();
-	
 	}
 	
-	playHorn() {
-	
+	playHorn() 
+	{
 		this.horn.play();
-	
 	}
 	
-	stopHorn() {
-	
+	stopHorn() 
+	{
 		this.horn.stop();
-		
 	}
 	
-	stopTheme() {
-	
+	stopTheme() 
+	{
 		this.theme.stop();
-		
 	}
 
 	/* END-USER-CODE */
@@ -242,3 +188,122 @@ class Start extends Phaser.Scene {
 /* END OF COMPILED CODE */
 
 // You can write more code here
+
+//dropdown menu class
+class DropdownMenu 
+{
+	constructor(scene, x, y, options, onSelect) 
+	{
+		this.scene = scene;
+		this.x = x;
+		this.y = y;
+		this.options = options;
+		this.onSelect = onSelect;
+
+		this.isOpen = false;
+		this.currentOptionIndex = 0;
+
+		this.createMenu();
+	}
+
+	createMenu() 
+	{
+    	const style = {
+		  fontFamily: 'GodOfWar',
+		  fontSize: '15px',
+		  fill: '#000000',
+		  backgroundColor: '#ffffff',
+		  padding: {
+			left: 10,
+			right: 10,
+			top: 0,
+			bottom: 0
+		  }
+		};
+	  
+	//matchButton
+	const matchButton = this.scene.add.image(687, 595, "matchButton").setInteractive({ useHandCursor: true  });
+	matchButton.scaleX = 0.5;
+	matchButton.scaleY = 0.5;
+	  
+	matchButton.on('pointerdown', () => 
+	{
+        this.toggleMenu();
+    });
+		
+	matchButton.on('pointerover', function (event)
+    {
+        this.setTint(0x808080);
+    });
+
+    matchButton.on('pointerout', function (event)
+    {
+        this.clearTint();
+    });
+
+    //menu options
+    this.optionTexts = [];
+    this.options.forEach((option, index) => 
+	{
+      const optionText = this.scene.add.text(this.x, this.y + 20 * (index + 1), option, style)
+        .setInteractive()
+        .on('pointerdown', () => 
+		{
+          this.selectOption(index);
+        });
+		
+	  //option background color
+      optionText.setOrigin(0);
+      optionText.background = this.scene.add.graphics()
+        .setVisible(false)
+        .fillStyle(0xffffff)
+        .fillRect(optionText.x - style.padding.left, optionText.y - style.padding.top, optionText.width + style.padding.left + style.padding.right, optionText.height + style.padding.top + style.padding.bottom);
+
+      optionText.on('pointerover', () => 
+	  {
+        optionText.setTint(0x808080);
+      });
+
+      optionText.on('pointerout', () => 
+	  {
+        optionText.clearTint();
+      });
+
+      this.optionTexts.push(optionText);
+    });
+
+    //hide menu initially
+    this.hideMenu();
+	}
+
+	toggleMenu() 
+	{
+		if (this.isOpen) 
+		{
+		  this.hideMenu();
+		} 
+		else 
+		{
+		  this.showMenu();
+		}
+	  }
+
+	showMenu() 
+	{
+		this.optionTexts.forEach(optionText => optionText.setVisible(true));
+		this.isOpen = true;
+	}
+
+	hideMenu() 
+	{
+		this.optionTexts.forEach(optionText => optionText.setVisible(false));
+		this.isOpen = false;
+	}
+
+	selectOption(index) 
+	{
+		this.currentOptionIndex = index;
+		this.onSelect(this.options[index]);
+		this.hideMenu();
+	}
+}
