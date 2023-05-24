@@ -7,16 +7,30 @@ class Gameboard extends Phaser.Scene {
 
 	constructor() {
 		super("Gameboard");
-
+		
 		/* START-USER-CTR-CODE */
 		// Write your code here.
 		/* END-USER-CTR-CODE */
+		this.shipRotation = 0;
+		this.shipSprite = null;
+		this.gridRow = 0;
+		this.gridCel = 0;
 	}
 
 	/** @returns {void} */
 	Shoot() {
 		// insert here REST Call to backend or send game object via websocket
 	}
+	rotateShip() {
+		
+		this.shipRotation += 90; // Increment the rotation angle by 90 degrees
+		this.shipSprite.setRotation(Phaser.Math.DegToRad(this.shipRotation)); // Apply the rotation to the ship sprite
+		if (this.shipRotation === 360) {
+			this.shipRotation = 0;
+		}
+		console.log(this.shipRotation)
+	}
+
 
 	/** @returns {void} */
 	editorCreate() {
@@ -24,7 +38,6 @@ class Gameboard extends Phaser.Scene {
 		// create clicksound
 		this.clickSound = this.sound.add('clicksound');
 
-		
 		// Add the background sprite
 		this.background = this.add.image(0, 0, '0001');
 		this.background.setOrigin(0, 0);
@@ -101,31 +114,37 @@ class Gameboard extends Phaser.Scene {
 			size: 5, // Change this value as per your ship's size
 			cells: [] // To store the cells occupied by the ship
 		  };
-		  
 
 		  // Add an array to store the highlighted cells
 		let highlightedCells = [];
 
-		function highlightShipCells(row, col) {
+		function highlightShipCells(row, col, shipRotation) {
 		ship.cells = []; // Reset the array of ship cells
 		// Reset the previously highlighted cells
 		highlightedCells.forEach(cell => {
 			cell.setAlpha(1); // Reset the cell's alpha value
 		});
 		highlightedCells = []; // Clear the array
-
 		// Iterate over the ship's size and mark the corresponding cells
-		for (let i = 0; i < ship.size; i++) {
-			const cellRow = row ;
-			const cellCol = col+ i;
-
-			// Check if the cell is within the game board
-			if (cellRow >= 0 && cellRow < gridSize && cellCol >= 0 && cellCol < gridSize) {
-			const cell = playerGrid[cellRow][cellCol];
-			cell.setAlpha(0.5); // Adjust the cell's highlight appearance as desired
-			highlightedCells.push(cell); // Add the cell to the highlighted cells array
+			var cellRow = 0;
+			var cellCol = 0;
+		
+			for (let i = 0; i < ship.size; i++) {
+				if (shipRotation === 0 || shipRotation === 180) {
+					cellRow = row ;
+					cellCol = col+i;
+				}
+				else {
+					cellRow = row+i;
+					cellCol = col;
+				}
+				// Check if the cell is within the game board
+				if (cellRow >= 0 && cellRow < gridSize && cellCol >= 0 && cellCol < gridSize) {
+				const cell = playerGrid[cellRow][cellCol];
+				cell.setAlpha(0.5); // Adjust the cell's highlight appearance as desired
+				highlightedCells.push(cell); // Add the cell to the highlighted cells array
+				}
 			}
-		}
 		}
 		  // Enable drag and drop functionality for the ship sprite
 		  const gameBoardBounds = new Phaser.Geom.Rectangle(
@@ -134,46 +153,50 @@ class Gameboard extends Phaser.Scene {
 			playerBoardPos.width + 2 * playerBoardPos.cornerRadius,
 			playerBoardPos.height + 2 * playerBoardPos.cornerRadius
 		  );
-		  
 
-		const shipSprite = this.add.sprite(1120, 80, 'destroyer');
-		shipSprite.setDepth(1); 
-		shipSprite.setInteractive();
+		this.shipSprite = this.add.sprite(1120, 80, 'destroyer');
+		this.shipSprite.setDepth(1); 
+		this.shipSprite.setInteractive();
 
-		this.input.setDraggable(shipSprite); // Enable drag and drop for the ship sprite
-
-		this.input.on('dragstart', (pointer, gameObject) => {
-			this.children.bringToTop(gameObject); // Bring the ship sprite to the top when dragging starts
-		});
+		this.input.setDraggable(this.shipSprite); // Enable drag and drop for the ship sprite
 
 		this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
 			gameObject.x = dragX;
 			gameObject.y = dragY;
-
-
-			// Calculate the ship's grid position based on the drop coordinates
-			const gridRow = Math.floor((gameObject.y - playerBoardPos.y) / playerCellSize);
-			const gridColumn = Math.floor((gameObject.x - playerBoardPos.x - (gameObject.width / 2)) / playerCellSize);
+			if (this.shipRotation === 0 || this.shipRotation === 180) {
+				// Calculate the ship's grid position based on the drop coordinates
+				this.gridRow = Math.floor((gameObject.y - playerBoardPos.y) / playerCellSize);
+				this.gridColumn = Math.floor((gameObject.x - playerBoardPos.x - (gameObject.width / 2)) / playerCellSize);
+			}
+			else {
+				// Calculate the ship's grid position based on the drop coordinates
+				this.gridRow = Math.floor((gameObject.y - playerBoardPos.y - (gameObject.height / 2)) / playerCellSize);
+				this.gridColumn = Math.floor((gameObject.x - playerBoardPos.x) / playerCellSize);
+			}			
 
 			// Highlight the cells covered by the ship
-  			highlightShipCells(gridRow, gridColumn);
+  			highlightShipCells(this.gridRow, this.gridColumn, this.shipRotation);
 		});
-
-		
 
 		this.input.on('dragend', (pointer, gameObject) => {
 			// Check if the ship sprite is dropped within the game board bounds
 			if (gameBoardBounds.contains(gameObject.x, gameObject.y)) {
-			// Calculate the ship's grid position based on the drop coordinates
-			const gridRow = Math.floor((gameObject.y - playerBoardPos.y) / playerCellSize);
-			const gridColumn = Math.floor((gameObject.x - playerBoardPos.x - (gameObject.width / 2)) / playerCellSize);
-	
+				if (this.shipRotation === 0 || this.shipRotation === 180) {
+					// Calculate the ship's grid position based on the drop coordinates
+					this.gridRow = Math.floor((gameObject.y - playerBoardPos.y) / playerCellSize);
+					this.gridColumn = Math.floor((gameObject.x - playerBoardPos.x - (gameObject.width / 2)) / playerCellSize);
+				}
+				else {
+					// Calculate the ship's grid position based on the drop coordinates
+					this.gridRow = Math.floor((gameObject.y - playerBoardPos.y - (gameObject.height / 2)) / playerCellSize);
+					this.gridColumn = Math.floor((gameObject.x - playerBoardPos.x) / playerCellSize);
+				}		
 
   			// Highlight the cells covered by the ship
-  			highlightShipCells(gridRow, gridColumn);
+  			highlightShipCells(this.gridRow, this.gridColumn,this.shipRotation);
 
   			// Make the ship non-draggable
-  			gameObject.disableInteractive();
+  			//gameObject.disableInteractive();
 
 			// Log the elements of the game board used by the ship
   			const usedCells = highlightedCells.map(cell => {
@@ -183,11 +206,7 @@ class Gameboard extends Phaser.Scene {
   			});
   			console.log('Elements used by the ship:', usedCells);
 
-			} else {
-			// Reset the ship sprite to its initial position
-			gameObject.x = 1120;
-			gameObject.y = 80;
-			}
+			} 
 		});
 		// draw fleet
 		this.fleetBoard = this.add.graphics();
@@ -220,7 +239,37 @@ class Gameboard extends Phaser.Scene {
 				this.scene.start('Start');
 			});
 		this.capitulateText = this.add.text(enemyBoardPos.x + tinyCornerRadius + 5, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3*smallCornerRadius + 110 + tinyCornerRadius, 'Capitulate', { fill: '#000000', fontSize: 30, fontFamily: "Sans"});
-		
+
+		// draw rotate button
+		this.rotateButton = this.add.graphics();
+		this.rotateButton.fillStyle(0xffffff, 1);
+		this.rotateButton.fillRoundedRect(
+		enemyBoardPos.x + enemyBoardPos.width - tinyCornerRadius - 120,
+		enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + 110,
+		135,
+		50,
+		tinyCornerRadius
+		);
+		this.rotateButton.setInteractive(
+		new Phaser.Geom.Rectangle(
+			enemyBoardPos.x + enemyBoardPos.width - tinyCornerRadius - 120,
+			enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + 110,
+			135,
+			50
+		),
+		Phaser.Geom.Rectangle.Contains
+		);
+		this.rotateButton.on('pointerdown', () => {
+		this.clickSound.play();
+		this.rotateShip();
+
+		});
+		this.rotateText = this.add.text(
+		enemyBoardPos.x + enemyBoardPos.width - tinyCornerRadius - 90,
+		enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + 110 + tinyCornerRadius-2,
+		'Rotate',
+		{ fill: '#000000', fontSize: 30, fontFamily: "Sans"}
+		);
 
 		  
 	}
