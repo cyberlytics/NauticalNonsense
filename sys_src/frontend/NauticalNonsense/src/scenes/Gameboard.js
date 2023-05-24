@@ -92,7 +92,6 @@ class Gameboard extends Phaser.Scene {
 				cell.on('pointerdown', () => {
 					cell.on('pointerdown', (pointer) => {
 						this.clickSound.play();
-						
 					});
 				});
 				playerGrid[row][col] = cell;
@@ -104,22 +103,30 @@ class Gameboard extends Phaser.Scene {
 		  };
 		  
 
-		  function highlightShipCells(row, col) {
-			ship.cells = []; // Reset the array of ship cells
-		  
-			// Iterate over the ship's size and mark the corresponding cells
-			for (let i = 0; i < ship.size; i++) {
-			  const cellRow = row;
-			  const cellCol = col + i;
-		  
-			  // Check if the cell is within the game board
-			  if (cellRow >= 0 && cellRow < gridSize && cellCol >= 0 && cellCol < gridSize) {
-				const cell = playerGrid[cellRow][cellCol];
-				cell.setAlpha(0.5); // Adjust the cell's highlight appearance as desired
-				ship.cells.push(cell); // Add the cell to the ship's cells array
-			  }
+		  // Add an array to store the highlighted cells
+		let highlightedCells = [];
+
+		function highlightShipCells(row, col) {
+		ship.cells = []; // Reset the array of ship cells
+		// Reset the previously highlighted cells
+		highlightedCells.forEach(cell => {
+			cell.setAlpha(1); // Reset the cell's alpha value
+		});
+		highlightedCells = []; // Clear the array
+
+		// Iterate over the ship's size and mark the corresponding cells
+		for (let i = 0; i < ship.size; i++) {
+			const cellRow = row ;
+			const cellCol = col+ i;
+
+			// Check if the cell is within the game board
+			if (cellRow >= 0 && cellRow < gridSize && cellCol >= 0 && cellCol < gridSize) {
+			const cell = playerGrid[cellRow][cellCol];
+			cell.setAlpha(0.5); // Adjust the cell's highlight appearance as desired
+			highlightedCells.push(cell); // Add the cell to the highlighted cells array
 			}
-		  }
+		}
+		}
 		  // Enable drag and drop functionality for the ship sprite
 		  const gameBoardBounds = new Phaser.Geom.Rectangle(
 			playerBoardPos.x - playerBoardPos.cornerRadius,
@@ -142,7 +149,17 @@ class Gameboard extends Phaser.Scene {
 		this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
 			gameObject.x = dragX;
 			gameObject.y = dragY;
+
+
+			// Calculate the ship's grid position based on the drop coordinates
+			const gridRow = Math.floor((gameObject.y - playerBoardPos.y) / playerCellSize);
+			const gridColumn = Math.floor((gameObject.x - playerBoardPos.x - (gameObject.width / 2)) / playerCellSize);
+
+			// Highlight the cells covered by the ship
+  			highlightShipCells(gridRow, gridColumn);
 		});
+
+		
 
 		this.input.on('dragend', (pointer, gameObject) => {
 			// Check if the ship sprite is dropped within the game board bounds
@@ -150,14 +167,26 @@ class Gameboard extends Phaser.Scene {
 			// Calculate the ship's grid position based on the drop coordinates
 			const gridRow = Math.floor((gameObject.y - playerBoardPos.y) / playerCellSize);
 			const gridColumn = Math.floor((gameObject.x - playerBoardPos.x - (gameObject.width / 2)) / playerCellSize);
+	
 
+  			// Highlight the cells covered by the ship
+  			highlightShipCells(gridRow, gridColumn);
 
-			// Highlight the cells covered by the ship
-			highlightShipCells(gridRow, gridColumn);
+  			// Make the ship non-draggable
+  			gameObject.disableInteractive();
+
+			// Log the elements of the game board used by the ship
+  			const usedCells = highlightedCells.map(cell => {
+    		const row = playerGrid.findIndex(row => row.includes(cell));
+    		const col = playerGrid[row].indexOf(cell);
+    		return { row, col };
+  			});
+  			console.log('Elements used by the ship:', usedCells);
+
 			} else {
 			// Reset the ship sprite to its initial position
-			gameObject.x = 800;
-			gameObject.y = 300;
+			gameObject.x = 1120;
+			gameObject.y = 80;
 			}
 		});
 		// draw fleet
@@ -191,9 +220,7 @@ class Gameboard extends Phaser.Scene {
 				this.scene.start('Start');
 			});
 		this.capitulateText = this.add.text(enemyBoardPos.x + tinyCornerRadius + 5, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3*smallCornerRadius + 110 + tinyCornerRadius, 'Capitulate', { fill: '#000000', fontSize: 30, fontFamily: "Sans"});
-
-		const numCellsUsedByShip = ship.cells.length;
-		console.log('Number of cells used by the ship:', numCellsUsedByShip);
+		
 
 		  
 	}
