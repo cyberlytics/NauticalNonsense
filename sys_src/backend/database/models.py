@@ -6,7 +6,7 @@ class State(BaseModel):
     player1: str = Field(..., description = "Name of player 1")
     player2: str = Field(..., description = "Name of player 2")
     next_player: str = Field(..., description = "Name of next player in turn")
-    againstComputer: bool = Field(..., description = "True if opponent is computer")
+    gameMode: str = Field(..., description = "against pc/random/friend")
     isFinished: bool = Field(..., description = "True if game is over")
     winner: str = Field(..., description = "Name of player, who won")
     step: int = Field(..., description = "Count of total moves of game")

@@ -1,29 +1,25 @@
+from database.database import get_map, get_partner
 import uuid
 
-def get_new_room(client_id: int, game_type: str, name: str) -> int:
+def prepare_room(client_id: uuid, game_type: str, name: str = None) -> int:
     '''
     Check in Database if a map exists, which the client can use.
-
-    If not, construct a new map.
-        The map is first empty (new_game_init has to be called).
-    if there is a existing map with a player waiting, use it (friend or other random guy is waiting)
-    return the room_id
+    If not, construct a new map will be constructed.
+    name is for name of friend
     '''
-    return uuid.uuid4().int
+    ret = get_map(client_id, game_type)
+    return ret
 
-def get_partner_id(room_id: int, first_client_id):
+async def get_partner_id(client_id: str):
     '''
     With room_id and first_client_id get the partners id from db
+    Either get partner_id from database or from flag in create_map()
     '''
-    pass
+    partner_id = await get_partner(client_id)
+    return partner_id
 
 def new_game_init():
     # place ships
-    pass
-
-def existing_game(client_json):
-    # search in game_id in client_json. if it's there, then reuse this game
-    # if this is not already existing in the database start a new game
     pass
 
 def validate_move(client_json):
