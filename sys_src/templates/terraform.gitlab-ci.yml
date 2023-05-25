@@ -68,6 +68,7 @@ prepare-test:
     - kubectl get pods
     - kubectl apply -f service.yaml
     - kubectl apply -f ingress.yaml
+    - sleep 15
     - output=$(kubectl describe ingress)
     - echo $output
     # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')

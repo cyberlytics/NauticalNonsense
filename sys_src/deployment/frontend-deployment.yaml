@@ -18,3 +18,5 @@ spec:
           image: kondrauer/bdcc-team-blau:frontend-0.0.1
           ports:
             - containerPort: 80
+          imagePullSecrets:
+            - name: regcred

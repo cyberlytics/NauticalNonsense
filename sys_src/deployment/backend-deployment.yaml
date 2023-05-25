@@ -18,3 +18,5 @@ spec:
           image: kondrauer/bdcc-team-blau:backend-0.0.1
           ports:
             - containerPort: 8000
+          imagePullSecrets:
+            - name: regcred

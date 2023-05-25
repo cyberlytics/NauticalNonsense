@@ -1,6 +1,6 @@
 build-docker:
   image: docker:23.0.5
-  stage: deploy
+  stage: build
   services:
     - docker:dind
   variables:
