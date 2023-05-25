@@ -110,7 +110,7 @@ module "eks" {
 }
 
 module "nat" {
-  source = "./nat-instance"
+  source = "int128/nat-instance/aws"
 
   name                        = "main"
   vpc_id                      = module.vpc.vpc_id
