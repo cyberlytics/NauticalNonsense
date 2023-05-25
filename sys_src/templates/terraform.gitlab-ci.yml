@@ -68,6 +68,7 @@ prepare-test:
     - kubectl get pods
     - kubectl apply -f service.yaml
     - kubectl apply -f ingress.yaml
+    - sleep 15
     - output=$(kubectl describe ingress)
     - echo $output
     # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
@@ -96,6 +97,32 @@ smoke-test:
         echo "Test failed"
         exit 1
       fi
+
+delete-deployments:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: post-test
+  dependencies:
+    - deploy
+  script:
+    - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
+    - cd sys_src/infrastructure/test
+    - export KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - kubectl delete -f deployment.yaml
+    - kubectl delete -f service.yaml
+    - kubectl delete -f ingress.yaml
+
+deploy-dasboard:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: deploy-dashboard
+  dependencies:
+    - deploy
+  script:
+    - export KUBECONFIG=${TF_ROOT}/kubeconfig_bdcc-team-blau
+    - kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
 
 destroy:
   extends: 

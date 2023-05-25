@@ -11,6 +11,9 @@ include:
   - local: sys_src/templates/docker.gitlab-ci.yml
     rules:
       - if: $CI_COMMIT_TAG
+  - local: sys_src/templates/deploy.gitlab-ci.yml
+    rules:
+      - if: $CI_COMMIT_TAG
 
 stages:
   - validate
@@ -20,6 +23,8 @@ stages:
   - deploy
   - prepare-test
   - integration-test
+  - post-test
+  - deploy-dashboard
   - cleanup
     
 dummy:
