@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nautical-nonsense
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    kubernetes.io/ingress.class: alb
+namespace: nautical-nonsense
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix # This should work even though "/"" also matches "/api" because the longest match is used
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 80
