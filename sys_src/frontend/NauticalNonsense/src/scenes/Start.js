@@ -19,6 +19,7 @@ class Start extends Phaser.Scene
 	{
 		const self = this;
 		const backgroundColor = 0x3c3845
+		var isTyping = false;
 		
 		//sounds
 		this.click = this.sound.add("click");
@@ -70,20 +71,58 @@ class Start extends Phaser.Scene
         });
 		
 		//nameInput
-		const nameInput = this.add.image(540, 545, "nameInput").setInteractive();
+		const nameInput = this.add.image(540, 545, "nameInput");
 		nameInput.scaleX = 0.5;
 		nameInput.scaleY = 0.5;
 		
 		//nameInputText
 		const nameInputText = this.add.text(410, 545, "", {});
-		nameInputText.scaleX = 1;
-		nameInputText.scaleY = 1;
 		nameInputText.setOrigin(0.5, 0.5);
 		nameInputText.text = "Name";
 		nameInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
-		//nameInputField
+		//nameInputBox
+		const nameInputBox = this.add.image(572, 545, "nameInputBox").setInteractive();
+		nameInputBox.scaleX = 0.5;
+		nameInputBox.scaleY = 0.5;
 		
+		nameInputBox.on('pointerover', function (event)
+        {
+            isTyping = true;
+			this.setTint(0x808080);
+        });
+
+        nameInputBox.on('pointerout', function (event)
+        {
+            isTyping = false;
+			this.clearTint();
+        });
+		
+		//nameInputBoxText
+		const nameInputBoxText = this.add.text(460, 535, '', {});
+		nameInputBoxText.setOrigin(0, 0);
+		nameInputBoxText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" })
+		
+		// Handle keyboard events
+		this.input.keyboard.on('keydown', function (event) 
+		{
+			if (isTyping)
+			{
+				if (event.key === 'Enter')
+				{
+					isTyping = false;
+					nameInputBox.clearTint();
+				} 
+				else if (event.key === 'Backspace')
+				{
+					nameInputBoxText.text = nameInputBoxText.text.slice(0, -1);
+				} 
+				else if (event.key.length === 1)
+				{
+					nameInputBoxText.text += event.key;
+				}
+		  	}
+		});
 
 		//matchInput
 		const matchInput = this.add.image(540, 595, "matchInput");
@@ -99,10 +138,10 @@ class Start extends Phaser.Scene
 		matchInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
 		//matchSelectionText
-		const matchSelectionText = this.add.text(500, 595, "", {});
+		const matchSelectionText = this.add.text(460, 585, "", {});
 		matchSelectionText.scaleX = 1;
 		matchSelectionText.scaleY = 1;
-		matchSelectionText.setOrigin(0.5, 0.5);
+		matchSelectionText.setOrigin(0, 0);
 		matchSelectionText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
 		//matchDropdown
@@ -245,9 +284,8 @@ class DropdownMenu
     this.optionTexts = [];
     this.options.forEach((option, index) => 
 	{
-      const optionText = this.scene.add.text(this.x, this.y + 20 * (index + 1), option, style)
-        .setInteractive()
-        .on('pointerdown', () => 
+      const optionText = this.scene.add.text(this.x, this.y + 20 * (index + 1), option, style).setInteractive();
+      optionText.on('pointerdown', () => 
 		{
           this.selectOption(index);
         });
@@ -255,9 +293,9 @@ class DropdownMenu
 	  //option background color
       optionText.setOrigin(0);
       optionText.background = this.scene.add.graphics()
-        .setVisible(false)
-        .fillStyle(0xffffff)
-        .fillRect(optionText.x - style.padding.left, optionText.y - style.padding.top, optionText.width + style.padding.left + style.padding.right, optionText.height + style.padding.top + style.padding.bottom);
+      	.setVisible(false)
+      	.fillStyle(0xffffff)
+      	.fillRect(optionText.x - style.padding.left, optionText.y - style.padding.top, optionText.width + style.padding.left + style.padding.right, optionText.height + style.padding.top + style.padding.bottom);
 
       optionText.on('pointerover', () => 
 	  {

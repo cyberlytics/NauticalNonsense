@@ -20,6 +20,7 @@ class Preload extends Phaser.Scene {
 		this.load.audio("click", ["assets/sounds/click_1.mp3"]);
 		this.load.audio("horn", ["assets/sounds/foghorn_3.mp3"]);
 		this.load.image("nameInput", "assets/start/nameInput.png");
+		this.load.image("nameInputBox", "assets/start/nameInputBox.png");
 		this.load.image("matchInput", "assets/start/matchSelection.png");
 		this.load.image("matchButton", "assets/start/matchSelectionbutton.png");
 		this.load.image("background", "assets/0001.png");
