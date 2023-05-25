@@ -19,7 +19,8 @@ class Start extends Phaser.Scene
 	{
 		const self = this;
 		const backgroundColor = 0x3c3845
-		var isTyping = false;
+		var isTypingName = false;
+		var isTypingId = false;
 		
 		//sounds
 		this.click = this.sound.add("click");
@@ -88,13 +89,13 @@ class Start extends Phaser.Scene
 		
 		nameInputBox.on('pointerover', function (event)
         {
-            isTyping = true;
+            isTypingName = true;
 			this.setTint(0x808080);
         });
 
         nameInputBox.on('pointerout', function (event)
         {
-            isTyping = false;
+            isTypingName = false;
 			this.clearTint();
         });
 		
@@ -106,11 +107,11 @@ class Start extends Phaser.Scene
 		// Handle keyboard events
 		this.input.keyboard.on('keydown', function (event) 
 		{
-			if (isTyping)
+			if (isTypingName)
 			{
 				if (event.key === 'Enter')
 				{
-					isTyping = false;
+					isTypingName = false;
 					nameInputBox.clearTint();
 				} 
 				else if (event.key === 'Backspace')
@@ -142,6 +143,7 @@ class Start extends Phaser.Scene
 		matchSelectionText.scaleX = 1;
 		matchSelectionText.scaleY = 1;
 		matchSelectionText.setOrigin(0, 0);
+		matchSelectionText.text = "Random";
 		matchSelectionText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
 		//matchDropdown
@@ -157,7 +159,14 @@ class Start extends Phaser.Scene
 		
 		startButton.on('pointerover', function (event)
         {
-            this.setTint(0x1ed013);
+			if (nameInputBoxText.text.length !== 0)
+			{
+            	this.setTint(0x1ed013);
+			}
+			else
+			{
+				this.setTint(0xe50000);
+			}
         });
 
         startButton.on('pointerout', function (event)
@@ -167,10 +176,13 @@ class Start extends Phaser.Scene
 		
 		startButton.on('pointerdown', function (event)
         {
-			this.clearTint();
-			self.stopHorn();
-			self.playClick();
-			self.scene.start("Gameboard");
+			if (nameInputBoxText.text.length !== 0)
+			{
+				this.clearTint();
+				self.stopHorn();
+				self.playClick();
+				self.scene.start("Gameboard");
+			}
         });
 		
 		//startButtonText
