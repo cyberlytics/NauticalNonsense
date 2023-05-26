@@ -31,7 +31,16 @@ def validate_move(client_json):
 
 
 def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
+    """
+    Check if a ship has been sunk.
+
+    Args:
+        ship (list[int]): The ship to be checked
+        game_field (list[int]): The game field
     
+    Returns:
+        list[int]: The updated game field
+    """
     hit = [True if game_field[coord] == 3 else False for coord in ship]
     
     if all(hit):
@@ -41,8 +50,40 @@ def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     return game_field
 
 
-def make_move(move: int, game_field: list[int], ships: list[list[int]]) -> list[int]:
+def check_win(game_field: list[int]) -> bool:
+    """
+    Check if the game has been won.
 
+    Args:
+        game_field (list[int]): The game field
+    
+    Returns:
+        bool: Whether the game has been won
+    """
+    return all([True if field in [0, 4, 2] else False for field in game_field])
+
+
+def make_move(
+    move: int, 
+    game_field: list[int], 
+    ships: list[list[int]]
+    ) -> tuple(bool, list[int]):
+    """
+    Make a move on the game field.
+
+    Args:
+        move (int): The move to be played
+        game_field (list[int]): The game field
+        ships (list[list[int]]): The ships on the game field
+    
+    Returns:
+        bool: Whether the game has been won
+        list[int]: The updated game field
+    
+    Raises:
+        ValueError: If the move has been played before
+        AssertionError: If the move is not an integer or out of range
+    """
     assert isinstance(move, int), "Move is not an integer"
     assert move < len(game_field) and move >= 0, "Move out of range"
     
@@ -50,10 +91,13 @@ def make_move(move: int, game_field: list[int], ships: list[list[int]]) -> list[
         game_field[move] = 2
     elif game_field[move] == 1:
         game_field[move] = 3
+
+        # We only have to check for sinking if a ship was hit
+        for ship in ships:
+            game_field = check_sink_ship(ship, game_field)
     else:
         raise ValueError("Move has been played before")
+    
+    won = check_win(game_field)
 
-    for ship in ships:
-        game_field = check_sink_ship(ship, game_field)
-
-    return game_field
+    return won, game_field
