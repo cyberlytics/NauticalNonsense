@@ -1,5 +1,5 @@
 import pytest
-from ..play_game import check_sink_ship, make_move
+from ..play_game import check_sink_ship, make_move, check_win
 
 
 def test_check_sink_ship():
@@ -54,7 +54,9 @@ def test_make_move_water():
     move = 0
     ships = [[0]]
 
-    assert make_move(move, game_field, ships) == [2]
+    _, game_field = make_move(move, game_field, ships)
+
+    assert  game_field == [2]
 
 
 def test_make_move_hit():
@@ -63,7 +65,21 @@ def test_make_move_hit():
     move = 0
     ships = [[0, 1]]
 
-    assert make_move(move, game_field, ships) == [3, 1, 0]
+    _, game_field = make_move(move, game_field, ships)
+
+    assert game_field == [3, 1, 0]
+
+
+def test_make_move_won():
+
+    game_field = [1, 3, 0]
+    move = 0
+    ships = [[0, 1]]
+
+    won, game_field = make_move(move, game_field, ships)
+
+    assert game_field == [4, 4, 0]
+    assert won is True
 
 
 def test_make_move_error():
@@ -96,6 +112,20 @@ def test_make_move_out_of_range():
         make_move(move, game_field, ships)
 
     move = 4
-    
+
     with pytest.raises(AssertionError, match="Move out of range"):
         make_move(move, game_field, ships)
+
+
+def test_check_win_true():
+    
+    game_field = [4, 4, 0, 0]
+
+    assert check_win(game_field) is True
+
+
+def test_check_win_false():
+    
+    game_field = [3, 3, 0, 0]
+
+    assert check_win(game_field) is False
