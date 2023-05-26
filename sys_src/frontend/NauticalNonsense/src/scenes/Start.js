@@ -21,6 +21,7 @@ class Start extends Phaser.Scene
 		const backgroundColor = 0x3c3845
 		var isTypingName = false;
 		var isTypingId = false;
+		var showId = false;
 		
 		//sounds
 		this.click = this.sound.add("click");
@@ -72,7 +73,7 @@ class Start extends Phaser.Scene
         });
 		
 		//nameInput
-		const nameInput = this.add.image(540, 545, "nameInput");
+		const nameInput = this.add.image(555, 545, "nameInput");
 		nameInput.scaleX = 0.5;
 		nameInput.scaleY = 0.5;
 		
@@ -83,7 +84,7 @@ class Start extends Phaser.Scene
 		nameInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		
 		//nameInputBox
-		const nameInputBox = this.add.image(572, 545, "nameInputBox").setInteractive();
+		const nameInputBox = this.add.image(587, 545, "nameInputBox").setInteractive();
 		nameInputBox.scaleX = 0.5;
 		nameInputBox.scaleY = 0.5;
 		
@@ -103,6 +104,67 @@ class Start extends Phaser.Scene
 		const nameInputBoxText = this.add.text(460, 535, '', {});
 		nameInputBoxText.setOrigin(0, 0);
 		nameInputBoxText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" })
+
+		//matchInput
+		const matchInput = this.add.image(555, 595, "matchInput");
+		matchInput.scaleX = 0.5;
+		matchInput.scaleY = 0.5;
+		matchInput.setVisible(true);
+		
+		//matchInputFriend
+		const matchInputFriend = this.add.image(473.5, 595, "matchInputFriend");
+		matchInputFriend.scaleX = 0.5;
+		matchInputFriend.scaleY = 0.5;
+		matchInputFriend.setVisible(false);
+		
+		//matchInputText
+		const matchInputText = this.add.text(410, 595, "", {});
+		matchInputText.scaleX = 1;
+		matchInputText.scaleY = 1;
+		matchInputText.setOrigin(0.5, 0.5);
+		matchInputText.text = "Match";
+		matchInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		
+		//matchSelectionText
+		const matchSelectionText = this.add.text(460, 585, "", {});
+		matchSelectionText.scaleX = 1;
+		matchSelectionText.scaleY = 1;
+		matchSelectionText.setOrigin(0, 0);
+		matchSelectionText.text = "Random";
+		matchSelectionText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		
+		//idInput
+		const idInput = this.add.image(656, 595, "idInput");
+		idInput.scaleX = 0.5;
+		idInput.scaleY = 0.5;
+		idInput.setVisible(false);
+		
+		//idInputText
+		const idInputText = this.add.text(613, 595, "", {});
+		idInputText.scaleX = 1;
+		idInputText.scaleY = 1;
+		idInputText.setOrigin(0.5, 0.5);
+		idInputText.text = "ID";
+		idInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		idInputText.setVisible(false);
+		
+		//idInputBox
+		const idInputBox = this.add.image(689, 595, "idInputBox").setInteractive();
+		idInputBox.scaleX = 0.5;
+		idInputBox.scaleY = 0.5;
+		idInputBox.setVisible(false);
+		
+		idInputBox.on('pointerover', function (event)
+        {
+            isTypingId = true;
+			this.setTint(0x808080);
+        });
+
+        idInputBox.on('pointerout', function (event)
+        {
+            isTypingId = false;
+			this.clearTint();
+        });
 		
 		// Handle keyboard events
 		this.input.keyboard.on('keydown', function (event) 
@@ -123,33 +185,63 @@ class Start extends Phaser.Scene
 					nameInputBoxText.text += event.key;
 				}
 		  	}
+			
+			else if (isTypingId)
+			{
+				if (event.key === 'Enter')
+				{
+					isTypingId = false;
+					idInputBox.clearTint();
+				} 
+				else if (event.key === 'Backspace')
+				{
+					idInputBoxText.text = idInputBoxText.text.slice(0, -1);
+				} 
+				else if (event.key.length === 1)
+				{
+					idInputBoxText.text += event.key;
+				}
+			}
 		});
-
-		//matchInput
-		const matchInput = this.add.image(540, 595, "matchInput");
-		matchInput.scaleX = 0.5;
-		matchInput.scaleY = 0.5;
 		
-		//matchInputText
-		const matchInputText = this.add.text(410, 595, "", {});
-		matchInputText.scaleX = 1;
-		matchInputText.scaleY = 1;
-		matchInputText.setOrigin(0.5, 0.5);
-		matchInputText.text = "Match";
-		matchInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		//idInputBoxText
+		const idInputBoxText = this.add.text(660, 585, '', {});
+		idInputBoxText.setOrigin(0, 0);
+		idInputBoxText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		idInputBoxText.setVisible(false);
 		
-		//matchSelectionText
-		const matchSelectionText = this.add.text(460, 585, "", {});
-		matchSelectionText.scaleX = 1;
-		matchSelectionText.scaleY = 1;
-		matchSelectionText.setOrigin(0, 0);
-		matchSelectionText.text = "Random";
-		matchSelectionText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		//matchCompareText
+		const matchCompareText = this.add.text(460, 585, "", {});
+		matchCompareText.scaleX = 1;
+		matchCompareText.scaleY = 1;
+		matchCompareText.setOrigin(0, 0);
+		matchCompareText.setVisible(false);
+		matchCompareText.text = "Friend";
+		matchCompareText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
+		
+		//matchButton
+		const matchButton = this.add.image(719, 595, "matchButton").setInteractive({ useHandCursor: true  });
+		matchButton.scaleX = 0.5;
+		matchButton.scaleY = 0.5;
 		
 		//matchDropdown
-		const matchDropdown = new DropdownMenu(this, 450, 596, ['Random', 'Friend', 'A.I.'], selectedOption => 
+		const matchDropdown = new DropdownMenu(this, 450, 596, ['Random', 'Friend', 'A.I.'], matchButton, selectedOption => 
 		{
 			matchSelectionText.text = selectedOption;
+			
+			if (matchSelectionText.text === matchCompareText.text)
+			{
+				showId = true;
+				this.matchFriend(matchInput, matchInputFriend, showId, matchButton, idInput, idInputText, idInputBox, idInputBoxText);
+			}
+			
+			else
+			{
+				showId = false;
+				this.matchFriend(matchInput, matchInputFriend, showId, matchButton, idInput, idInputText, idInputBox, idInputBoxText);
+			}
+			
+			
 		});
 		
 		// startButton
@@ -159,14 +251,21 @@ class Start extends Phaser.Scene
 		
 		startButton.on('pointerover', function (event)
         {
-			if (nameInputBoxText.text.length !== 0)
+			if ((nameInputBoxText.text.length !== 0) && (showId === false))
 			{
             	this.setTint(0x1ed013);
 			}
+			
+			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0))
+			{
+				this.setTint(0x1ed013);
+			}
+			
 			else
 			{
 				this.setTint(0xe50000);
 			}
+			
         });
 
         startButton.on('pointerout', function (event)
@@ -176,7 +275,15 @@ class Start extends Phaser.Scene
 		
 		startButton.on('pointerdown', function (event)
         {
-			if (nameInputBoxText.text.length !== 0)
+			if ((nameInputBoxText.text.length !== 0) && (showId === false))
+			{
+				this.clearTint();
+				self.stopHorn();
+				self.playClick();
+				self.scene.start("Gameboard");
+			}
+			
+			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0))
 			{
 				this.clearTint();
 				self.stopHorn();
@@ -232,6 +339,30 @@ class Start extends Phaser.Scene
 	{
 		this.theme.stop();
 	}
+	
+	matchFriend(i, f, s, button, idin, idint, idinb, idinbt)
+	{
+		i.setVisible(!s);
+		f.setVisible(s);
+		
+		idin.setVisible(s);
+		idint.setVisible(s);
+		idinb.setVisible(s);
+		idinbt.setVisible(s);
+		
+		if (s)
+		{
+			button.x = 555;
+			button.y = 595;
+		}
+		
+		else
+		{
+			button.x = 719;
+			button.y = 595;
+		}
+		
+	}
 
 	/* END-USER-CODE */
 }
@@ -243,12 +374,13 @@ class Start extends Phaser.Scene
 //dropdown menu class
 class DropdownMenu 
 {
-	constructor(scene, x, y, options, onSelect) 
+	constructor(scene, x, y, options, button, onSelect) 
 	{
 		this.scene = scene;
 		this.x = x;
 		this.y = y;
 		this.options = options;
+		this.button = button;
 		this.onSelect = onSelect;
 
 		this.isOpen = false;
@@ -257,7 +389,7 @@ class DropdownMenu
 		this.createMenu();
 	}
 
-	createMenu() 
+	createMenu(button) 
 	{
     	const style = {
 		  fontFamily: 'GodOfWar',
@@ -270,24 +402,19 @@ class DropdownMenu
 			top: 0,
 			bottom: 0
 		  }
-		};
+		}; 
 	  
-	//matchButton
-	const matchButton = this.scene.add.image(687, 595, "matchButton").setInteractive({ useHandCursor: true  });
-	matchButton.scaleX = 0.5;
-	matchButton.scaleY = 0.5;
-	  
-	matchButton.on('pointerdown', () => 
+	this.button.on('pointerdown', () => 
 	{
         this.toggleMenu();
     });
 		
-	matchButton.on('pointerover', function (event)
+	this.button.on('pointerover', function (event)
     {
         this.setTint(0x808080);
     });
 
-    matchButton.on('pointerout', function (event)
+    this.button.on('pointerout', function (event)
     {
         this.clearTint();
     });
@@ -356,4 +483,5 @@ class DropdownMenu
 		this.onSelect(this.options[index]);
 		this.hideMenu();
 	}
+	
 }
