@@ -182,7 +182,10 @@ class Start extends Phaser.Scene
 				} 
 				else if (event.key.length === 1)
 				{
-					nameInputBoxText.text += event.key;
+					if (nameInputBoxText.text.length < 19)
+					{
+						nameInputBoxText.text += event.key;
+					}
 				}
 		  	}
 			
@@ -199,7 +202,10 @@ class Start extends Phaser.Scene
 				} 
 				else if (event.key.length === 1)
 				{
-					idInputBoxText.text += event.key;
+					if (idInputBoxText.text.length < 6)
+					{
+						idInputBoxText.text += event.key;
+					}
 				}
 			}
 		});
