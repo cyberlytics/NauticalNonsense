@@ -60,14 +60,14 @@ def check_win(game_field: list[int]) -> bool:
     Returns:
         bool: Whether the game has been won
     """
-    return all([True if field in [0, 4, 2] else False for field in game_field])
+    return not bool(game_field.count(3))
 
 
 def make_move(
     move: int, 
     game_field: list[int], 
     ships: list[list[int]]
-    ) -> tuple(bool, list[int]):
+    ) -> tuple[bool, list[int]]:
     """
     Make a move on the game field.
 
