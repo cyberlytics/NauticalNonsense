@@ -28,6 +28,16 @@ class Gameboard extends Phaser.Scene {
 	  
 		return shipRotation; // Return the updated rotation angle
 	  }
+
+	  GetColumnsAndRows(highlightedCells,playerGrid) {
+		// Log the elements of the game board used by the ship
+		const usedCells = highlightedCells.map(cell => {
+    		const row = playerGrid.findIndex(row => row.includes(cell));
+    		const col = playerGrid[row].indexOf(cell);
+    		return { row, col };
+  			});
+  			console.log('Elements used by the ship:', usedCells);
+	  }
 	  
 	  highlightShipCells(ship, gameObject, highlightedCells, gridRow, gridColumn, gridSize, playerBoardPos, playerCellSize, playerGrid, shipRotation) {
 		ship.cells = []; // Reset the array of ship cells
@@ -66,12 +76,6 @@ class Gameboard extends Phaser.Scene {
 		  }
 		}
 	  }
-	  
-	  
-	  
-		  
-
-
 
 	/** @returns {void} */
 	editorCreate() {
@@ -188,14 +192,8 @@ class Gameboard extends Phaser.Scene {
 
   			// Make the ship non-draggable
   			//gameObject.disableInteractive();
-
-			// Log the elements of the game board used by the ship
-  			const usedCells = highlightedCells.map(cell => {
-    		const row = playerGrid.findIndex(row => row.includes(cell));
-    		const col = playerGrid[row].indexOf(cell);
-    		return { row, col };
-  			});
-  			console.log('Elements used by the ship:', usedCells);
+			
+			  this.GetColumnsAndRows(highlightedCells,playerGrid)
 		});
 
 		// draw fleet
@@ -254,6 +252,7 @@ class Gameboard extends Phaser.Scene {
 		shipRotation = this.rotateShip(shipSprite, shipRotation);
 		// Update the highlighted cells
 		this.highlightShipCells(ship, shipSprite, highlightedCells, gridRow, gridColumn, gridSize, playerBoardPos, playerCellSize, playerGrid, shipRotation);
+		this.GetColumnsAndRows(highlightedCells,playerGrid)
 
 		});
 		this.rotateText = this.add.text(
