@@ -67,7 +67,7 @@ class Start extends Phaser.Scene {
 		
         });
 
-		// optionsButton
+		// leaderboardButton
 		const leaderboardButton = this.add.image(1100, 280, "leaderboardButton").setInteractive({ useHandCursor: true  });
 
 		leaderboardButton.on('pointerover', function (event)

@@ -4,7 +4,7 @@
     "settings": {
         "preloadPackFiles": [],
         "createMethodName": "editorCreate",
-        "sceneKey": "Dashboard",
+        "sceneKey": "Leaderboard",
         "borderWidth": 1280,
         "borderHeight": 720
     },
@@ -20,14 +20,6 @@
             "scaleY": 0.7,
             "originX": 0,
             "originY": 0
-        },
-        {
-            "type": "Text",
-            "id": "9dda1868-918e-456c-ad16-b88504b37185",
-            "label": "text_01",
-            "x": 289,
-            "y": 253,
-            "text": "New text"
         }
     ],
     "plainObjects": [],
