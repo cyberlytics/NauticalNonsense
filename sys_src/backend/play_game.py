@@ -30,12 +30,30 @@ def validate_move(client_json):
     pass
 
 
-def check_sink_ship(ship_pos: list[int], game_field: list[int]) -> list[int]:
+def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     
-    hit = [True for coord in ship_pos if game_field[coord] == 3]
+    hit = [True if game_field[coord] == 3 else False for coord in ship]
     
     if all(hit):
-        for coord in ship_pos:
+        for coord in ship:
             game_field[coord] = 4
     
+    return game_field
+
+
+def make_move(move: int, game_field: list[int], ships: list[list[int]]) -> list[int]:
+
+    assert isinstance(move, int), "Move is not an integer"
+    assert move < len(game_field) and move >= 0, "Move out of range"
+    
+    if game_field[move] == 0:
+        game_field[move] = 2
+    elif game_field[move] == 1:
+        game_field[move] = 3
+    else:
+        raise ValueError("Move has been played before")
+
+    for ship in ships:
+        game_field = check_sink_ship(ship, game_field)
+
     return game_field
