@@ -17,6 +17,7 @@ window.addEventListener('load', function () {
 	game.scene.add("Level", Level);
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
+	game.scene.add("Dashboard", Dashboard);
 });
 
 class Boot extends Phaser.Scene {
