@@ -28,3 +28,14 @@ def validate_move(client_json):
     # step size has to be one more then the previous, nothing else
     # only one move per player, keep care that one player dont send more times a move
     pass
+
+
+def check_sink_ship(ship_pos: list[int], game_field: list[int]) -> list[int]:
+    
+    hit = [True for coord in ship_pos if game_field[coord] == 3]
+    
+    if all(hit):
+        for coord in ship_pos:
+            game_field[coord] = 4
+    
+    return game_field
