@@ -3,10 +3,10 @@
 
 /* START OF COMPILED CODE */
 
-class Dashboard extends Phaser.Scene {
+class Leaderboard extends Phaser.Scene {
 
 	constructor() {
-		super("Dashboard");
+		super("Leaderboard");
 
 		/* START-USER-CTR-CODE */
 		// Write your code here.

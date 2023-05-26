@@ -68,29 +68,29 @@ class Start extends Phaser.Scene {
         });
 
 		// optionsButton
-		const dashboardButton = this.add.image(1100, 280, "dashboardButton").setInteractive({ useHandCursor: true  });
+		const leaderboardButton = this.add.image(1100, 280, "leaderboardButton").setInteractive({ useHandCursor: true  });
 
-		dashboardButton.on('pointerover', function (event)
+		leaderboardButton.on('pointerover', function (event)
         {
 
             this.setTint(0x808080);
 
         });
 
-        dashboardButton.on('pointerout', function (event)
+        leaderboardButton.on('pointerout', function (event)
         {
 
             this.clearTint();
 
         });
 		
-		dashboardButton.on('pointerdown', function (event)
+		leaderboardButton.on('pointerdown', function (event)
         {
 
 			this.clearTint();
 			self.playClick();
 			self.stopHorn();
-			self.scene.start("Dashboard");
+			self.scene.start("Leaderboard");
 		
         });
 		
