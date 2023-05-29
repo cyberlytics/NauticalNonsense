@@ -9,7 +9,7 @@ class Leaderboard extends Phaser.Scene {
 		super("Leaderboard");
 
 		/* START-USER-CTR-CODE */
-		// Write your code here.
+
 		/* END-USER-CTR-CODE */
 	}
 
@@ -22,20 +22,20 @@ class Leaderboard extends Phaser.Scene {
 		this.background.scaleY = 0.7;
 		this.background.setOrigin(0, 0);
 
-		// startButton
-		const backToStartButton = this.add.image(1100, 220, "backToStartButton").setInteractive({ useHandCursor: true  });
+		// homeButton
+		const homeButton = this.add.image(1100, 220, "homeButton").setInteractive({ useHandCursor: true  });
 
-		backToStartButton.on('pointerover', function (event)
+		homeButton.on('pointerover', function (event)
         {
             this.setTint(0x808080);
         });
 
-        backToStartButton.on('pointerout', function (event)
+        homeButton.on('pointerout', function (event)
         {
             this.clearTint();
         });
 		
-		backToStartButton.on('pointerdown', function (event)
+		homeButton.on('pointerdown', function (event)
         {
 			this.clearTint();
 			self.playClick();
@@ -45,13 +45,52 @@ class Leaderboard extends Phaser.Scene {
 
 		// Leaderboard
 		
-		// dummy data --> replace with database input
+		// Folgender Teil nicht wirklich funktionell, überprüfen wie das mit der DB Anbindung funktioniert
+		/*
+		const MongoClient = require('mongodb').MongoClient;
+		const url = 'mongodb+srv://nn_user:nn_bsyjntss@nauticalnonsens.lflmzfg.mongodb.net/?retryWrites=true&w=majority';
+		const dbName = 'NauticalNonsens'; // Replace with your database name
+		const options = { useNewUrlParser: true, useUnifiedTopology: true };
+
+		MongoClient.connect(url, options, function(err, client) {
+			if (err) {
+			  console.error('Error occurred while connecting to MongoDB:', err);
+			  return;
+			}
+		  
+			console.log('Connected successfully to MongoDB');
+		  
+			const db = client.db(dbName);
+			const collection = db.collection('leaderboard'); // Replace with your collection name
+		  
+			collection.find({}).toArray(function(err, documents) {
+				if (err) {
+				  console.error('Error occurred while reading documents:', err);
+				  return;
+				}
+			  
+				console.log('Found', documents.length, 'documents');
+				
+				// Iterate over the retrieved documents
+				documents.forEach(function(document) {
+				  console.log(document);
+				});
+			  });
+		  
+			client.close(); // Close the connection when finished
+		  });
+		*/ 
 		const leaderboardData = [
-			{ rank: 1, name: 'Player 1', shots: 100 },
-			{ rank: 2, name: 'Player 2', shots: 90 },
-			{ rank: 3, name: 'Player 3', shots: 80 },
-			{ rank: 4, name: 'Player 4', shots: 70 },
-			{ rank: 5, name: 'Player 5', shots: 60 }
+			{ rank: 1, name: 'Player 1', shots: 10 },
+			{ rank: 2, name: 'Player 2', shots: 20 },
+			{ rank: 3, name: 'Player 3', shots: 30 },
+			{ rank: 4, name: 'Player 4', shots: 40 },
+			{ rank: 5, name: 'Player 5', shots: 50 },
+			{ rank: 6, name: 'Player 6', shots: 60 },
+			{ rank: 7, name: 'Player 7', shots: 70 },
+			{ rank: 8, name: 'Player 8', shots: 80 },
+			{ rank: 9, name: 'Player 9', shots: 90 },
+			{ rank: 10, name: 'Player 10', shots: 100 },
 		];
 	  
 		// Create a text style for the table
@@ -71,7 +110,7 @@ class Leaderboard extends Phaser.Scene {
 			x : 200,
 			y : 100,
 			width : 700,
-			height : 500,
+			height : 550,
 			cornerRadius : smallCornerRadius
 		}
 
@@ -106,6 +145,11 @@ class Leaderboard extends Phaser.Scene {
 	create() {
 
 		this.editorCreate();
+	}
+
+	preload() {
+
+		this.load.pack("asset-pack", "assets/leaderboard-asset-pack.json");
 	}
 
 	/* END-USER-CODE */

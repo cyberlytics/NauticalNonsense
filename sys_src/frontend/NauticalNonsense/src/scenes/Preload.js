@@ -17,6 +17,7 @@ class Preload extends Phaser.Scene {
 	editorPreload() {
 
 		this.load.pack("asset-pack", "assets/start-asset-pack.json");
+		this.load.pack("leaderboard-asset-pack", "assets/leaderboard-asset-pack.json");
 		this.load.audio("click", ["assets/sounds/click_1.mp3"]);
 		this.load.audio("horn", ["assets/sounds/foghorn_3.mp3"]);
 		this.load.image("nameInput", "assets/start/nameInput.png");
