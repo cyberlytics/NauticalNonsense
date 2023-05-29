@@ -35,7 +35,7 @@ def polling():
 
 
 @app.post("/against_random")
-def against_random(client_id):
+def against_random(client_id: str):
     # init to wait/play against random
     # if frontend gets two player_ids, then it should use websockets
     ready = prepare_room(client_id, "random")
