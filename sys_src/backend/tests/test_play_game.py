@@ -135,13 +135,13 @@ def test_make_move_out_of_range():
 
 def test_check_win_true():
     
-    game_field = [4, 4, 0, 0]
+    ships = [[100, 101]]
 
-    assert check_win(game_field) is True
+    assert check_win(ships) is True
 
 
 def test_check_win_false():
     
-    game_field = [3, 3, 0, 0]
+    ships = [[100, 1]]
 
-    assert check_win(game_field) is False
+    assert check_win(ships) is False

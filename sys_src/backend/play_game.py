@@ -50,7 +50,7 @@ def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     return game_field
 
 
-def check_win(game_field: list[int]) -> bool:
+def check_win(ships: list[list[int]]) -> bool:
     """
     Check if the game has been won.
 
@@ -60,7 +60,7 @@ def check_win(game_field: list[int]) -> bool:
     Returns:
         bool: Whether the game has been won
     """
-    return not bool(game_field.count(3))
+    return any([all([coord >= 100 for coord in ship]) for ship in ships])
 
 
 def make_move(
@@ -107,7 +107,7 @@ def make_move(
                 game_field = check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
-        won = check_win(game_field)
+        won = check_win(ships)
     else:
         raise ValueError("Move has been played before")
     
