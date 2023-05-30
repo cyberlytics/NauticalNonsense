@@ -40,6 +40,17 @@ def test_check_sink_ship_only_one():
     assert game_field == [4, 4, 4, 0, 0, 0, 0, 0, 1, 3]
 
 
+def test_check_sink_ship_touching_ships():
+
+    ships = [[0, 1, 2], [3, 4]]
+    game_field = [3, 3, 3, 3, 1, 0, 0, 0, 0, 0]
+
+    for ship in ships:
+        game_field = check_sink_ship(ship, game_field)
+
+    assert game_field == [4, 4, 4, 3, 1, 0, 0, 0, 0, 0]
+
+
 def test_check_sink_ship_nothing_to_sink():
 
     ship_pos = [0]
@@ -54,9 +65,10 @@ def test_make_move_water():
     move = 0
     ships = [[0]]
 
-    _, game_field = make_move(move, game_field, ships)
+    _, hit, game_field = make_move(move, game_field, ships)
 
-    assert  game_field == [2]
+    assert game_field == [2]
+    assert hit is False
 
 
 def test_make_move_hit():
@@ -65,9 +77,10 @@ def test_make_move_hit():
     move = 0
     ships = [[0, 1]]
 
-    _, game_field = make_move(move, game_field, ships)
+    _, hit, game_field = make_move(move, game_field, ships)
 
     assert game_field == [3, 1, 0]
+    assert hit is True
 
 
 def test_make_move_won():
@@ -76,9 +89,10 @@ def test_make_move_won():
     move = 0
     ships = [[0, 1]]
 
-    won, game_field = make_move(move, game_field, ships)
+    won, hit, game_field = make_move(move, game_field, ships)
 
     assert game_field == [4, 4, 0]
+    assert hit is True
     assert won is True
 
 

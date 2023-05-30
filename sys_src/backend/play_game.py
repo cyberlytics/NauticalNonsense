@@ -67,7 +67,7 @@ def make_move(
     move: int, 
     game_field: list[int], 
     ships: list[list[int]]
-    ) -> tuple[bool, list[int]]:
+    ) -> tuple[bool, bool, list[int]]:
     """
     Make a move on the game field.
 
@@ -84,20 +84,29 @@ def make_move(
         ValueError: If the move has been played before
         AssertionError: If the move is not an integer or out of range
     """
-    assert isinstance(move, int), "Move is not an integer"
-    assert move < len(game_field) and move >= 0, "Move out of range"
+    if not isinstance(move, int):
+        raise AssertionError("Move is not an integer")
+    
+    if move < 0 or move >= len(game_field):
+        raise AssertionError("Move out of range")
+
+    hit = False
+    won = False
     
     if game_field[move] == 0:
         game_field[move] = 2
     elif game_field[move] == 1:
         game_field[move] = 3
 
+        hit = True
+
         # We only have to check for sinking if a ship was hit
         for ship in ships:
             game_field = check_sink_ship(ship, game_field)
+
+        # We only have to check for winning if a ship was hit
+        won = check_win(game_field)
     else:
         raise ValueError("Move has been played before")
     
-    won = check_win(game_field)
-
-    return won, game_field
+    return won, hit, game_field
