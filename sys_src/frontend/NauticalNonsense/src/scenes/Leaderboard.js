@@ -23,25 +23,22 @@ class Leaderboard extends Phaser.Scene {
 		this.background.setOrigin(0, 0);
 
 		// homeButton
-		const homeButton = this.add.image(1100, 220, "homeButton").setInteractive({ useHandCursor: true  });
+		this.homeButton = this.add.image(1100, 220, "homeButton").setInteractive({ useHandCursor: true  });
 
-		homeButton.on('pointerover', function (event)
+		this.homeButton.on('pointerover', function (event)
         {
             this.setTint(0x808080);
         });
 
-        homeButton.on('pointerout', function (event)
+        this.homeButton.on('pointerout', function (event)
         {
             this.clearTint();
         });
 		
-		homeButton.on('pointerdown', function (event)
-        {
-			this.clearTint();
-			self.playClick();
-			self.stopHorn();
-			self.scene.start('Start');
+		this.homeButton.on('pointerdown', () => {
+			this.scene.start('Start');
         });
+
 
 		// Leaderboard
 		
@@ -94,6 +91,11 @@ class Leaderboard extends Phaser.Scene {
 		];
 	  
 		// Create a text style for the table
+		const headingStyle = {
+			fontSize: '20px',
+			fill: '#ffffff'
+		};
+
 		const textStyle = {
 			fontSize: '32px',
 			fill: '#ffffff'
@@ -120,9 +122,9 @@ class Leaderboard extends Phaser.Scene {
 										tableBoardPos.width+2*tableBoardPos.cornerRadius, tableBoardPos.height+2*tableBoardPos.cornerRadius, 20);
 	
 		// Add table headers
-		this.add.text(tableBoardPos.x + tableBoardMargin, tableBoardPos.y, 'Rank', textStyle);
-		this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 2, tableBoardPos.y, 'Name', textStyle);
-		this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 10, tableBoardPos.y, 'Shots', textStyle);
+		this.add.text(tableBoardPos.x + tableBoardMargin, tableBoardPos.y, 'RANK', headingStyle);
+		this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 2, tableBoardPos.y, 'NAME', headingStyle);
+		this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 10, tableBoardPos.y, 'SHOTS', headingStyle);
 	
 		// Add leaderboard entries
 		leaderboardData.forEach((entry, index) => {
@@ -143,12 +145,10 @@ class Leaderboard extends Phaser.Scene {
 	// Write your code here
 
 	create() {
-
 		this.editorCreate();
 	}
 
 	preload() {
-
 		this.load.pack("asset-pack", "assets/leaderboard-asset-pack.json");
 	}
 
