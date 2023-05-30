@@ -41,11 +41,11 @@ def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     Returns:
         list[int]: The updated game field
     """
-    hit = [True if game_field[coord] == 3 else False for coord in ship]
+    hit = [True if coord >= 100 else False for coord in ship]
     
     if all(hit):
         for coord in ship:
-            game_field[coord] = 4
+            game_field[coord % 100] = 4
     
     return game_field
 
@@ -102,7 +102,9 @@ def make_move(
 
         # We only have to check for sinking if a ship was hit
         for ship in ships:
-            game_field = check_sink_ship(ship, game_field)
+            if move in ship:
+                ship[ship.index(move)] += 100
+                game_field = check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
         won = check_win(game_field)
