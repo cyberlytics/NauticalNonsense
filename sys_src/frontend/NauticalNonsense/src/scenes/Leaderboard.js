@@ -42,6 +42,15 @@ class Leaderboard extends Phaser.Scene {
 
 		// Leaderboard
 		
+		/*
+		Hier HTTP Request schicken um die Anfrage an die REST Schittstelle zu machen
+
+		--> function.onload()
+
+		Nicht vergessen request auch senden ;)
+		*/
+
+
 		// Folgender Teil nicht wirklich funktionell, überprüfen wie das mit der DB Anbindung funktioniert
 		/*
 		const MongoClient = require('mongodb').MongoClient;
