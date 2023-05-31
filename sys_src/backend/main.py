@@ -4,7 +4,7 @@ from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from database.database import get_leaderboard, add_rank
+from database.database import get_leaderboard, add_rank, get_stat
 from database.models import LeaderboardWithRank, Stat
 
 app = FastAPI()
