@@ -22,6 +22,11 @@ class Statistics extends Phaser.Scene {
 		background.scaleY = 0.7;
 		background.setOrigin(0, 0);
 
+		// get stats via backend API
+		//...
+		var stats = dummy;
+
+
 		this.events.emit("scene-awake");
 	}
 
