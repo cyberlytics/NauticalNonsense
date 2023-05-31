@@ -43,7 +43,7 @@ class Options extends Phaser.Scene
 		title.setStyle({ "align": "center", "color": "#ffffffff", "fontFamily": "GodOfWar", "fontSize": "50px" });
 		
 		// optionsBack
-		const optionsBack = this.add.image(1280/2 - 245, 200, "optionsBack").setInteractive({ useHandCursor: true  });
+		const optionsBack = this.add.image(1280/2 - 245, 615, "optionsBack").setInteractive({ useHandCursor: true  });
 		optionsBack.scaleX = 0.7;
 		optionsBack.scaleY = 0.7;
 		
@@ -116,8 +116,8 @@ class Options extends Phaser.Scene
 		
 		// leaderboardButton
 		const leaderboardButton = this.add.image(1280/2, 250, "optionsButtons").setInteractive({ useHandCursor: true  });
-		leaderboardButton.scaleX = 1;
-		leaderboardButton.scaleY = 1;
+		leaderboardButton.scaleX = 0.7;
+		leaderboardButton.scaleY = 0.7;
 		
 		leaderboardButton.on('pointerover', function (event)
         {
@@ -144,10 +144,40 @@ class Options extends Phaser.Scene
 		leaderboardText.text = "Leaderboard";
 		leaderboardText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
+		// statisticsButton
+		const statisticsButton = this.add.image(1280/2, 350, "optionsButtons").setInteractive({ useHandCursor: true  });
+		statisticsButton.scaleX = 0.7;
+		statisticsButton.scaleY = 0.7;
+		
+		statisticsButton.on('pointerover', function (event)
+        {
+            this.setTint(0x808080);
+        });
+
+        statisticsButton.on('pointerout', function (event)
+        {
+            this.clearTint();
+        });
+		
+		statisticsButton.on('pointerdown', function (event)
+        {
+			self.playClick();
+			this.clearTint();
+			//self.scene.start("");
+        });
+		
+		// statisticsText
+		const statisticsText = this.add.text(1280/2, 350, "", {});
+		statisticsText.scaleX = 1;
+		statisticsText.scaleY = 1;
+		statisticsText.setOrigin(0.5, 0.5);
+		statisticsText.text = "Statistics";
+		statisticsText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		
 		// rulesButton
-		const rulesButton = this.add.image(1280/2, 400, "optionsButtons").setInteractive({ useHandCursor: true  });
-		rulesButton.scaleX = 1;
-		rulesButton.scaleY = 1;
+		const rulesButton = this.add.image(1280/2, 450, "optionsButtons").setInteractive({ useHandCursor: true  });
+		rulesButton.scaleX = 0.7;
+		rulesButton.scaleY = 0.7;
 		
 		rulesButton.on('pointerover', function (event)
         {
@@ -167,7 +197,7 @@ class Options extends Phaser.Scene
         });
 		
 		// rulesText
-		const rulesText = this.add.text(1280/2, 400, "", {});
+		const rulesText = this.add.text(1280/2, 450, "", {});
 		rulesText.scaleX = 1;
 		rulesText.scaleY = 1;
 		rulesText.setOrigin(0.5, 0.5);
@@ -176,8 +206,8 @@ class Options extends Phaser.Scene
 		
 		// creditsButton
 		const creditsButton = this.add.image(1280/2, 550, "optionsButtons").setInteractive({ useHandCursor: true  });
-		creditsButton.scaleX = 1;
-		creditsButton.scaleY = 1;
+		creditsButton.scaleX = 0.7;
+		creditsButton.scaleY = 0.7;
 		
 		creditsButton.on('pointerover', function (event)
         {
@@ -193,7 +223,7 @@ class Options extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
-			//self.scene.start("");
+			self.scene.start("Credits");
         });
 		
 		// creditsText
