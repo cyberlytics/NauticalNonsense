@@ -5,7 +5,7 @@ import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank, add_ship_placement
+from database.database import get_leaderboard, add_rank, add_ship_placement, get_stat
 from database.models import LeaderboardWithRank, Stat
 
 app = FastAPI()
