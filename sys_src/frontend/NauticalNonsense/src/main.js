@@ -14,6 +14,7 @@ window.addEventListener('load', function () {
 	game.scene.add("Preload", Preload);
 	game.scene.add("Start", Start);
 	game.scene.add("Options", Options);
+	game.scene.add("Credits", Credits);
 	game.scene.add("Level", Level);
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
