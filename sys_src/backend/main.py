@@ -35,7 +35,7 @@ def polling():
 
 
 @app.post("/against_random")
-def against_random(client_id):
+def against_random(client_id: str):
     # init to wait/play against random
     # if frontend gets two player_ids, then it should use websockets
     ready = prepare_room(client_id, "random")
@@ -87,8 +87,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             # validate the data
             response = {"message received in the backend": data}
             await manager.send_personal_message(response, partner_id)
+
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        manager.disconnect(client_id)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
 
