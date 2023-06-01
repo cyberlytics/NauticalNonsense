@@ -81,7 +81,7 @@ class Gameboard extends Phaser.Scene {
 		return occupiedCells.some((cell) => cell.row === row && cell.col === col);
 	}
 
-	updateOccupiedCells(occupiedCells, playerGrid, ship, oldcells) {
+	updateOccupiedCells(occupiedCells, shipcells, oldcells) {
 		// Remove old occupied cells
 		if (oldcells !== null) {
 			for (const cell of oldcells) {
@@ -93,7 +93,7 @@ class Gameboard extends Phaser.Scene {
 		}
 
 		// Add new occupied cells
-		for (const cell of ship.cells) {
+		for (const cell of shipcells) {
 			occupiedCells.push(cell);
 		}
 	}
@@ -138,7 +138,7 @@ class Gameboard extends Phaser.Scene {
 			});
 		}
 		ship.cells = indices;
-		this.updateOccupiedCells(occupiedCells, playerGrid, ship, null);
+		this.updateOccupiedCells(occupiedCells, ship.cells, null);
 		shipSprite.setRotation(Phaser.Math.DegToRad(rotation));
 		return { x: xcenter, y: ycenter };
 	}
@@ -160,7 +160,22 @@ class Gameboard extends Phaser.Scene {
 	}
 
 
-	removeHighlightCells(oldcells, playerGrid) {
+	CheckValidPositioning(occupiedCells, oldcells, futurecells, gridSize) {
+		//Delete Old Cells for Validation of the Future Cells
+		for (const cell of oldcells) {
+			const index = occupiedCells.findIndex((occupiedCell) => occupiedCell.row === cell.row && occupiedCell.col === cell.col);
+			if (index !== -1) {
+				occupiedCells.splice(index, 1);
+			}
+		}
+		
+
+		for (let i = 0; i < futurecells.length; i++) {
+			if (futurecells[i].row > gridSize - 1 || futurecells[i].row < 0 || futurecells[i].col > gridSize - 1 || futurecells[i].col < 0) {
+				return false;
+			}
+		}
+		return !futurecells.some((cell) => { return this.isCellOccupied(occupiedCells, cell.row, cell.col); });
 
 	}
 
@@ -221,24 +236,26 @@ class Gameboard extends Phaser.Scene {
 					} else if (event.key === 'ArrowRight') {
 						col_delta = 1;
 					}
-					var oldcells = ship.cells;
+
+					var futurecells = ship.cells.map(cell => ({ ...cell }));
 					// Update ship cells with new positions
 					for (let i = 0; i < ship.cells.length; i++) {
 						if (row_delta != 0) {
-							ship.cells[i].row += row_delta;
+							futurecells[i].row += row_delta;
 						} else if (col_delta != 0) {
-							ship.cells[i].col += col_delta;
+							futurecells[i].col += col_delta;
 						}
 					}
-
-					console.log(oldcells);
-					// Update occupiedCells array
-					this.updateOccupiedCells(occupiedCells, playerGrid, ship, oldcells);
-
-					// Update ship sprite position
-					sprite.x = sprite.x + col_delta * playerCellSize;
-					sprite.y = sprite.y + row_delta * playerCellSize;
-					this.highlightCells(occupiedCells, playerGrid);
+					
+					if (this.CheckValidPositioning(occupiedCells, ship.cells , futurecells , gridSize)) {
+						// Update occupiedCells array
+						this.updateOccupiedCells(occupiedCells, futurecells, ship.cells);
+						ship.cells = futurecells
+						// Update ship sprite position
+						sprite.x = sprite.x + col_delta * playerCellSize;
+						sprite.y = sprite.y + row_delta * playerCellSize;
+						this.highlightCells(occupiedCells, playerGrid);
+					} 
 				}
 			};
 
@@ -527,8 +544,6 @@ class Gameboard extends Phaser.Scene {
 				this.GetColumnsAndRows(highlightedCells, playerGrid)
 
 			}
-
-
 		});
 		this.rotateText = this.add.text(
 			enemyBoardPos.x + enemyBoardPos.width - tinyCornerRadius - 90,
