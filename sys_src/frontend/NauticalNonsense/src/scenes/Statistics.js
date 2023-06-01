@@ -18,6 +18,14 @@ class Statistics extends Phaser.Scene {
 
 		//reference to this statistics scene
 		const statistics = this;
+		const darkgrey = 0x3c3845;
+
+		//text style
+		const textStyle = {
+			fontSize: '32px',
+			fill: '#ffffff'
+		};
+
 
 		// background
 		const background = this.add.image(0, 0, "0001");
@@ -48,6 +56,25 @@ class Statistics extends Phaser.Scene {
 		// get stats via backend API
 		//...
 		var stats = dummy;
+
+
+		//number of games
+		const gamesStyle = {
+			x: 50,
+			y: 50,
+			width: 900,
+			height: 100,
+			radius: 20,
+			backgroundColor: darkgrey,
+			padding: 20
+		}
+
+		const games = this.add.graphics();
+		games.fillStyle(gamesStyle.backgroundColor, 1);
+		games.fillRoundedRect(gamesStyle.x, gamesStyle.y, gamesStyle.width, gamesStyle.height, gamesStyle.radius);
+
+		this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding, "Games played: " + stats.gamesCount, textStyle);
+
 
 
 		this.events.emit("scene-awake");
