@@ -90,7 +90,6 @@ class Gameboard extends Phaser.Scene {
 			  occupiedCells.splice(index, 1);
 			}
 		  }
-		
 		  // Add new occupied cells
 		  for (const cell of ship.cells) {
 			occupiedCells.push(cell);
@@ -105,36 +104,9 @@ class Gameboard extends Phaser.Scene {
 		const maxIndex = gridSize - 1 - size; // The maximum index for row and col based on size
 		let xcenter, ycenter;
 		let row, col;
+		let cellsOccupied = true;
 	  
-		if (rotation === 0 || rotation === 180) {
-		  // Select horizontally
-		  row = Phaser.Math.Between(0, gridSize - 1); // Random row index
-		  col = Phaser.Math.Between(0, maxIndex); // Random col index within the valid range
-	  
-		  xcenter = (playerGrid[row][col].x + playerGrid[row][col + size].x) / 2;
-		  ycenter = playerGrid[row][col].y + playerCellSize / 2;
-		} else if (rotation === 90 || rotation === 270) {
-		  // Select vertically
-		  row = Phaser.Math.Between(0, maxIndex); // Random row index within the valid range
-		  col = Phaser.Math.Between(0, gridSize - 1); // Random col index
-		  xcenter = playerGrid[row][col].x + playerCellSize / 2;
-		  ycenter = (playerGrid[row][col].y + playerGrid[row + size][col].y) / 2;
-		}
-	  
-		const indices = [];
-		for (let i = 0; i < size; i++) {
-		  if (rotation === 0 || rotation === 180) {
-			indices.push({ row, col: col + i });
-		  } else if (rotation === 90 || rotation === 270) {
-			indices.push({ row: row + i, col });
-		  }
-		}
-	  
-		// Check if the cells are free
-		let cellsOccupied = indices.some((cell) => {
-		  return this.isCellOccupied(occupiedCells, cell.row, cell.col);
-		});
-	  
+		const indices = [];	  
 		while (cellsOccupied) {
 			if (rotation === 0 || rotation === 180) {
 				// Select horizontally
@@ -183,7 +155,7 @@ class Gameboard extends Phaser.Scene {
 		sprite.on('pointerdown', () => {
 		  this.clickSound.play();
 		  if (!isShipPlaced) {
-			const { x, y } = this.getRandomPositionTest(ship.rotation, ship, sprite, gridSize, playerGrid, playerCellSize, occupiedCells);
+			const { x, y } = this.getRandomPosition(ship.rotation, ship, sprite, gridSize, playerGrid, playerCellSize, occupiedCells);
 			console.log(x, y);
 			console.log(ship.cells);
 			console.log(occupiedCells);
@@ -201,49 +173,6 @@ class Gameboard extends Phaser.Scene {
 		  }
 		});
 	  }
-	
-	// getRandomPosition(rotation, ship,shipSprite, gridSize, playerGrid, playerCellSize) {
-	// 	rotation = Phaser.Math.RND.pick([0, 90, 180, 270]); // Randomly choose rotation angle
-	// 	shipSprite.setRotation(Phaser.Math.DegToRad(rotation));
-	// 	ship.rotation = rotation;
-	// 	var size = ship.size;
-	// 	const maxIndex = gridSize-1 - size; // The maximum index for row and col based on size
-	// 	let xcenter,ycenter;
-	// 	let row, col;
-	// 	if (rotation === 0 || rotation === 180) {
-	// 	  // Select horizontally
-	// 	  row = Phaser.Math.Between(0, gridSize - 1); // Random row index
-	// 	  col = Phaser.Math.Between(0, maxIndex); // Random col index within the valid range
-
-	// 	  xcenter = (playerGrid[row][col].x + playerGrid[row][col+size].x)/2;
-	// 	  ycenter = playerGrid[row][col].y + playerCellSize/2;
-	// 	} else if (rotation === 90 || rotation === 270) {
-	// 	  // Select vertically
-	// 	  row = Phaser.Math.Between(0, maxIndex); // Random row index within the valid range
-	// 	  col = Phaser.Math.Between(0, gridSize - 1); // Random col index
-	// 	  xcenter = playerGrid[row][col].x + playerCellSize/2;
-	// 	  ycenter = (playerGrid[row][col].y + playerGrid[row+size][col].y)/2;
-	// 	}
-	  
-	// 	const indices = [];
-	// 	for (let i = 0; i < size; i++) {
-	// 	  if (rotation === 0 || rotation === 180) {
-	// 		indices.push({ row, col: col + i });
-	// 	  } else if (rotation === 90 || rotation === 270) {
-	// 		indices.push({ row: row + i, col });
-	// 	  }
-	// 	}
-	// 	ship.cells = indices;
-	// 	return { x: xcenter, y: ycenter};
-	//   }
-
-	//   highlightShipCells(ship, playerGrid) {	  
-	// 	// Iterate over the cells array and highlight the corresponding cells on the player board
-	// 	ship.cells.forEach((cell) => {
-	// 	  const { row, col } = cell;
-	// 	  playerGrid[row][col].setAlpha(0.5);
-	// 	});
-	//   }
 
 	/** @returns {void} */
 	editorCreate() {
@@ -296,8 +225,6 @@ class Gameboard extends Phaser.Scene {
 			name: "submarine1",
 			rotation: 0
 		};
-
-		var shipRotation = 0;
 		
 		var battleshipSprite = null;
 		var carrierSprite = null;
@@ -307,19 +234,12 @@ class Gameboard extends Phaser.Scene {
 		var submarineSprite =null;
 		var submarineSprite1 =null;
 
-		var gridRow = 0;
-		var gridColumn = 0;
 
 		// create clicksound
 		this.clickSound = this.sound.add('clicksound');
 
-		// Add an array to store the highlighted cells
-		let highlightedCells = [];
-
-		//TESTING
 		let occupiedCells = [];
 		
-
 		// Add the background sprite
 		this.background = this.add.image(0, 0, '0001');
 		this.background.setOrigin(0, 0);
@@ -426,29 +346,6 @@ class Gameboard extends Phaser.Scene {
 		this.placeShipSprite(destroyerSprite1, destroyer1, gridSize, playerGrid, playerCellSize, occupiedCells);
 		this.placeShipSprite(submarineSprite, submarine, gridSize, playerGrid, playerCellSize, occupiedCells);
 		this.placeShipSprite(submarineSprite1, submarine1, gridSize, playerGrid, playerCellSize, occupiedCells);
-		
-		// let isShipPlaced = false;
-		// destroyerSprite.on('pointerdown', () => {
-		// 	this.clickSound.play();
-		// 	if (!isShipPlaced) { 
-		// 		var { x, y } = this.getRandomPositionTest(shipRotation, destroyer,destroyerSprite, gridSize,playerGrid, playerCellSize, occupiedCells);	
-		// 		console.log(x,y);
-		// 		console.log(destroyer.cells);
-		// 		console.log(occupiedCells);
-		// 		this.tweens.add({
-		// 			targets: destroyerSprite,
-		// 			x : x,
-		// 			y : y,
-		// 			duration: 500,
-		// 			onComplete: () => {
-		// 				isShipPlaced = true;
-		// 				this.input.setDraggable(destroyerSprite);
-		// 				this.highlightCells(occupiedCells,playerGrid);
-		// 			}
-		// 		});
-
-		// 	}
-		// });
 
 		// this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
 		// 	if (isShipPlaced) {
@@ -527,7 +424,6 @@ class Gameboard extends Phaser.Scene {
 				this.clickSound.play();
 				shipRotation = this.rotateShip(destroyerSprite, shipRotation);
 				// Update the highlighted cells
-				this.highlightShipCells(destroyer, destroyerSprite, highlightedCells, gridRow, gridColumn, gridSize, playerBoardPos, playerCellSize, playerGrid, shipRotation);
 				this.GetColumnsAndRows(highlightedCells, playerGrid)
 
 			}
