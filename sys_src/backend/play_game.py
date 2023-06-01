@@ -55,12 +55,12 @@ def check_win(ships: list[list[int]]) -> bool:
     Check if the game has been won.
 
     Args:
-        game_field (list[int]): The game field
+        ships (list[list[int]]): The ships on the game field
     
     Returns:
         bool: Whether the game has been won
     """
-    return any([all([coord >= 100 for coord in ship]) for ship in ships])
+    return all([all([coord >= 100 for coord in ship]) for ship in ships])
 
 
 def make_move(

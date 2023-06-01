@@ -142,6 +142,6 @@ def test_check_win_true():
 
 def test_check_win_false():
     
-    ships = [[100, 1]]
+    ships = [[100, 1], [102, 103]]
 
     assert check_win(ships) is False
