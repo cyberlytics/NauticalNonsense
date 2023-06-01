@@ -1,6 +1,26 @@
 
 // You can write more code here
 
+const COLOR_PRIMARY = 0x4e342e;
+const COLOR_LIGHT = 0x7b5e57;
+const COLOR_DARK = 0x260e04;
+const backgroundColor = 0x3c3845
+const columnSpacing = 50;
+const rowSpacing = 50;
+const smallCornerRadius = 20
+const tinyCornerRadius = 10
+const tableBoardMargin = 30
+
+const headingStyle = {
+	fontSize: '20px',
+	fill: '#ffffff'
+};
+
+const textStyle = {
+	fontSize: '32px',
+	fill: '#ffffff'
+};
+
 /* START OF COMPILED CODE */
 
 class Leaderboard extends Phaser.Scene {
@@ -16,14 +36,20 @@ class Leaderboard extends Phaser.Scene {
 	/** @returns {void} */
 	editorCreate() {
 
+		// sound
+		this.click = this.sound.add("click");
+
 		// background
 		this.background = this.add.image(0, 0, "0001");
 		this.background.scaleX = 1.2;
 		this.background.scaleY = 0.7;
 		this.background.setOrigin(0, 0);
+		
 
 		// homeButton
-		this.homeButton = this.add.image(1100, 220, "homeButton").setInteractive({ useHandCursor: true  });
+		this.homeButton = this.add.image(1280 - 50 - 20, 70, "homeButton").setInteractive({ useHandCursor: true  });
+		this.homeButton.scaleX = 0.7;
+		this.homeButton.scaleY = 0.7;
 
 		this.homeButton.on('pointerover', function (event)
         {
@@ -36,8 +62,30 @@ class Leaderboard extends Phaser.Scene {
         });
 		
 		this.homeButton.on('pointerdown', () => {
+			this.playClick();
 			this.scene.start('Start');
         });
+
+		// backButton
+		this.backButton = this.add.image(1280 - 50 - 20, 70 + 70, "backButton").setInteractive({ useHandCursor: true  });
+		this.backButton.scaleX=0.7;
+		this.backButton.scaleY=0.7;
+
+		this.backButton.on('pointerover', function (event)
+		{
+			this.setTint(0x808080);
+		});
+
+		this.backButton.on('pointerout', function (event)
+		{
+			this.clearTint();
+		});
+		
+		this.backButton.on('pointerdown', () => {
+			this.playClick();
+			this.scene.start('Options');
+		});
+
 
 
 		// Leaderboard
@@ -50,42 +98,7 @@ class Leaderboard extends Phaser.Scene {
 		Nicht vergessen request auch senden ;)
 		*/
 
-
-		// Folgender Teil nicht wirklich funktionell, überprüfen wie das mit der DB Anbindung funktioniert
-		/*
-		const MongoClient = require('mongodb').MongoClient;
-		const url = 'mongodb+srv://nn_user:nn_bsyjntss@nauticalnonsens.lflmzfg.mongodb.net/?retryWrites=true&w=majority';
-		const dbName = 'NauticalNonsens'; // Replace with your database name
-		const options = { useNewUrlParser: true, useUnifiedTopology: true };
-
-		MongoClient.connect(url, options, function(err, client) {
-			if (err) {
-			  console.error('Error occurred while connecting to MongoDB:', err);
-			  return;
-			}
-		  
-			console.log('Connected successfully to MongoDB');
-		  
-			const db = client.db(dbName);
-			const collection = db.collection('leaderboard'); // Replace with your collection name
-		  
-			collection.find({}).toArray(function(err, documents) {
-				if (err) {
-				  console.error('Error occurred while reading documents:', err);
-				  return;
-				}
-			  
-				console.log('Found', documents.length, 'documents');
-				
-				// Iterate over the retrieved documents
-				documents.forEach(function(document) {
-				  console.log(document);
-				});
-			  });
-		  
-			client.close(); // Close the connection when finished
-		  });
-		*/ 
+		
 		const leaderboardData = [
 			{ rank: 1, name: 'Player 1', shots: 10 },
 			{ rank: 2, name: 'Player 2', shots: 20 },
@@ -98,28 +111,12 @@ class Leaderboard extends Phaser.Scene {
 			{ rank: 9, name: 'Player 9', shots: 90 },
 			{ rank: 10, name: 'Player 10', shots: 100 },
 		];
-	  
-		// Create a text style for the table
-		const headingStyle = {
-			fontSize: '20px',
-			fill: '#ffffff'
-		};
-
-		const textStyle = {
-			fontSize: '32px',
-			fill: '#ffffff'
-		};
-
-		const columnSpacing = 50;
-		const rowSpacing = 50;
-		const backgroundColor = 0x3c3845
-		const smallCornerRadius = 20
-		const tinyCornerRadius = 10
-		const tableBoardMargin = 30
-
+		
+		/*
+		// old method to create the table
 		const tableBoardPos = {
-			x : 200,
-			y : 100,
+			x : 1270/2 - 700/2,
+			y : 720/2 - 550/2,
 			width : 700,
 			height : 550,
 			cornerRadius : smallCornerRadius
@@ -142,8 +139,52 @@ class Leaderboard extends Phaser.Scene {
 			this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 2, rowY, entry.name, textStyle);
 			this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 10, rowY, entry.shots, textStyle);
 		});
+		*/
 
+		// Scrollbar
+		var textArea = this.rexUI.add.textArea({
+            x : 1270/2,
+			y : 720/2,
+			width : 700,
+			height : 550,
 
+            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, smallCornerRadius, backgroundColor),
+
+            // text: this.add.text(),
+            text: this.rexUI.add.BBCodeText(),
+            // textMask: true,
+
+            slider: {
+                track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 0, COLOR_DARK),
+                thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, tinyCornerRadius, COLOR_LIGHT),
+            },
+
+            space: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+
+                text: tableBoardMargin,
+                header: 0,
+                footer: tableBoardMargin,
+            },
+
+            mouseWheelScroller: {
+                focus: false,
+                speed: 0.1
+            },
+
+            header: this.rexUI.add.label({
+                height: 30,
+                orientation: 0,
+                background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
+                text: this.add.text(0, 0, 'Rank \t Name \t Shots',  headingStyle),
+            }),
+
+            content: CreateContent(leaderboardData),
+        })
+            .layout();
 
 
 		this.events.emit("scene-awake");
@@ -159,10 +200,29 @@ class Leaderboard extends Phaser.Scene {
 
 	preload() {
 		this.load.pack("asset-pack", "assets/leaderboard-asset-pack.json");
+		this.load.audio("click", ["assets/sounds/click_1.mp3"]);
+		this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
 	}
+
+	playClick() 
+	{
+		this.click.play();
+	}
+
+	update(){}
 
 	/* END-USER-CODE */
 }
+
+// Generates data for scrollable list
+var CreateContent = function (data) {
+	let leaderboardString = '';
+	data.forEach((player) => {
+	leaderboardString += `${player.rank} \t ${player.name} \t ${player.shots}\n`;
+	});
+	return leaderboardString
+}
+
 
 /* END OF COMPILED CODE */
 
