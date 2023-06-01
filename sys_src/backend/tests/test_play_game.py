@@ -1,5 +1,5 @@
 import pytest
-from ..play_game import check_sink_ship, make_move, check_win
+from play_game import _check_sink_ship, make_move, _check_win
 
 
 def test_check_sink_ship():
@@ -7,7 +7,7 @@ def test_check_sink_ship():
     ship = [100, 101, 102]
     game_field = [3, 3, 3, 0, 0, 0, 0, 0, 0, 0]
 
-    assert check_sink_ship(ship, game_field) == [4, 4, 4, 0, 0, 0, 0, 0, 0, 0]
+    assert _check_sink_ship(ship, game_field) == [4, 4, 4, 0, 0, 0, 0, 0, 0, 0]
 
 
 def test_check_sink_ship_not_yet():
@@ -15,7 +15,7 @@ def test_check_sink_ship_not_yet():
     ship = [100, 1, 102]
     game_field = [3, 1, 3, 0, 0, 0, 0, 0, 0, 0]
 
-    assert check_sink_ship(ship, game_field) == [3, 1, 3, 0, 0, 0, 0, 0, 0, 0]
+    assert _check_sink_ship(ship, game_field) == [3, 1, 3, 0, 0, 0, 0, 0, 0, 0]
 
 
 def test_check_sink_ship_multiple():
@@ -24,7 +24,7 @@ def test_check_sink_ship_multiple():
     game_field = [3, 3, 3, 0, 0, 0, 0, 0, 3, 3]
 
     for ship in ships:
-        game_field = check_sink_ship(ship, game_field)
+        game_field = _check_sink_ship(ship, game_field)
 
     assert game_field == [4, 4, 4, 0, 0, 0, 0, 0, 4, 4]
 
@@ -35,7 +35,7 @@ def test_check_sink_ship_only_one():
     game_field = [3, 3, 3, 0, 0, 0, 0, 0, 1, 3]
 
     for ship in ships:
-        game_field = check_sink_ship(ship, game_field)
+        game_field = _check_sink_ship(ship, game_field)
 
     assert game_field == [4, 4, 4, 0, 0, 0, 0, 0, 1, 3]
 
@@ -46,7 +46,7 @@ def test_check_sink_ship_touching_ships():
     game_field = [3, 3, 3, 3, 1, 0, 0, 0, 0, 0]
 
     for ship in ships:
-        game_field = check_sink_ship(ship, game_field)
+        game_field = _check_sink_ship(ship, game_field)
 
     assert game_field == [4, 4, 4, 3, 1, 0, 0, 0, 0, 0]
 
@@ -56,7 +56,7 @@ def test_check_sink_ship_nothing_to_sink():
     ship_pos = [0]
     game_field = [1, 0]
 
-    assert check_sink_ship(ship_pos, game_field) == [1, 0]
+    assert _check_sink_ship(ship_pos, game_field) == [1, 0]
 
 
 def test_make_move_water():
@@ -137,11 +137,11 @@ def test_check_win_true():
     
     ships = [[100, 101]]
 
-    assert check_win(ships) is True
+    assert _check_win(ships) is True
 
 
 def test_check_win_false():
     
     ships = [[100, 1], [102, 103]]
 
-    assert check_win(ships) is False
+    assert _check_win(ships) is False
