@@ -11,7 +11,6 @@ class Gameboard extends Phaser.Scene {
 		/* START-USER-CTR-CODE */
 		// Write your code here.
 		/* END-USER-CTR-CODE */
-
 	}
 
 	/** @returns {void} */
@@ -30,14 +29,14 @@ class Gameboard extends Phaser.Scene {
 	}
 
 	// GetColumnsAndRows(highlightedCells, playerGrid) {
-	// 	// Log the elements of the game board used by the ship
-	// 	const usedCells = highlightedCells.map(cell => {
-	// 		const row = playerGrid.findIndex(row => row.includes(cell));
-	// 		const col = playerGrid[row].indexOf(cell);
-	// 		return { row, col };
-	// 	});
-	// 	console.log('Elements used by the ship:', usedCells);
-	// }
+	//  	// Log the elements of the game board used by the ship
+	//  	const usedCells = highlightedCells.map(cell => {
+	//  		const row = playerGrid.findIndex(row => row.includes(cell));
+	//  		const col = playerGrid[row].indexOf(cell);
+	//  		return { row, col };
+	//  	});
+	//  	console.log('Elements used by the ship:', usedCells);
+	//  }
 
 	// highlightShipCells(ship, gameObject, highlightedCells, gridRow, gridColumn, gridSize, playerBoardPos, playerCellSize, playerGrid, shipRotation) {
 	// 	ship.cells = []; // Reset the array of ship cells
@@ -80,23 +79,26 @@ class Gameboard extends Phaser.Scene {
 
 	isCellOccupied(occupiedCells, row, col) {
 		return occupiedCells.some((cell) => cell.row === row && cell.col === col);
-	  }
+	}
 
-	updateOccupiedCells(occupiedCells,ship) {
+	updateOccupiedCells(occupiedCells, playerGrid, ship, oldcells) {
 		// Remove old occupied cells
-		for (const cell of ship.cells) {
-			const index = occupiedCells.findIndex((occupiedCell) => occupiedCell.row === cell.row && occupiedCell.col === cell.col);
-			if (index !== -1) {
-			  occupiedCells.splice(index, 1);
+		if (oldcells !== null) {
+			for (const cell of oldcells) {
+				const index = occupiedCells.findIndex((occupiedCell) => occupiedCell.row === cell.row && occupiedCell.col === cell.col);
+				if (index !== -1) {
+					occupiedCells.splice(index, 1);
+				}
 			}
-		  }
-		  // Add new occupied cells
-		  for (const cell of ship.cells) {
-			occupiedCells.push(cell);
-		  }
-	  }
+		}
 
-	  
+		// Add new occupied cells
+		for (const cell of ship.cells) {
+			occupiedCells.push(cell);
+		}
+	}
+
+
 	getRandomPosition(rotation, ship, shipSprite, gridSize, playerGrid, playerCellSize, occupiedCells) {
 		rotation = Phaser.Math.RND.pick([0, 90, 180, 270]); // Randomly choose rotation angle
 		ship.rotation = rotation;
@@ -104,75 +106,162 @@ class Gameboard extends Phaser.Scene {
 		const maxIndex = gridSize - 1 - size; // The maximum index for row and col based on size
 		let xcenter, ycenter;
 		let row, col;
-		let cellsOccupied = true;
-	  
-		const indices = [];	  
+		var cellsOccupied = true;
+
+		const indices = [];
 		while (cellsOccupied) {
 			if (rotation === 0 || rotation === 180) {
 				// Select horizontally
 				row = Phaser.Math.Between(0, gridSize - 1); // Random row index
 				col = Phaser.Math.Between(0, maxIndex); // Random col index within the valid range
-			
+
 				xcenter = (playerGrid[row][col].x + playerGrid[row][col + size].x) / 2;
 				ycenter = playerGrid[row][col].y + playerCellSize / 2;
-			  } else if (rotation === 90 || rotation === 270) {
+			} else if (rotation === 90 || rotation === 270) {
 				// Select vertically
 				row = Phaser.Math.Between(0, maxIndex); // Random row index within the valid range
 				col = Phaser.Math.Between(0, gridSize - 1); // Random col index
 				xcenter = playerGrid[row][col].x + playerCellSize / 2;
 				ycenter = (playerGrid[row][col].y + playerGrid[row + size][col].y) / 2;
-			  }
-			
-			  indices.length = 0; // Clear previous indices
-			  for (let i = 0; i < size; i++) {
+			}
+
+			indices.length = 0; // Clear previous indices
+			for (let i = 0; i < size; i++) {
 				if (rotation === 0 || rotation === 180) {
-				  indices.push({ row, col: col + i });
+					indices.push({ row, col: col + i });
 				} else if (rotation === 90 || rotation === 270) {
-				  indices.push({ row: row + i, col });
+					indices.push({ row: row + i, col });
 				}
-			  }
-			  cellsOccupied = indices.some((cell) => {
+			}
+			cellsOccupied = indices.some((cell) => {
 				return this.isCellOccupied(occupiedCells, cell.row, cell.col);
-			  });
+			});
 		}
 		ship.cells = indices;
-		this.updateOccupiedCells(occupiedCells,ship);
+		this.updateOccupiedCells(occupiedCells, playerGrid, ship, null);
 		shipSprite.setRotation(Phaser.Math.DegToRad(rotation));
-		return { x: xcenter, y: ycenter};
+		return { x: xcenter, y: ycenter };
 	}
 
-	highlightCells(occupiedCells, playerGrid) {	  
-		// Iterate over the cells array and highlight the corresponding cells on the player board
-		occupiedCells.forEach((cell) => {
-		  const { row, col } = cell;
-		  playerGrid[row][col].setAlpha(0.5);
-		});
-	  }
+	highlightCells(occupiedCells, playerGrid) {
+		// Iterate over the cells array and adjust the alpha value accordingly
+		for (let row = 0; row < playerGrid.length; row++) {
+			for (let col = 0; col < playerGrid[row].length; col++) {
+				const cell = playerGrid[row][col];
+
+				// Check if the cell is in the occupiedCells array
+				if (occupiedCells.some(({ row: occupiedRow, col: occupiedCol }) => occupiedRow === row && occupiedCol === col)) {
+					cell.setAlpha(0.5);  // Highlight occupied cell
+				} else {
+					cell.setAlpha(1);    // Set other cells to normal
+				}
+			}
+		}
+	}
+
+
+	removeHighlightCells(oldcells, playerGrid) {
+
+	}
 
 	placeShipSprite(sprite, ship, gridSize, playerGrid, playerCellSize, occupiedCells) {
-		sprite.setInteractive();
-		let isShipPlaced = false;
-		sprite.on('pointerdown', () => {
-		  this.clickSound.play();
-		  if (!isShipPlaced) {
-			const { x, y } = this.getRandomPosition(ship.rotation, ship, sprite, gridSize, playerGrid, playerCellSize, occupiedCells);
-			console.log(x, y);
-			console.log(ship.cells);
-			console.log(occupiedCells);
-			this.tweens.add({
-			  targets: sprite,
-			  x: x,
-			  y: y,
-			  duration: 500,
-			  onComplete: () => {
-				isShipPlaced = true;
-				this.input.setDraggable(sprite);
-				this.highlightCells(occupiedCells, playerGrid);
-			  }
+		if (ship.placed === 0) {
+			sprite.setInteractive();
+			let isShipClicked = false;
+			sprite.on('pointerdown', () => {
+				this.clickSound.play();
+				if (!isShipClicked) {
+					isShipClicked = true;
+					const { x, y } = this.getRandomPosition(ship.rotation, ship, sprite, gridSize, playerGrid, playerCellSize, occupiedCells);
+					console.log(x, y);
+					console.log(ship.cells);
+					console.log(occupiedCells);
+					this.tweens.add({
+						targets: sprite,
+						x: x,
+						y: y,
+						duration: 300,
+						onComplete: () => {
+							ship.placed = 1;
+							this.highlightCells(occupiedCells, playerGrid);
+							sprite.on("pointerdown", () => {
+								// Call placeShipSprite when the ship sprite is clicked
+								this.placeShipSprite(sprite, ship, gridSize, playerGrid, playerCellSize, occupiedCells);
+							});
+						}
+					});
+				}
 			});
-		  }
-		});
-	  }
+		}
+		else if (ship.placed === 1) {
+			let isSelected = false;
+			// Function to handle ship selection
+			const selectShip = () => {
+				if (isSelected) {
+					sprite.setTint(); // Remove tint from previously selected ship
+					isSelected = false;
+				} else {
+					sprite.setTint(0x00ff00); // Apply tint to the selected ship
+					isSelected = true;
+				}
+			};
+			selectShip();
+
+			const moveShip = (event) => {
+				if (isSelected) {
+					var row_delta = 0;
+					var col_delta = 0;
+
+					if (event.key === 'ArrowUp') {
+						row_delta = -1;
+					} else if (event.key === 'ArrowDown') {
+						row_delta = 1;
+					} else if (event.key === 'ArrowLeft') {
+						col_delta = -1;
+					} else if (event.key === 'ArrowRight') {
+						col_delta = 1;
+					}
+					var oldcells = ship.cells;
+					// Update ship cells with new positions
+					for (let i = 0; i < ship.cells.length; i++) {
+						if (row_delta != 0) {
+							ship.cells[i].row += row_delta;
+						} else if (col_delta != 0) {
+							ship.cells[i].col += col_delta;
+						}
+					}
+
+					console.log(oldcells);
+					// Update occupiedCells array
+					this.updateOccupiedCells(occupiedCells, playerGrid, ship, oldcells);
+
+					// Update ship sprite position
+					sprite.x = sprite.x + col_delta * playerCellSize;
+					sprite.y = sprite.y + row_delta * playerCellSize;
+					this.highlightCells(occupiedCells, playerGrid);
+				}
+			};
+
+			const handleKeyPress = (event) => {
+				if (isSelected) {
+					if (event.key === 'Enter' || event.key === 'Escape') {
+						selectShip();
+						document.removeEventListener('keydown', handleKeyPress);
+					}
+				} else if (event.key === 'Enter' && !isSelected) {
+					selectShip();
+					document.addEventListener('keydown', handleKeyPress);
+				}
+			};
+
+			// Enable keyboard input for ship movement and selection
+			document.addEventListener('keydown', handleKeyPress);
+			document.addEventListener('keydown', moveShip);
+		}
+	}
+
+
+
 
 	/** @returns {void} */
 	editorCreate() {
@@ -181,65 +270,105 @@ class Gameboard extends Phaser.Scene {
 			size: 5, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "battleship",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
 
 		const carrier = {
 			size: 4, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "carrier",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
 
 		const cruiser = {
 			size: 3, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "cruiser",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
 
 		const destroyer = {
 			size: 2, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "destroyer",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
 
 		const destroyer1 = {
 			size: 2, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "destroyer1",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
 
 		const submarine = {
 			size: 1, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "submarine",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
 
 		const submarine1 = {
 			size: 1, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "submarine1",
-			rotation: 0
+			rotation: 0,
+			placed: 0
 		};
-		
-		var battleshipSprite = null;
-		var carrierSprite = null;
-		var cruiserSprite = null;
-		var destroyerSprite = null;
-		var destroyerSprite1 = null;
-		var submarineSprite =null;
-		var submarineSprite1 =null;
+
+		var battleshipSprite = this.add.sprite(1120, 120, 'battleship');
+		battleshipSprite.setScale(0.35);
+		battleshipSprite.setDepth(1);
+
+		var carrierSprite = this.add.sprite(1100, 180, 'carrier');
+		carrierSprite.setScale(0.2);
+		carrierSprite.setDepth(1);
+
+		var cruiserSprite = this.add.sprite(1080, 240, 'cruiser');
+		cruiserSprite.setScale(0.25);
+		cruiserSprite.setDepth(1);
+
+		var destroyerSprite = this.add.sprite(1070, 300, 'destroyer');
+		destroyerSprite.setScale(0.25);
+		destroyerSprite.setDepth(1);
+
+		var destroyerSprite1 = this.add.sprite(1170, 300, 'destroyer');
+		destroyerSprite1.setScale(0.25);
+		destroyerSprite1.setDepth(1);
+
+		var submarineSprite = this.add.sprite((1060), 360, 'submarine');
+		submarineSprite.setScale(0.23);
+		submarineSprite.setDepth(1);
+
+		var submarineSprite1 = this.add.sprite(1120, 360, 'submarine');
+		submarineSprite1.setScale(0.23);
+		submarineSprite1.setDepth(1);
+
+		const ships = [battleship, carrier, cruiser, destroyer, destroyer1, submarine, submarine1];
+		const shipSprites = [battleshipSprite, carrierSprite, cruiserSprite, destroyerSprite, destroyerSprite1, submarineSprite, submarineSprite1];
+		let selectedShipIndex = -1; // Initialize with an invalid index
+
+		// Function to handle ship selection
+		const selectShip = (index) => {
+			if (selectedShipIndex !== -1) {
+				shipSprites[selectedShipIndex].setTint(); // Remove tint from previously selected ship
+			}
+			selectedShipIndex = index;
+			shipSprites[selectedShipIndex].setTint(0x00ff00); // Apply tint to the selected ship
+		};
 
 
 		// create clicksound
 		this.clickSound = this.sound.add('clicksound');
 
 		let occupiedCells = [];
-		
+
 		// Add the background sprite
 		this.background = this.add.image(0, 0, '0001');
 		this.background.setOrigin(0, 0);
@@ -311,51 +440,22 @@ class Gameboard extends Phaser.Scene {
 				playerGrid[row][col] = cell;
 			}
 		}
-		battleshipSprite = this.add.sprite(1120, 120, 'battleship');
-		battleshipSprite.setScale(0.35);
-		battleshipSprite.setDepth(1);
 
-		carrierSprite = this.add.sprite(1100, 180, 'carrier');
-		carrierSprite.setScale(0.2);
-		carrierSprite.setDepth(1);
-
-		cruiserSprite = this.add.sprite(1080, 240, 'cruiser');
-		cruiserSprite.setScale(0.25);
-		cruiserSprite.setDepth(1);
-
-		destroyerSprite = this.add.sprite(1070, 300, 'destroyer');
-		destroyerSprite.setScale(0.25);
-		destroyerSprite.setDepth(1);
-
-		destroyerSprite1 = this.add.sprite(1170, 300, 'destroyer');
-		destroyerSprite1.setScale(0.25);
-		destroyerSprite1.setDepth(1);
-
-		submarineSprite = this.add.sprite((1060), 360, 'submarine');
-		submarineSprite.setScale(0.23);
-		submarineSprite.setDepth(1);
-
-		submarineSprite1 = this.add.sprite(1120, 360, 'submarine');
-		submarineSprite1.setScale(0.23);
-		submarineSprite1.setDepth(1);
-
-		this.placeShipSprite(battleshipSprite, battleship, gridSize, playerGrid, playerCellSize, occupiedCells);
-		this.placeShipSprite(carrierSprite, carrier, gridSize, playerGrid, playerCellSize, occupiedCells);
-		this.placeShipSprite(cruiserSprite, cruiser, gridSize, playerGrid, playerCellSize, occupiedCells);
-		this.placeShipSprite(destroyerSprite, destroyer, gridSize, playerGrid, playerCellSize, occupiedCells);
-		this.placeShipSprite(destroyerSprite1, destroyer1, gridSize, playerGrid, playerCellSize, occupiedCells);
-		this.placeShipSprite(submarineSprite, submarine, gridSize, playerGrid, playerCellSize, occupiedCells);
-		this.placeShipSprite(submarineSprite1, submarine1, gridSize, playerGrid, playerCellSize, occupiedCells);
+		// Call the placeShipSprite function for each ship
+		for (let i = 0; i < ships.length; i++) {
+			const ship = ships[i];
+			const sprite = shipSprites[i];
+			this.placeShipSprite(sprite, ship, gridSize, playerGrid, playerCellSize, occupiedCells);
+		}
 
 		// this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-		// 	if (isShipPlaced) {
 		// 		gameObject.x = dragX;
 		// 		gameObject.y = dragY;
 		// 		// Highlight the cells covered by the ship
 		// 		this.highlightShipCells(destroyer, gameObject, highlightedCells, gridRow, gridColumn, gridSize, playerBoardPos, playerCellSize, playerGrid, shipRotation);
-		// 	}
 
-		// });
+
+		// 	});
 
 		// this.input.on('dragend', (pointer, gameObject) => {
 		// 	if (isShipPlaced) {
@@ -450,7 +550,7 @@ class Gameboard extends Phaser.Scene {
 	}
 
 	preload() {
-		
+
 		this.load.image("battleship", "assets/ships/battleship/battleship_2.png");
 		this.load.image("carrier", "assets/ships/carrier/carrier_2.png");
 		this.load.image("cruiser", "assets/ships/cruiser/cruiser_2.png");
