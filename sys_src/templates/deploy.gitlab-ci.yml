@@ -1,0 +1,23 @@
+get-kubeconfig:
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  stage: .pre
+  script:
+    - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name bdcc-team-blau
+  artifacts:
+    paths:
+      - ~/.kube/config
+   
+deploy-frontend-backend:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: deploy
+  dependencies:
+    - get-kubeconfig
+  script:
+    - kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL
+    - kubectl apply -f sys_src/deployment/backend-deployment.yaml
+    - kubectl apply -f sys_src/deployment/frontend-deployment.yaml
+    - kubectl apply -f sys_src/deployment/backend-service.yaml
+    - kubectl apply -f sys_src/deployment/frontend-service.yaml
+    - kubectl apply -f sys_src/deployment/ingress.yaml

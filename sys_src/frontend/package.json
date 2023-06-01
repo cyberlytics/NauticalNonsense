@@ -4,6 +4,7 @@
   "description": "Description of your project",
   "dependencies": {
     "kafkajs": "^1.15.0",
+    "mongodb": "^5.5.0",
     "ws": "^8.13.0"
   }
 }
