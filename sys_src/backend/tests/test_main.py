@@ -3,6 +3,7 @@ import uuid
 import time
 
 from main import app
+from utils import is_valid_uuid
 
 client = TestClient(app)
 
@@ -11,6 +12,7 @@ def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
     assert isinstance(response.json(), str)
+    assert is_valid_uuid(response.json())
 
 def test_polling():
     response = client.get("/polling")

@@ -1,5 +1,5 @@
 import pytest
-from play_game import _check_sink_ship, make_move, _check_win
+from play_game import _check_sink_ship, make_move, _check_win, _create_game_field
 
 
 def test_check_sink_ship():
@@ -145,3 +145,40 @@ def test_check_win_false():
     ships = [[100, 1], [102, 103]]
 
     assert _check_win(ships) is False
+
+
+def test_create_game_field():
+
+    ships = [[0, 1]]
+
+    game_field = _create_game_field(ships, size=4)
+
+    assert game_field == [1, 1, 0, 0]
+
+
+def test_create_game_field_invalid():
+
+    ships = []
+
+    with pytest.raises(ValueError, match="No ships given"):
+        _create_game_field(ships, size=4)
+
+    ships = [[0, 1], [0, 1]]
+
+    with pytest.raises(ValueError, match="Ship coordinates overlap"):
+        _create_game_field(ships, size=4)
+
+    ships = [[0, -1]]
+
+    with pytest.raises(ValueError, match="Ship coordinates out of range"):
+        _create_game_field(ships, size=4)
+
+    ships = [[0.4, 1.4]]
+
+    with pytest.raises(ValueError, match="Ship coordinates are not integers"):
+        _create_game_field(ships, size=4)
+
+    ships = [[0, 4]]
+
+    with pytest.raises(ValueError, match="Ship coordinates are not one apart"):
+        _create_game_field(ships, size=4)

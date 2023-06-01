@@ -3,6 +3,8 @@ from database.models import State
 
 from datetime import datetime
 
+from utils import is_incremental
+
 import uuid
 
 def prepare_room(client_id: uuid, game_type: str, name: str = None) -> int:
@@ -29,7 +31,7 @@ def new_game_init(
     ships_player_1: list[list[int]],
     ships_player_2: list[list[int]],
     game_mode: str
-) -> State:
+    ) -> State:
     
     game_field_player_1 = _create_game_field(ships_player_1)
     game_field_player_2 = _create_game_field(ships_player_2)
@@ -74,9 +76,22 @@ def _create_game_field(ships: list[list[int]], size: int = 100) -> list[int]:
     Raises:
         ValueError: If the ship coordinates overlap or are out of range
     """
+
+    if not ships:
+        raise ValueError("No ships given")
+
     game_field = [0] * size
 
     for ship in ships:
+
+        ship = sorted(ship)
+
+        if not all([isinstance(coord, int) for coord in ship]):
+            raise ValueError("Ship coordinates are not integers")
+        
+        if not is_incremental(ship):
+            raise ValueError("Ship coordinates are not one apart")
+        
         for coord in ship:
             if coord < len(game_field) and coord >= 0:
                 if game_field[coord] == 0:
