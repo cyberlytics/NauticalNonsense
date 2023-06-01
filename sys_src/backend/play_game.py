@@ -1,4 +1,4 @@
-from database.database import get_map, get_partner, save_state
+from database.database import get_map, get_partner
 from database.models import State
 
 from datetime import datetime
@@ -28,18 +28,19 @@ def new_game_init(
     game_id: str,
     player_1_id: str,
     player_2_id: str,
-    ships_player_1: list[list[int]],
-    ships_player_2: list[list[int]],
-    game_mode: str
+    player_1_ships: list[list[int]],
+    player_2_ships: list[list[int]],
+    game_mode: str,
+    size: int = 100
     ) -> State:
     
-    game_field_player_1 = _create_game_field(ships_player_1)
-    game_field_player_2 = _create_game_field(ships_player_2)
+    game_field_player_1 = _create_game_field(player_1_ships, size=size)
+    game_field_player_2 = _create_game_field(player_2_ships, size=size)
 
     game_state = State(
         game_id=game_id,
-        player_1_id=player_1_id,
-        player_2_id=player_2_id,
+        player1=player_1_id,
+        player2=player_2_id,
         next_player=player_1_id,
         gameMode=game_mode,
         isFinished=False,
@@ -47,12 +48,11 @@ def new_game_init(
         step=0,
         board1=game_field_player_1,
         board2=game_field_player_2,
-        ships1=ships_player_1,
-        ships2=ships_player_2,
+        ships1=player_1_ships,
+        ships2=player_2_ships,
         timestamp=datetime.now()
     )
 
-    # save_state(game_state)
     return game_state
 
 def validate_move(client_json):
@@ -69,6 +69,7 @@ def _create_game_field(ships: list[list[int]], size: int = 100) -> list[int]:
 
     Args:
         ships (list[list[int]]): The ships on the game field
+        size (int, optional): The size of the game field. Defaults to 100.
     
     Returns:
         list[int]: The game field

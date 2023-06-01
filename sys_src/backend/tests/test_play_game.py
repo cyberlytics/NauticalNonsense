@@ -1,5 +1,8 @@
 import pytest
-from play_game import _check_sink_ship, make_move, _check_win, _create_game_field
+
+from play_game import _check_sink_ship, make_move, _check_win, _create_game_field, new_game_init
+
+from database.models import State
 
 
 def test_check_sink_ship():
@@ -182,3 +185,20 @@ def test_create_game_field_invalid():
 
     with pytest.raises(ValueError, match="Ship coordinates are not one apart"):
         _create_game_field(ships, size=4)
+
+
+def test_new_game_init():
+
+    game_state = new_game_init(
+        game_id="0",
+        player_1_id="1",
+        player_2_id="2",
+        player_1_ships=[[0, 1]],
+        player_2_ships=[[2, 3]],
+        game_mode="random",
+        size=4
+    )
+
+    assert isinstance(game_state, State)
+    assert game_state.board1 == [1, 1, 0, 0]
+    assert game_state.board2 == [0, 0, 1, 1]
