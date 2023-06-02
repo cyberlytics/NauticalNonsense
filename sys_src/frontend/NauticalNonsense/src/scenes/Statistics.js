@@ -19,10 +19,16 @@ class Statistics extends Phaser.Scene {
 		//reference to this statistics scene
 		const statistics = this;
 		const darkgrey = 0x3c3845;
+		//1280 x 720
 
 		//text style
 		const textStyle = {
-			fontSize: '32px',
+			fontSize: '24px',
+			fill: '#ffffff'
+		};
+
+		const headingStyle = {
+			fontSize: '28px',
 			fill: '#ffffff'
 		};
 
@@ -66,15 +72,23 @@ class Statistics extends Phaser.Scene {
 			height: 100,
 			radius: 20,
 			backgroundColor: darkgrey,
-			padding: 20
+			padding: 20,
+			//gapX: 11,
+			gapY: 15
 		}
 
 		const games = this.add.graphics();
 		games.fillStyle(gamesStyle.backgroundColor, 1);
 		games.fillRoundedRect(gamesStyle.x, gamesStyle.y, gamesStyle.width, gamesStyle.height, gamesStyle.radius);
 
-		this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding, "Games played: " + stats.gamesCount, textStyle);
-
+		const txtGamesPlayed = this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding, "GAMES PLAYED", textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 250, gamesStyle.y + gamesStyle.padding, "2-Player: " + stats.gamesCountHuman, textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 530, gamesStyle.y + gamesStyle.padding, "PC: " + stats.gamesCountComputer, textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 700, gamesStyle.y + gamesStyle.padding, "Total: "+stats.gamesCount, textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "AVERAGE SHOTS", textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 250, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "2-Player: " + stats.averageMovesHuman.toFixed(2), textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 530, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "PC: " + stats.averageMovesComputer.toFixed(2), textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 700, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "Total: " + stats.averageMoves.toFixed(2), textStyle);
 
 
 		this.events.emit("scene-awake");

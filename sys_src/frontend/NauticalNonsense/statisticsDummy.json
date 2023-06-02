@@ -6,9 +6,9 @@ dummy={
   "totalMoves": 213,
   "totalMovesHuman": 213,
   "totalMovesComputer": 0,
-  "averageMoves": 71,
-  "averageMovesHuman": 71,
-  "averageMovesComputer": 0,
+  "averageMoves": 71.5,
+  "averageMovesHuman": 120.23472,
+  "averageMovesComputer": 50.0,
   "shipPositions": [
     3,
     3,
