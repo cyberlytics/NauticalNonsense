@@ -17,15 +17,54 @@ class Gameboard extends Phaser.Scene {
 	Shoot() {
 		// insert here REST Call to backend or send game object via websocket
 	}
-	rotateShip(shipSprite, shipRotation) {
-		shipRotation += 90; // Increment the rotation angle by 90 degrees
-		shipSprite.setRotation(Phaser.Math.DegToRad(shipRotation)); // Apply the rotation to the ship sprite
-		if (shipRotation === 360) {
-			shipRotation = 0;
+	rotateShip(shipSprite, ship, occupiedCells, gridSize, playerGrid, playerCellSize) {
+		ship.rotation += 90; // Increment the rotation angle by 90 degrees
+		if (ship.rotation === 360) {
+			ship.rotation = 0;
 		}
-		console.log(shipRotation);
 
-		return shipRotation; // Return the updated rotation angle
+		if (ship.size !== 1) {
+			let futurecells = [];
+			for (let i = 0; i < ship.size; i++) {
+				if (ship.rotation === 0 || ship.rotation === 180) {
+					var row = ship.cells[Math.floor(ship.size / 2)].row;
+					var col = ship.cells[0].col - Math.floor(ship.size / 2);
+					futurecells.push({ row, col: col + i });
+
+				} else if (ship.rotation === 90 || ship.rotation === 270) {
+					var row = ship.cells[0].row - Math.floor(ship.size / 2);
+					var col = ship.cells[Math.floor(ship.size / 2)].col;
+					futurecells.push({ row: row + i, col });
+				}
+			}
+			console.log(futurecells);
+
+			if (this.CheckValidPositioning(occupiedCells.map(cell => ({ ...cell })), ship.cells, futurecells, gridSize)) {
+				this.updateOccupiedCells(occupiedCells, futurecells, ship.cells);
+				row = futurecells[0].row;
+				col = futurecells[0].col
+				var xcenter = 0;
+				var ycenter = 0;
+
+				if (ship.rotation === 0 || ship.rotation === 180) {
+					xcenter = (playerGrid[row][col].x + playerGrid[row][col + ship.size - 1].x) / 2 + playerCellSize / 2;
+					ycenter = playerGrid[row][col].y + playerCellSize / 2;
+				} else if (ship.rotation === 90 || ship.rotation === 270) {
+					xcenter = playerGrid[row][col].x + playerCellSize / 2;
+					ycenter = (playerGrid[row][col].y + playerGrid[row + ship.size - 1][col].y) / 2 + playerCellSize / 2;
+				}
+				ship.cells = futurecells;
+				shipSprite.x = xcenter;
+				shipSprite.y = ycenter;
+				shipSprite.setRotation(Phaser.Math.DegToRad(ship.rotation)); // Apply the rotation to the ship sprite
+				this.highlightCells(occupiedCells, playerGrid);
+			}
+			else {
+				ship.rotation -= 90; // Decrement the rotation angle by 90 degrees
+			}
+		} else {
+			shipSprite.setRotation(Phaser.Math.DegToRad(ship.rotation)); // Apply the rotation to the ship sprite
+		}
 	}
 
 	// GetColumnsAndRows(highlightedCells, playerGrid) {
@@ -168,7 +207,7 @@ class Gameboard extends Phaser.Scene {
 				occupiedCells.splice(index, 1);
 			}
 		}
-		
+
 
 		for (let i = 0; i < futurecells.length; i++) {
 			if (futurecells[i].row > gridSize - 1 || futurecells[i].row < 0 || futurecells[i].col > gridSize - 1 || futurecells[i].col < 0) {
@@ -246,8 +285,8 @@ class Gameboard extends Phaser.Scene {
 							futurecells[i].col += col_delta;
 						}
 					}
-					
-					if (this.CheckValidPositioning(occupiedCells.map(cell => ({ ...cell })), ship.cells , futurecells , gridSize)) {
+
+					if (this.CheckValidPositioning(occupiedCells.map(cell => ({ ...cell })), ship.cells, futurecells, gridSize)) {
 						// Update occupiedCells array
 						this.updateOccupiedCells(occupiedCells, futurecells, ship.cells);
 						ship.cells = futurecells
@@ -255,7 +294,7 @@ class Gameboard extends Phaser.Scene {
 						sprite.x = sprite.x + col_delta * playerCellSize;
 						sprite.y = sprite.y + row_delta * playerCellSize;
 						this.highlightCells(occupiedCells, playerGrid);
-					} 
+					}
 				}
 			};
 
@@ -264,6 +303,8 @@ class Gameboard extends Phaser.Scene {
 					if (event.key === 'Enter' || event.key === 'Escape') {
 						selectShip();
 						document.removeEventListener('keydown', handleKeyPress);
+					} else if (event.key === 'r' || event.key === 'R') {
+						this.rotateShip(sprite, ship, occupiedCells, gridSize, playerGrid, playerCellSize);
 					}
 				} else if (event.key === 'Enter' && !isSelected) {
 					selectShip();
@@ -537,12 +578,9 @@ class Gameboard extends Phaser.Scene {
 			Phaser.Geom.Rectangle.Contains
 		);
 		this.rotateButton.on('pointerdown', () => {
-			if (isShipPlaced) {
+			if (destroyer.placed === 1) {
 				this.clickSound.play();
-				shipRotation = this.rotateShip(destroyerSprite, shipRotation);
-				// Update the highlighted cells
-				this.GetColumnsAndRows(highlightedCells, playerGrid)
-
+				this.rotateShip(destroyerSprite, destroyer, occupiedCells, gridSize, playerGrid, playerCellSize);
 			}
 		});
 		this.rotateText = this.add.text(
