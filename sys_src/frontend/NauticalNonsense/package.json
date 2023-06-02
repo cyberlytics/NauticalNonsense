@@ -7,9 +7,10 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cypress run --e2e --headless --browser firefox",
     "editor": "phasereditor2d-launcher -project . -port 1959",
-    "editor-remote": "phasereditor2d-launcher -project . -disable-open-browser -public -port 1959"
+    "editor-remote": "phasereditor2d-launcher -project . -disable-open-browser -public -port 1959",
+    "cypress:open": "cypress open"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   },
   "homepage": "https://github.com/PhaserEditor2D/starter-template-basic-javascript#readme",
   "devDependencies": {
+    "cypress": "^12.13.0",
     "phasereditor2d-launcher": "^3.32.0"
   }
 }
