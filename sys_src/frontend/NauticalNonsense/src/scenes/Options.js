@@ -193,7 +193,7 @@ class Options extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
-			//self.scene.start("");
+			self.scene.start("Rules");
         });
 		
 		// rulesText
