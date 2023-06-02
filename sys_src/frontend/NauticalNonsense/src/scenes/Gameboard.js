@@ -247,7 +247,7 @@ class Gameboard extends Phaser.Scene {
 						}
 					}
 					
-					if (this.CheckValidPositioning(occupiedCells, ship.cells , futurecells , gridSize)) {
+					if (this.CheckValidPositioning(occupiedCells.map(cell => ({ ...cell })), ship.cells , futurecells , gridSize)) {
 						// Update occupiedCells array
 						this.updateOccupiedCells(occupiedCells, futurecells, ship.cells);
 						ship.cells = futurecells
