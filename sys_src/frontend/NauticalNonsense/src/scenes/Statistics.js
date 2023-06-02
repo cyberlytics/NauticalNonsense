@@ -19,6 +19,8 @@ class Statistics extends Phaser.Scene {
 		//reference to this statistics scene
 		const statistics = this;
 		const darkgrey = 0x3c3845;
+		const white = 0xffffff;
+		const boardsize = 100;
 		//1280 x 720
 
 		//text style
@@ -64,7 +66,7 @@ class Statistics extends Phaser.Scene {
 		var stats = dummy;
 
 
-		//number of games
+		//number of games and average shots
 		const gamesStyle = {
 			x: 50,
 			y: 50,
@@ -89,6 +91,41 @@ class Statistics extends Phaser.Scene {
 		this.add.text(gamesStyle.x + gamesStyle.padding + 250, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "2-Player: " + stats.averageMovesHuman.toFixed(2), textStyle);
 		this.add.text(gamesStyle.x + gamesStyle.padding + 530, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "PC: " + stats.averageMovesComputer.toFixed(2), textStyle);
 		this.add.text(gamesStyle.x + gamesStyle.padding + 700, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "Total: " + stats.averageMoves.toFixed(2), textStyle);
+		
+
+		//board for most used ship positions
+		const boardShips = [];
+
+		const cellColor = 0x387c00;
+
+		const boardStyle = {
+			x: 60,
+			y: 200,
+			radius: 20,
+			backgroundColor: darkgrey,
+			padding: 20,
+			cellsize: 30
+		}
+
+		this.boardShipsBG = this.add.graphics();
+		this.boardShipsBG.fillStyle(boardStyle.backgroundColor, 1);
+		this.boardShipsBG.fillRoundedRect(boardStyle.x, boardStyle.y, 10 * boardStyle.cellsize + 2 * boardStyle.padding, 10 * boardStyle.cellsize + 2 * boardStyle.padding /*+Titel*/, boardStyle.radius);
+
+		var cellX = boardStyle.x + boardStyle.padding;
+		var cellY = boardStyle.y + boardStyle.padding; //+Titel
+
+		var ships = stats.shipPositions;
+		var maxShips = Math.max(...ships);
+
+		for (let i = 1; i <= boardsize; i++) {
+			this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, white).setOrigin(0, 0);
+			boardShips[i] = this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, cellColor).setOrigin(0, 0).setAlpha(ships[i-1]/maxShips);
+			cellX = cellX + boardStyle.cellsize;
+			if (i % 10 == 0) {
+				cellX = boardStyle.x + boardStyle.padding;
+				cellY = cellY + boardStyle.cellsize;
+			}
+		}
 
 
 		this.events.emit("scene-awake");
