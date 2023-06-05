@@ -125,6 +125,21 @@ class Statistics extends Phaser.Scene {
 		}
 		this.boardShots = this.makeBoard(boardStyleShots, "Most Shot Fields", stats.moves);
 
+		//board for first shots
+		const boardStyleFirsts = {
+			x: 680,
+			y: 200,
+			radius: 20,
+			backgroundColor: darkgrey,
+			padding: 20,
+			boardsize: boardsize,
+			cellsize: 25,
+			cellColor: 0xff7700,
+			cellBackground: white,
+			textStyle: textStyle
+		}
+		this.boardFirsts = this.makeBoard(boardStyleFirsts, "Most First Shots", stats.moves); //data noch ändern
+
 
 		this.events.emit("scene-awake");
 	}
