@@ -70,9 +70,9 @@ class Statistics extends Phaser.Scene {
 
 		//number of games and average shots
 		const gamesStyle = {
-			x: 50,
+			x: 35,
 			y: 50,
-			width: 900,
+			width: 910,
 			height: 100,
 			radius: 20,
 			backgroundColor: darkgrey,
@@ -80,7 +80,6 @@ class Statistics extends Phaser.Scene {
 			//gapX: 11,
 			gapY: 15
 		}
-
 		const games = this.add.graphics();
 		games.fillStyle(gamesStyle.backgroundColor, 1);
 		games.fillRoundedRect(gamesStyle.x, gamesStyle.y, gamesStyle.width, gamesStyle.height, gamesStyle.radius);
@@ -97,7 +96,7 @@ class Statistics extends Phaser.Scene {
 
 		//board for most used ship positions
 		const boardStyleShips = {
-			x: 60,
+			x: 35,
 			y: 200,
 			radius: 20,
 			backgroundColor: darkgrey,
@@ -112,7 +111,7 @@ class Statistics extends Phaser.Scene {
 
 		//board for positions most shot
 		const boardStyleShots = {
-			x: 370,
+			x: 345,
 			y: 200,
 			radius: 20,
 			backgroundColor: darkgrey,
@@ -127,7 +126,7 @@ class Statistics extends Phaser.Scene {
 
 		//board for first shots
 		const boardStyleFirsts = {
-			x: 680,
+			x: 655,
 			y: 200,
 			radius: 20,
 			backgroundColor: darkgrey,
@@ -139,6 +138,26 @@ class Statistics extends Phaser.Scene {
 			textStyle: textStyle
 		}
 		this.boardFirsts = this.makeBoard(boardStyleFirsts, "Most First Shots", stats.moves); //data noch ändern
+		
+		//winner's ships hit
+		const shiphitsStyle = {
+			x: 965,
+			y: 50,
+			width: 290,
+			height: 473,
+			radius: 20,
+			backgroundColor: darkgrey,
+			padding: 20,
+
+		}
+		const shiphits = this.add.graphics();
+		shiphits.fillStyle(shiphitsStyle.backgroundColor, 1);
+		shiphits.fillRoundedRect(shiphitsStyle.x, shiphitsStyle.y, shiphitsStyle.width, shiphitsStyle.height, shiphitsStyle.radius);
+
+		const txtShiphits = this.add.text(shiphitsStyle.x + shiphitsStyle.padding, shiphitsStyle.y + shiphitsStyle.padding, "Winner's Ships Hit", textStyle);
+
+		//Schiffe einfügen
+		//...
 
 
 		this.events.emit("scene-awake");
