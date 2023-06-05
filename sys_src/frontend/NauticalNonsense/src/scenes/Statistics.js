@@ -104,22 +104,24 @@ class Statistics extends Phaser.Scene {
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
-			cellsize: 30
+			cellsize: 25
 		}
+
+		const txtShips = this.add.text(boardStyleShips.x + boardStyleShips.padding, boardStyleShips.y + boardStyleShips.padding, "Ship positions", textStyle).setDepth(1);		
 
 		this.boardShipsBG = this.add.graphics();
 		this.boardShipsBG.fillStyle(boardStyleShips.backgroundColor, 1);
-		this.boardShipsBG.fillRoundedRect(boardStyleShips.x, boardStyleShips.y, 10 * boardStyleShips.cellsize + 2 * boardStyleShips.padding, 10 * boardStyleShips.cellsize + 2 * boardStyleShips.padding /*+Titel*/, boardStyleShips.radius);
+		this.boardShipsBG.fillRoundedRect(boardStyleShips.x, boardStyleShips.y, 10 * boardStyleShips.cellsize + 2 * boardStyleShips.padding, 10 * boardStyleShips.cellsize + 2 * boardStyleShips.padding + 1.5*txtShips.height, boardStyleShips.radius);
 
 		var cellX = boardStyleShips.x + boardStyleShips.padding;
-		var cellY = boardStyleShips.y + boardStyleShips.padding; //+Titel
+		var cellY = boardStyleShips.y + boardStyleShips.padding + 1.5*txtShips.height;
 
 		var ships = stats.shipPositions;
 		var maxShips = Math.max(...ships);
 
 		for (let i = 1; i <= boardsize; i++) {
 			this.add.rectangle(cellX, cellY, boardStyleShips.cellsize - 1, boardStyleShips.cellsize - 1, white).setOrigin(0, 0);
-			boardShips[i] = this.add.rectangle(cellX, cellY, boardStyleShips.cellsize - 1, boardStyleShips.cellsize - 1, cellColorShips).setOrigin(0, 0).setAlpha(ships[i-1]/maxShips);
+			boardShips[i - 1] = this.add.rectangle(cellX, cellY, boardStyleShips.cellsize - 1, boardStyleShips.cellsize - 1, cellColorShips).setOrigin(0, 0).setAlpha(ships[i-1]/maxShips);
 			cellX = cellX + boardStyleShips.cellsize;
 			if (i % 10 == 0) {
 				cellX = boardStyleShips.x + boardStyleShips.padding;
@@ -134,35 +136,35 @@ class Statistics extends Phaser.Scene {
 		const cellColorShots = 0xff003c;
 
 		const boardStyleShots = {
-			x: 420,
+			x: 370,
 			y: 200,
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
-			cellsize: 30
+			cellsize: 25
 		}
+
+		const txtShots = this.add.text(boardStyleShots.x + boardStyleShots.padding, boardStyleShots.y + boardStyleShots.padding, "Most shot fields", textStyle).setDepth(1);
 
 		this.boardShotsBG = this.add.graphics();
 		this.boardShotsBG.fillStyle(boardStyleShots.backgroundColor, 1);
-		this.boardShotsBG.fillRoundedRect(boardStyleShots.x, boardStyleShots.y, 10 * boardStyleShots.cellsize + 2 * boardStyleShots.padding, 10 * boardStyleShots.cellsize + 2 * boardStyleShots.padding, boardStyleShots.radius);
+		this.boardShotsBG.fillRoundedRect(boardStyleShots.x, boardStyleShots.y, 10 * boardStyleShots.cellsize + 2 * boardStyleShots.padding, 10 * boardStyleShots.cellsize + 2 * boardStyleShots.padding + 1.5 * txtShots.height, boardStyleShots.radius);
 
 		var cellX = boardStyleShots.x + boardStyleShots.padding;
-		var cellY = boardStyleShots.y + boardStyleShots.padding;
+		var cellY = boardStyleShots.y + boardStyleShots.padding + 1.5 * txtShots.height;
 
 		var shots = stats.moves;
 		var maxShots = Math.max(...shots);
 
 		for (let i = 1; i <= boardsize; i++) {
 			this.add.rectangle(cellX, cellY, boardStyleShots.cellsize - 1, boardStyleShots.cellsize - 1, white).setOrigin(0, 0);
-			boardShots[i] = this.add.rectangle(cellX, cellY, boardStyleShots.cellsize - 1, boardStyleShots.cellsize - 1, cellColorShots).setOrigin(0, 0).setAlpha(shots[i - 1] / maxShots);
+			boardShots[i - 1] = this.add.rectangle(cellX, cellY, boardStyleShots.cellsize - 1, boardStyleShots.cellsize - 1, cellColorShots).setOrigin(0, 0).setAlpha(shots[i - 1] / maxShots);
 			cellX = cellX + boardStyleShots.cellsize;
 			if (i % 10 == 0) {
 				cellX = boardStyleShots.x + boardStyleShots.padding;
 				cellY = cellY + boardStyleShots.cellsize;
 			}
 		}
-
-
 
 		this.events.emit("scene-awake");
 	}
