@@ -18,17 +18,18 @@ class Statistics extends Phaser.Scene {
 
 		//reference to this statistics scene
 		const statistics = this;
+
+		//define important variables
 		const darkgrey = 0x3c3845;
 		const white = 0xffffff;
 		const boardsize = 100;
 		//1280 x 720
 
-		//text style
+		//text styles
 		const textStyle = {
 			fontSize: '24px',
 			fill: '#ffffff'
 		};
-
 		const headingStyle = {
 			fontSize: '28px',
 			fill: '#ffffff'
@@ -58,12 +59,13 @@ class Statistics extends Phaser.Scene {
 			statistics.sound.add("click").play();
 			this.clearTint();
 			statistics.scene.start('Options');
+						//boardShips[0].setFillStyle(boardShips[0].fillColor, 0.2);
 		})
 
 
 		// get stats via backend API
 		//...
-		var stats = dummy;
+		const stats = dummy;
 
 
 		//number of games and average shots
@@ -94,77 +96,35 @@ class Statistics extends Phaser.Scene {
 		
 
 		//board for most used ship positions
-		const boardShips = [];
-
-		const cellColorShips = 0x387c00;
-
 		const boardStyleShips = {
 			x: 60,
 			y: 200,
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
-			cellsize: 25
+			boardsize: boardsize,
+			cellsize: 25,
+			cellColor: 0x387c00,
+			cellBackground: white,
+			textStyle: textStyle
 		}
-
-		const txtShips = this.add.text(boardStyleShips.x + boardStyleShips.padding, boardStyleShips.y + boardStyleShips.padding, "Ship positions", textStyle).setDepth(1);		
-
-		this.boardShipsBG = this.add.graphics();
-		this.boardShipsBG.fillStyle(boardStyleShips.backgroundColor, 1);
-		this.boardShipsBG.fillRoundedRect(boardStyleShips.x, boardStyleShips.y, 10 * boardStyleShips.cellsize + 2 * boardStyleShips.padding, 10 * boardStyleShips.cellsize + 2 * boardStyleShips.padding + 1.5*txtShips.height, boardStyleShips.radius);
-
-		var cellX = boardStyleShips.x + boardStyleShips.padding;
-		var cellY = boardStyleShips.y + boardStyleShips.padding + 1.5*txtShips.height;
-
-		var ships = stats.shipPositions;
-		var maxShips = Math.max(...ships);
-
-		for (let i = 1; i <= boardsize; i++) {
-			this.add.rectangle(cellX, cellY, boardStyleShips.cellsize - 1, boardStyleShips.cellsize - 1, white).setOrigin(0, 0);
-			boardShips[i - 1] = this.add.rectangle(cellX, cellY, boardStyleShips.cellsize - 1, boardStyleShips.cellsize - 1, cellColorShips).setOrigin(0, 0).setAlpha(ships[i-1]/maxShips);
-			cellX = cellX + boardStyleShips.cellsize;
-			if (i % 10 == 0) {
-				cellX = boardStyleShips.x + boardStyleShips.padding;
-				cellY = cellY + boardStyleShips.cellsize;
-			}
-		}
-
+		this.boardShips = this.makeBoard(boardStyleShips, "Ship Positions", stats.shipPositions);
 
 		//board for positions most shot
-		const boardShots = [];
-
-		const cellColorShots = 0xff003c;
-
 		const boardStyleShots = {
 			x: 370,
 			y: 200,
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
-			cellsize: 25
+			boardsize: boardsize,
+			cellsize: 25,
+			cellColor: 0xff003c,
+			cellBackground: white,
+			textStyle: textStyle
 		}
+		this.boardShots = this.makeBoard(boardStyleShots, "Most Shot Fields", stats.moves);
 
-		const txtShots = this.add.text(boardStyleShots.x + boardStyleShots.padding, boardStyleShots.y + boardStyleShots.padding, "Most shot fields", textStyle).setDepth(1);
-
-		this.boardShotsBG = this.add.graphics();
-		this.boardShotsBG.fillStyle(boardStyleShots.backgroundColor, 1);
-		this.boardShotsBG.fillRoundedRect(boardStyleShots.x, boardStyleShots.y, 10 * boardStyleShots.cellsize + 2 * boardStyleShots.padding, 10 * boardStyleShots.cellsize + 2 * boardStyleShots.padding + 1.5 * txtShots.height, boardStyleShots.radius);
-
-		var cellX = boardStyleShots.x + boardStyleShots.padding;
-		var cellY = boardStyleShots.y + boardStyleShots.padding + 1.5 * txtShots.height;
-
-		var shots = stats.moves;
-		var maxShots = Math.max(...shots);
-
-		for (let i = 1; i <= boardsize; i++) {
-			this.add.rectangle(cellX, cellY, boardStyleShots.cellsize - 1, boardStyleShots.cellsize - 1, white).setOrigin(0, 0);
-			boardShots[i - 1] = this.add.rectangle(cellX, cellY, boardStyleShots.cellsize - 1, boardStyleShots.cellsize - 1, cellColorShots).setOrigin(0, 0).setAlpha(shots[i - 1] / maxShots);
-			cellX = cellX + boardStyleShots.cellsize;
-			if (i % 10 == 0) {
-				cellX = boardStyleShots.x + boardStyleShots.padding;
-				cellY = cellY + boardStyleShots.cellsize;
-			}
-		}
 
 		this.events.emit("scene-awake");
 	}
@@ -180,6 +140,32 @@ class Statistics extends Phaser.Scene {
 
 	preload() {
 
+	}
+
+	makeBoard(boardStyle, title, data) {
+		let board = []
+
+		const txtTitle = this.add.text(boardStyle.x + boardStyle.padding, boardStyle.y + boardStyle.padding, title, boardStyle.textStyle).setDepth(1);
+
+		const boardBG = this.add.graphics();
+		boardBG.fillStyle(boardStyle.backgroundColor, 1);
+		boardBG.fillRoundedRect(boardStyle.x, boardStyle.y, 10 * boardStyle.cellsize + 2 * boardStyle.padding, 10 * boardStyle.cellsize + 2 * boardStyle.padding + 1.5 * txtTitle.height, boardStyle.radius);
+
+		let cellX = boardStyle.x + boardStyle.padding;
+		let cellY = boardStyle.y + boardStyle.padding + 1.5 * txtTitle.height;
+
+		let dataMax = Math.max(...data);
+
+		for (let i = 1; i <= boardStyle.boardsize; i++) {
+			this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellBackground).setOrigin(0, 0);
+			board[i - 1] = this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellColor).setOrigin(0, 0).setAlpha(data[i - 1] / dataMax);
+			cellX = cellX + boardStyle.cellsize;
+			if (i % 10 == 0) {
+				cellX = boardStyle.x + boardStyle.padding;
+				cellY = cellY + boardStyle.cellsize;
+			}
+		}
+		return board;
 	}
 
 	/* END-USER-CODE */
