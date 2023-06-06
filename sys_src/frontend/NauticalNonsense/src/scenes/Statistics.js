@@ -148,17 +148,36 @@ class Statistics extends Phaser.Scene {
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
-
+			textStyle: textStyle
 		}
 		const shiphits = this.add.graphics();
 		shiphits.fillStyle(shiphitsStyle.backgroundColor, 1);
 		shiphits.fillRoundedRect(shiphitsStyle.x, shiphitsStyle.y, shiphitsStyle.width, shiphitsStyle.height, shiphitsStyle.radius);
 
-		const txtShiphits = this.add.text(shiphitsStyle.x + shiphitsStyle.padding, shiphitsStyle.y + shiphitsStyle.padding, "Winner's Ships Hit", textStyle);
+		const txtShiphits = this.add.text(shiphitsStyle.x + shiphitsStyle.padding, shiphitsStyle.y + shiphitsStyle.padding, "Winner's Ships Hit", shiphitsStyle.textStyle);
 
 		//Schiffe einfügen
 		//...
 
+
+		//other (capitulations and wins against computer)
+		const otherStyle = {
+			x: 120,
+			y: 545,
+			width: 910,
+			height: 100,
+			radius: 20,
+			backgroundColor: darkgrey,
+			padding: 20,
+			gapY: 15,
+			textStyle: textStyle
+		}
+		const other = this.add.graphics();
+		other.fillStyle(otherStyle.backgroundColor, 1);
+		other.fillRoundedRect(otherStyle.x, otherStyle.y, otherStyle.width, otherStyle.height, otherStyle.radius);
+
+		const txtCapitulations = this.add.text(otherStyle.x + otherStyle.padding, otherStyle.y + otherStyle.padding, "Total Capitulations: " + stats.capitulations, otherStyle.textStyle);
+		const txtWinsPc = this.add.text(otherStyle.x + otherStyle.padding, otherStyle.y + otherStyle.padding + txtCapitulations.height + otherStyle.gapY, "Wins against PC: " + stats.winCountComputer + " or " + (100 * stats.winCountComputer / stats.gamesCountComputer).toFixed(1)+ "%", otherStyle.textStyle);
 
 		this.events.emit("scene-awake");
 	}

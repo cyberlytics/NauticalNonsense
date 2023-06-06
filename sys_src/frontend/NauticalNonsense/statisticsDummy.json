@@ -1,14 +1,15 @@
 dummy={
-  "gamesCount": 3,
+  "gamesCount": 5,
   "gamesCountHuman": 3,
-  "gamesCountComputer": 0,
-  "winCountComputer": 0,
+  "gamesCountComputer": 2,
+  "winCountComputer": 1,
   "totalMoves": 213,
   "totalMovesHuman": 213,
   "totalMovesComputer": 0,
   "averageMoves": 71.5,
   "averageMovesHuman": 120.23472,
   "averageMovesComputer": 50.0,
+  "capitulations":  12,
   "shipPositions": [
     3,
     3,
