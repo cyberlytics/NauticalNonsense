@@ -3,11 +3,13 @@ import datetime
 
 class State(BaseModel):
     game_id: str = Field(..., description = "Unique id for the game")
-    player1: str = Field(..., description = "Name of player 1")
-    player2: str = Field(..., description = "Name of player 2")
-    next_player: str = Field(..., description = "Name of next player in turn")
+    player1: str = Field(..., description = "Id of player 1")
+    player1Name: str = Field(..., description = "Name of player 1")
+    player2: str = Field(..., description = "Id of player 2")
+    player2Name: str = Field(..., description = "Name of player 2")
+    next_player: str = Field(..., description = "Id of next player in turn")
     gameMode: str = Field(..., description = "against pc/random/friend")
-    isFinished: bool = Field(..., description = "True if game is over")
+    gameStatus: str = Field(..., description = "status of game: wait/place/play/finished")
     winner: str = Field(..., description = "Name of player, who won")
     step: int = Field(..., description = "Count of total moves of game")
     board1: list[int] = Field(..., description = "Playing board owned by player1")
@@ -32,7 +34,6 @@ class LeaderboardWithRank(BaseModel):
 
 class Stat(BaseModel):
     #Siege durch Kapitulation entfernen?
-    #Bei State: capitulation bool = Field(..., description = "True if opponent capitulated")
     gamesCount: int = Field(..., description = "Total number of games played") #int has no limit in python3
     gamesCountHuman: int = Field(..., description = "Number of games played against other players")
     gamesCountComputer: int = Field(..., description = "Number of games played against computer")
@@ -43,11 +44,11 @@ class Stat(BaseModel):
     averageMoves: float = Field(..., description = "Average number of moves until end of game")
     averageMovesHuman: float = Field(..., description = "Average number of moves until end of game against player")
     averageMovesComputer: float = Field(..., description = "Average number of moves until end of game against computer") #vllt /2 ?
+    capitulations: int = Field(..., description = "Total number of capitulations")
     shipPositions: list[int] = Field(..., description = "Total positions of ships")
-    moves: list[int] = Field(..., description = "(Normalized) total moves") #Mongo: Absolut, Frontend: Relativ ?
-    #firstMoves: list[int] = Field(..., description = "Most commonly chosen first moves")
-    #popularShipPositions: list[list[int]] = Field(..., description = "Most popular ship positions")
-    totalShipsHit: list[int] = Field(..., description = "Total count of winner's ships hit per shiptype by end of game")#Zahl der mind 1x getroffenen Schiffe #vllt auch Gesamtanzahl
+    moves: list[int] = Field(..., description = "Total moves")
+    firstMoves: list[int] = Field(..., description = "Most commonly chosen first moves")
+    totalShipsHit: list[int] = Field(..., description = "Total count of winner's ships hit per shiptype by end of game")#Zahl der mind 1x getroffenen Schiffe
     averageShipsHit: list[float] = Field(..., description = "Average count of winner's ships hit per shiptype by end of game")
     totalShiphits: list[int] = Field(..., description = "Total count of winner's ships' hits per shiptype by end of game")#Anteile der Schiffe, die getroffen sind
     averageShiphits: list[float] = Field(..., description = "Average count of winner's ships' hits per shiptype by end of game")
