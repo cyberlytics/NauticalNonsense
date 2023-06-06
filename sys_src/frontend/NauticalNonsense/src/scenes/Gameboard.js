@@ -276,7 +276,7 @@ class Gameboard extends Phaser.Scene {
 	editorCreate() {
 		//Ship Init
 		const battleship = {
-			size: 5, // Change this value as per your ship's size
+			size: 4, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "battleship",
 			rotation: 0,
@@ -284,7 +284,7 @@ class Gameboard extends Phaser.Scene {
 		};
 
 		const carrier = {
-			size: 4, // Change this value as per your ship's size
+			size: 5, // Change this value as per your ship's size
 			cells: [], // To store the cells occupied by the ship
 			name: "carrier",
 			rotation: 0,
@@ -330,12 +330,12 @@ class Gameboard extends Phaser.Scene {
 			rotation: 0,
 			placed: 0
 		};
-
-		var battleshipSprite = this.add.sprite(1120, 120, 'battleship');
+		
+		var battleshipSprite = this.add.sprite(1100, 180 , 'battleship');
 		battleshipSprite.setScale(0.35);
 		battleshipSprite.setDepth(1);
 
-		var carrierSprite = this.add.sprite(1100, 180, 'carrier');
+		var carrierSprite = this.add.sprite(1120, 120, 'carrier');
 		carrierSprite.setScale(0.2);
 		carrierSprite.setDepth(1);
 
@@ -376,12 +376,12 @@ class Gameboard extends Phaser.Scene {
 		// draw enemy board
 		const gridSize = 10;
 		const cellColor = 0x8cc88c;
-		const shootRedColor = 0xff7896
-		const backgroundColor = 0x3c3845
-		const capitulateColor = 0xffe578
-		const smallCornerRadius = 20
-		const tinyCornerRadius = 10
-		const boardMargin = 30
+		const PositionFinished = 0x5bb450;
+		const backgroundColor = 0x3c3845;
+		const capitulateColor = 0xffe578;
+		const smallCornerRadius = 20;
+		const tinyCornerRadius = 10;
+		const boardMargin = 30;
 
 		const enemyBoardPos = {
 			x: 60,
@@ -457,17 +457,32 @@ class Gameboard extends Phaser.Scene {
 		this.shootBoard.fillStyle(backgroundColor, 1);
 		this.shootBoard.fillRoundedRect(enemyBoardPos.x - smallCornerRadius, enemyBoardPos.y + enemyBoardPos.height + smallCornerRadius + boardMargin, enemyBoardPos.width + 2 * smallCornerRadius, 220, smallCornerRadius);
 
-		// draw shoot button
-		this.shootButton = this.add.graphics();
-		this.shootButton.fillStyle(shootRedColor, 1);
-		this.shootButton.fillRoundedRect(enemyBoardPos.x, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 2 * smallCornerRadius, 220, 110, tinyCornerRadius);
-		this.shootButton.setInteractive(new Phaser.Geom.Rectangle(enemyBoardPos.x, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 2 * smallCornerRadius, 220, 110), Phaser.Geom.Rectangle.Contains);
-		this.shootButton.on('pointerdown', () => {
-			this.clickSound.play();
-			shoot()
-		});
-		this.shootText = this.add.text(enemyBoardPos.x + tinyCornerRadius + 35, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + tinyCornerRadius + 10, 'SHOOT', { fill: '#000000', fontSize: 30, fontStyle: "bold", fontFamily: "Sans" });
+		// startButton
+		const startButton = this.add.image(120, 540, "startButton").setInteractive({ useHandCursor: true  });
+		
+		startButton.on('pointerover', function (event)
+        {
 
+            this.setTint(PositionFinished);
+
+        });
+
+        startButton.on('pointerout', function (event)
+        {
+
+            this.clearTint();
+
+        });
+		
+		startButton.on('pointerdown', function (event)
+        {
+
+			this.clearTint();
+			self.stopHorn();
+			self.playClick();
+		});
+		
+		
 
 		// draw capitulate button
 		this.capitulateButton = this.add.graphics();
