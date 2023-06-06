@@ -31,6 +31,15 @@ class Preload extends Phaser.Scene {
 		this.load.image("rulesBackground", "assets/rules/rulesBackground.png");
 		this.load.image("rulesRight", "assets/rules/buttonRight.png");
 		this.load.image("rulesLeft", "assets/rules/buttonLeft.png");
+		this.load.image("spBattlefieldBackground", "assets/shipplacement/battlefieldBackground.png");
+		this.load.image("spButtonBox", "assets/shipplacement/buttonBox.png");
+		this.load.image("spConfirmButton", "assets/shipplacement/confirmButton.png");
+		this.load.image("spFleetBox", "assets/shipplacement/fleetBox.png");
+		this.load.image("spOpponentStatus", "assets/shipplacement/opponentStatus.png");
+		this.load.image("spOpponentStatusGreen", "assets/shipplacement/opponentStatusGreen.png");
+		this.load.image("spOpponentStatusRed", "assets/shipplacement/opponentStatusRed.png");
+		this.load.image("spRandomButton", "assets/shipplacement/randomButton.png");
+		this.load.image("spResetButton", "assets/shipplacement/resetButton.png");
 
 	}
 
