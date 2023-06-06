@@ -17,6 +17,20 @@ class Gameboard extends Phaser.Scene {
 	Shoot() {
 		// insert here REST Call to backend or send game object via websocket
 	}
+
+	GetListOfPositions(ships, gridSize) {
+		let positions = []
+		for (let i = 0; i < ships.length; i++) {
+			positions[i] = []
+			for (let j = 0; j < ships[i].cells.length; j++) {
+				console.log(ships[i].cells[0])
+				positions[i][j] = ships[i].cells[j].row * gridSize + ships[i].cells[j].col;
+			}
+		}
+		console.log(positions);
+		return positions;
+	}
+
 	rotateShip(shipSprite, ship, occupiedCells, gridSize, playerGrid, playerCellSize) {
 		ship.rotation += 90; // Increment the rotation angle by 90 degrees
 		if (ship.rotation === 360) {
@@ -274,6 +288,8 @@ class Gameboard extends Phaser.Scene {
 
 	/** @returns {void} */
 	editorCreate() {
+
+		const self = this;
 		//Ship Init
 		const battleship = {
 			size: 4, // Change this value as per your ship's size
@@ -330,8 +346,8 @@ class Gameboard extends Phaser.Scene {
 			rotation: 0,
 			placed: 0
 		};
-		
-		var battleshipSprite = this.add.sprite(1100, 180 , 'battleship');
+
+		var battleshipSprite = this.add.sprite(1100, 180, 'battleship');
 		battleshipSprite.setScale(0.35);
 		battleshipSprite.setDepth(1);
 
@@ -360,7 +376,7 @@ class Gameboard extends Phaser.Scene {
 		submarineSprite1.setDepth(1);
 
 		const ships = [battleship, carrier, cruiser, destroyer, destroyer1, submarine, submarine1];
-		const shipSprites = [battleshipSprite, carrierSprite, cruiserSprite, destroyerSprite, destroyerSprite1, submarineSprite, submarineSprite1];		let selectedShipIndex = -1; // Initialize with an invalid index
+		const shipSprites = [battleshipSprite, carrierSprite, cruiserSprite, destroyerSprite, destroyerSprite1, submarineSprite, submarineSprite1]; let selectedShipIndex = -1; // Initialize with an invalid index
 
 		// create clicksound
 		this.clickSound = this.sound.add('clicksound');
@@ -410,7 +426,7 @@ class Gameboard extends Phaser.Scene {
 				enemyGrid[row][col] = cell;
 			}
 		}
-		
+
 		const playerBoardPos = {
 			x: 490,
 			y: 70,
@@ -458,31 +474,26 @@ class Gameboard extends Phaser.Scene {
 		this.shootBoard.fillRoundedRect(enemyBoardPos.x - smallCornerRadius, enemyBoardPos.y + enemyBoardPos.height + smallCornerRadius + boardMargin, enemyBoardPos.width + 2 * smallCornerRadius, 220, smallCornerRadius);
 
 		// startButton
-		const startButton = this.add.image(120, 540, "startButton").setInteractive({ useHandCursor: true  });
-		
-		startButton.on('pointerover', function (event)
-        {
+		const startButton = this.add.image(120, 540, "startButton").setInteractive({ useHandCursor: true });
 
-            this.setTint(PositionFinished);
+		startButton.on('pointerover', function (event) {
 
-        });
+			this.setTint(PositionFinished);
 
-        startButton.on('pointerout', function (event)
-        {
+		});
 
-            this.clearTint();
-
-        });
-		
-		startButton.on('pointerdown', function (event)
-        {
+		startButton.on('pointerout', function (event) {
 
 			this.clearTint();
-			self.stopHorn();
-			self.playClick();
+
 		});
-		
-		
+
+		startButton.on('pointerdown', function (event) {
+			this.clearTint();
+			console.log(self.GetListOfPositions(ships,gridSize));
+		});
+
+
 
 		// draw capitulate button
 		this.capitulateButton = this.add.graphics();
