@@ -7,7 +7,8 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "cypress run --e2e --headless --browser firefox",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:e2e": "cypress run --e2e --headless --browser chrome",
     "editor": "phasereditor2d-launcher -project . -port 1959",
     "editor-remote": "phasereditor2d-launcher -project . -disable-open-browser -public -port 1959",
     "cypress:open": "cypress open"

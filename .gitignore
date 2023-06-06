@@ -434,3 +434,7 @@ TSWLatexianTemp*
 # Terraform
 .terraform/
 .terraform.lock.hcl
+
+#
+sys_src/frontend/NauticalNonsense/cypress/**
+!sys_src/frontend/NauticalNonsense/cypress/e2e/

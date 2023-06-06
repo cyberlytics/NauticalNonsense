@@ -2,9 +2,9 @@ describe('My First Menu Test', () => {
   let game;
   beforeEach(() => {
     cy.viewport(1280, 720)
-    cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/');
-    // cy.visit('http://localhost:80/sys_src/frontend/NauticalNonsense/');
-    cy.wait(5000);
+    // cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/');
+    cy.visit('localhost:8080/');
+    cy.wait(7000);
     cy.window().then((win) => {
       game = win.game;
     });
@@ -16,12 +16,12 @@ describe('My First Menu Test', () => {
   it('Menu should have music playing', () => {
     let hasThemePlaying;
     cy.wrap(game.sound).invoke('getAllPlaying').then((musicArray) => {
-      console.log(musicArray);
-      expect(musicArray).to.exist; // Check if active music exists
-       hasThemePlaying = musicArray.some((music) => {
-        return music['key'] == "theme" && music.isPlaying;
-      });
-      expect(hasThemePlaying).to.be.true;
+        console.log(musicArray);
+        expect(musicArray).to.exist; // Check if active music exists
+        hasThemePlaying = musicArray.some((music) => {
+          return music['key'] == "theme" && music.isPlaying;
+        });
+        expect(hasThemePlaying).to.be.true;
     });
   });
   it('should change to options scene', () => {
@@ -35,8 +35,8 @@ describe('My First Menu Test', () => {
       cy.window().then((win) => {
         game = win.game;
         game.scene.dump();
-      cy.expect(game.scene.keys['Start'].sys.settings['active']).to.be.false;
-      cy.expect(game.scene.keys['Options'].sys.settings['active']).to.be.true;
+        cy.expect(game.scene.keys['Start'].sys.settings['active']).to.be.false;
+        cy.expect(game.scene.keys['Options'].sys.settings['active']).to.be.true;
       });
     });
   });
