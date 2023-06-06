@@ -12,12 +12,6 @@ locals {
   cluster_name = "bdcc-team-blau"
 }
 
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-}
-
 module "eks-kubeconfig" {
   source  = "hyperbadger/eks-kubeconfig/aws"
   version = "1.0.0"
@@ -116,7 +110,7 @@ module "eks" {
 }
 
 module "nat" {
-  source = "./nat-instance"
+  source = "int128/nat-instance/aws"
 
   name                        = "main"
   vpc_id                      = module.vpc.vpc_id

@@ -9,6 +9,8 @@ games = db.games
 #Example: Get last entry in collection
 game = games.find_one()
 
+# commented out, because it runs every time docker starts and inserts at every start new items in the database
+'''
 #Example: Insert one entry in collection
 doc = {"game_id": 3,
        "current_player": 1,
@@ -26,9 +28,12 @@ doc4 = {"game_id": 2,
        "current_player": 2,
        "board":{"11": 1, "12": 0, "21": 0, "22": 0}}
 inserted_games = games.insert_many([doc2,doc3,doc4])
+'''
 
 #Example: Get all entries in collection
-all_games = games.find()
+def get_all_games():
+    all_games = games.find()
+    return all_games
 
 #Example: Get all entries for specific game_id
 game_with_id1 = games.find({"game_id": 1})

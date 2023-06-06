@@ -14,9 +14,12 @@ window.addEventListener('load', function () {
 	game.scene.add("Preload", Preload);
 	game.scene.add("Start", Start);
 	game.scene.add("Options", Options);
+	game.scene.add("Rules", Rules);
+	game.scene.add("Credits", Credits);
 	game.scene.add("Level", Level);
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
+	game.scene.add("Leaderboard", Leaderboard);
 });
 
 class Boot extends Phaser.Scene {
@@ -26,6 +29,8 @@ class Boot extends Phaser.Scene {
 		this.load.pack("pack", "assets/preload-asset-pack.json");
 		this.load.image('button', 'assets/button.png');
 		this.load.audio("theme", ["assets/sounds/NauticalNonsense_soundtrack.mp3"]);
+		this.load.image("background", "assets/0001.png");
+		this.load.image("logo", "assets/start/logo.png");
 	}
 
 	create() {

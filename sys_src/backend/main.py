@@ -1,11 +1,12 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from play_game import existing_game, validate_move, get_new_room, get_partner_id
+from play_game import prepare_room, get_partner_id
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from database import get_leaderboard, add_rank #Noch richtigen Pfad für "database.py" wählen
-from models import LeaderboardWithRank #Noch richtigen Pfad für "models.py" wählen
+from database.examples import get_all_games
+from database.database import get_leaderboard, add_rank
+from database.models import LeaderboardWithRank
 
 app = FastAPI()
 
@@ -20,10 +21,10 @@ app.add_middleware(
 manager = ConnectionManager()
 polling_count = 0
 
-
 @app.get("/")
 def startpage():
-    return {"message": "Hello World"}
+    client_id = uuid.uuid4()
+    return client_id
 
 
 @app.get("/polling")
@@ -33,27 +34,36 @@ def polling():
     return {"message": f"Es wurde {polling_count} Mal gepollt"}
 
 
-@app.get("/against_random")
-def against_random():
-    # create uuid for client
-    client_id = uuid.uuid4().int
-    # check if someone is waiting for opponent
-    room_id = get_new_room(client_id, "random")
-    return JSONResponse({"websocket_route": f"ws/{room_id}"})
-
+@app.post("/against_random")
+def against_random(client_id: str):
+    # init to wait/play against random
+    # if frontend gets two player_ids, then it should use websockets
+    ready = prepare_room(client_id, "random")
+    return ready
 
 @app.post("/against_friend")
-def against_friend(name: str):
-    client_id = uuid.uuid4().int
-    room_id = get_new_room(client_id, "friend")
-    return JSONResponse({"websocket_route": f"ws/{room_id}"})
+def against_friend(client_id, name: str):
+    # init to wait/play against friend
+    # rename get_new_room to prepare_room, doesnt have to return something
+    prepare_room(client_id, "friend")
+    return JSONResponse({"websocket_route": f"ws/{client_id}"})
     
 
-@app.get("/against_computer")
-def against_computer():
-    client_id = uuid.uuid4().int
-    room_id = get_new_room(client_id, "computer")
-    return JSONResponse({"websocket_route": f"ws/{room_id}"})
+@app.post("/against_computer")
+def against_computer(client_id):
+    # init to play against computer
+    # rename get_new_room to prepare_room, doesnt have to return something
+    prepare_room(client_id, "computer")
+    return JSONResponse({"websocket_route": f"ws/{client_id}"})
+
+
+@app.get("/mongo_entries")
+def mongo_entries():
+    games = get_all_games()
+    games_list = []
+    for i, x in enumerate(games):
+        games_list.append(x)
+    return str(games_list), i
 
 
 # Diese Route wird vom Frontend aufgerufen, wenn die Verbindung bei den Websockets abbricht (ohne sieger)
@@ -63,32 +73,24 @@ def continue_game(player_id: int):
     pass
 
 
-# hier noch nicht sicher, ob ich room_id oder client_id nutze.
-@app.websocket("/ws/{room_id}")
-async def websocket_endpoint(websocket: WebSocket, room_id: str):
-
-    # mock for websocket
-    # use for one client 12
-    # and for other client 21
-    client_id = room_id[:len(room_id)//2]
-    partner_id = room_id[len(room_id)//2:]
-
-    # check if connection is correct
-    #partner_id = get_partner_id(client_id)
-
+# Use Kafka for a persistant WebSocket-List
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await manager.connect(websocket, client_id)
+    
+    # partner is viable, because ws only build if 2 guys are waiting
+    partner_id = await get_partner_id(client_id)
+    
     try:
-        while True:
-            # check if two guys are in one room
-            # if ready(): 
+        while True:       
             data = await websocket.receive_json()
             # validate the data
             response = {"message received in the backend": data}
             await manager.send_personal_message(response, partner_id)
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
+    except WebSocketDisconnect:
+        manager.disconnect(client_id)
+        await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
 
 #Route for leaderboard
