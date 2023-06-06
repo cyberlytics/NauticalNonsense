@@ -23,11 +23,9 @@ class Gameboard extends Phaser.Scene {
 		for (let i = 0; i < ships.length; i++) {
 			positions[i] = []
 			for (let j = 0; j < ships[i].cells.length; j++) {
-				console.log(ships[i].cells[0])
 				positions[i][j] = ships[i].cells[j].row * gridSize + ships[i].cells[j].col;
 			}
 		}
-		console.log(positions);
 		return positions;
 	}
 
@@ -490,6 +488,11 @@ class Gameboard extends Phaser.Scene {
 
 		startButton.on('pointerdown', function (event) {
 			this.clearTint();
+			for (let i = 0; i < shipSprites.length; i++) {
+				shipSprites[i].setInteractive(false).removeAllListeners();
+				console.log(1);
+				ships[i].placed = 3;
+			}
 			console.log(self.GetListOfPositions(ships,gridSize));
 		});
 
