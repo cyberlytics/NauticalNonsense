@@ -28,6 +28,9 @@ class Preload extends Phaser.Scene {
 		this.load.image("matchInputFriend", "assets/start/matchSelectionFriend.png");
 		this.load.image("idInput", "assets/start/IdInput.png");
 		this.load.image("idInputBox", "assets/start/IdInputBox.png");
+		this.load.image("rulesBackground", "assets/rules/rulesBackground.png");
+		this.load.image("rulesRight", "assets/rules/buttonRight.png");
+		this.load.image("rulesLeft", "assets/rules/buttonLeft.png");
 
 	}
 

@@ -1,0 +1,1 @@
+Typhoon Class Submarine (Revised) by ate135 on Thingiverse: https://www.thingiverse.com/thing:3180260
