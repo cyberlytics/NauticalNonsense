@@ -89,16 +89,40 @@ class Leaderboard extends Phaser.Scene {
 
 
 		// Leaderboard
-		
-		/*
-		Hier HTTP Request schicken um die Anfrage an die REST Schittstelle zu machen
 
-		--> function.onload()
+		fetch('http://localhost:8000/leaderboard')
+		.then(response => response.json())
+		.then(data => {
+		  const leaders = data.leadersHuman;
+		  let result = '';
+		  let allNames = '';
+		  let allMoves = '';
+		  let allRanks = '';
+	  
+		  // Iterate over the leaders array
+		  leaders.forEach((leader, index) => {
+			const { name, moves, rank } = leader;
+			result += `${rank} ${name} ${moves}`;
+			
+			allNames += `${name}\n`
+			allMoves += `${moves}\n`
+			allRanks += `${rank}\n`
+			// Add line break except for the last entry
+			if (index < leaders.length - 1) {
+			  result += '\n';
+			}
+		  });
+	  
+		  // Print the result
+		  console.log(allNames);
+		  console.log(allMoves);
+		  console.log(allRanks);
+		})
+		.catch(error => {
+		  console.error('Error:', error);
+		});
 
-		Nicht vergessen request auch senden ;)
-		*/
-
-		
+		// dummy data
 		const leaderboardData = [
 			{ rank: 1, name: 'Player 1', shots: 10 },
 			{ rank: 2, name: 'Player 2', shots: 20 },
@@ -110,6 +134,61 @@ class Leaderboard extends Phaser.Scene {
 			{ rank: 8, name: 'Player 8', shots: 80 },
 			{ rank: 9, name: 'Player 9', shots: 90 },
 			{ rank: 10, name: 'Player 10', shots: 100 },
+
+			{ rank: 1, name: 'Player 1', shots: 10 },
+			{ rank: 2, name: 'Player 2', shots: 20 },
+			{ rank: 3, name: 'Player 3', shots: 30 },
+			{ rank: 4, name: 'Player 4', shots: 40 },
+			{ rank: 5, name: 'Player 5', shots: 50 },
+			{ rank: 6, name: 'Player 6', shots: 60 },
+			{ rank: 7, name: 'Player 7', shots: 70 },
+			{ rank: 8, name: 'Player 8', shots: 80 },
+			{ rank: 9, name: 'Player 9', shots: 90 },
+			{ rank: 10, name: 'Player 10', shots: 100 },
+
+			{ rank: 1, name: 'Player 1', shots: 10 },
+			{ rank: 2, name: 'Player 2', shots: 20 },
+			{ rank: 3, name: 'Player 3', shots: 30 },
+			{ rank: 4, name: 'Player 4', shots: 40 },
+			{ rank: 5, name: 'Player 5', shots: 50 },
+			{ rank: 6, name: 'Player 6', shots: 60 },
+			{ rank: 7, name: 'Player 7', shots: 70 },
+			{ rank: 8, name: 'Player 8', shots: 80 },
+			{ rank: 9, name: 'Player 9', shots: 90 },
+			{ rank: 10, name: 'Player 10', shots: 100 },
+
+			{ rank: 1, name: 'Player 1', shots: 10 },
+			{ rank: 2, name: 'Player 2', shots: 20 },
+			{ rank: 3, name: 'Player 3', shots: 30 },
+			{ rank: 4, name: 'Player 4', shots: 40 },
+			{ rank: 5, name: 'Player 5', shots: 50 },
+			{ rank: 6, name: 'Player 6', shots: 60 },
+			{ rank: 7, name: 'Player 7', shots: 70 },
+			{ rank: 8, name: 'Player 8', shots: 80 },
+			{ rank: 9, name: 'Player 9', shots: 90 },
+			{ rank: 10, name: 'Player 10', shots: 100 },
+
+			{ rank: 1, name: 'Player 1', shots: 10 },
+			{ rank: 2, name: 'Player 2', shots: 20 },
+			{ rank: 3, name: 'Player 3', shots: 30 },
+			{ rank: 4, name: 'Player 4', shots: 40 },
+			{ rank: 5, name: 'Player 5', shots: 50 },
+			{ rank: 6, name: 'Player 6', shots: 60 },
+			{ rank: 7, name: 'Player 7', shots: 70 },
+			{ rank: 8, name: 'Player 8', shots: 80 },
+			{ rank: 9, name: 'Player 9', shots: 90 },
+			{ rank: 10, name: 'Player 10', shots: 100 },
+
+			{ rank: 1, name: 'Player 1', shots: 10 },
+			{ rank: 2, name: 'Player 2', shots: 20 },
+			{ rank: 3, name: 'Player 3', shots: 30 },
+			{ rank: 4, name: 'Player 4', shots: 40 },
+			{ rank: 5, name: 'Player 5', shots: 50 },
+			{ rank: 6, name: 'Player 6', shots: 60 },
+			{ rank: 7, name: 'Player 7', shots: 70 },
+			{ rank: 8, name: 'Player 8', shots: 80 },
+			{ rank: 9, name: 'Player 9', shots: 90 },
+			{ rank: 10, name: 'Player 10', shots: 100 }
 		];
 		
 		/*
@@ -145,14 +224,12 @@ class Leaderboard extends Phaser.Scene {
 		var textArea = this.rexUI.add.textArea({
             x : 1270/2,
 			y : 720/2,
-			width : 700,
+			width : 700/2,
 			height : 550,
 
             background: this.rexUI.add.roundRectangle(0, 0, 2, 2, smallCornerRadius, backgroundColor),
 
-            // text: this.add.text(),
             text: this.rexUI.add.BBCodeText(),
-            // textMask: true,
 
             slider: {
                 track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 0, COLOR_DARK),
@@ -163,7 +240,7 @@ class Leaderboard extends Phaser.Scene {
                 left: 0,
                 right: 0,
                 top: 0,
-                bottom: 0,
+                bottom: tableBoardMargin,
 
                 text: tableBoardMargin,
                 header: 0,
