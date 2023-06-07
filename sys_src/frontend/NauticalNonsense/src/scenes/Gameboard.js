@@ -473,6 +473,8 @@ class Gameboard extends Phaser.Scene {
 
 		// startButton
 		const startButton = this.add.image(120, 540, "startButton").setInteractive({ useHandCursor: true });
+		startButton.scaleX = 0.5;
+		startButton.scaleY = 0.5;
 
 		startButton.on('pointerover', function (event) {
 
@@ -495,6 +497,14 @@ class Gameboard extends Phaser.Scene {
 			}
 			console.log(self.GetListOfPositions(ships,gridSize));
 		});
+
+		//startButtonText
+		const startButtonText = this.add.text(120, 540, "", {});
+		startButtonText.scaleX = 1;
+		startButtonText.scaleY = 1;
+		startButtonText.setOrigin(0.5, 0.5);
+		startButtonText.text = "Start";
+		startButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "25px" });
 
 
 
@@ -526,6 +536,7 @@ class Gameboard extends Phaser.Scene {
 		this.load.image("cruiser", "assets/ships/cruiser/cruiser_2.png");
 		this.load.image("destroyer", "assets/ships/destroyer/destroyer_2.png");
 		this.load.image("submarine", "assets/ships/submarine/submarine_2.png");
+		this.load.image("startButton", "assets/start/startButton.png");
 	}
 
 	/* END-USER-CODE */
