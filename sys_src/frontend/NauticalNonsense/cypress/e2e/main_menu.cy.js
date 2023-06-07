@@ -2,9 +2,9 @@ describe('My First Menu Test', () => {
   let game;
   beforeEach(() => {
     cy.viewport(1280, 720)
-    // cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/');
-    cy.visit('localhost:8080/');
-    cy.wait(7000);
+    // cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/public/index.html');
+    cy.visit('localhost:3000/');
+    cy.wait(10000);
     cy.window().then((win) => {
       game = win.game;
     });
