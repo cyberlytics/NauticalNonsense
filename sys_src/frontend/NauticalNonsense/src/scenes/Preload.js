@@ -41,6 +41,11 @@ class Preload extends Phaser.Scene {
 		this.load.image("spRandomButton", "assets/shipplacement/randomButton.png");
 		this.load.image("spResetButton", "assets/shipplacement/resetButton.png");
 		this.load.image("wLogo", "assets/waiting/waiting.png");
+		this.load.image("battleship", "assets/ships/battleship/battleship_2.png");
+		this.load.image("carrier", "assets/ships/carrier/carrier_2.png");
+		this.load.image("cruiser", "assets/ships/cruiser/cruiser_2.png");
+		this.load.image("destroyer", "assets/ships/destroyer/destroyer_2.png");
+		this.load.image("submarine", "assets/ships/submarine/submarine_2.png");
 
 	}
 
