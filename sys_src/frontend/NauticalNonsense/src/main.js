@@ -13,7 +13,9 @@ window.addEventListener('load', function () {
 
 	game.scene.add("Preload", Preload);
 	game.scene.add("Start", Start);
+	game.scene.add("Waiting", Waiting);
 	game.scene.add("Shipplacement", Shipplacement);
+	game.scene.add("Waiting2", Waiting2);
 	game.scene.add("Options", Options);
 	game.scene.add("Rules", Rules);
 	game.scene.add("Credits", Credits);

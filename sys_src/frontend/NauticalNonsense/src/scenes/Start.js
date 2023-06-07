@@ -286,7 +286,7 @@ class Start extends Phaser.Scene
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				self.scene.start("Shipplacement");
+				self.scene.start("Waiting");
 			}
 			
 			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0))

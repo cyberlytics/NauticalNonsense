@@ -81,7 +81,7 @@ class Shipplacement extends Phaser.Scene
 			self.playClick();
 			this.clearTint();
 			isPlayerReady = true;
-			self.scene.start("Gameboard");
+			self.scene.start("Waiting2");
         });
 		
 		// confirmButtonText
