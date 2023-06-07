@@ -294,7 +294,7 @@ class Start extends Phaser.Scene
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				self.scene.start("Gameboard");
+				self.scene.start("Waiting");
 			}
         });
 		
