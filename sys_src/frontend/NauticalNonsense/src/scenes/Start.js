@@ -30,15 +30,17 @@ class Start extends Phaser.Scene {
 			});
 	}
 
-	http_POST(url, uuid, name){
+	http_POST(url, uuid, opponent_name, playername){
 		var http_post_data = {
 
 			uuid: uuid,
-			name: name,
+			opponent_name: opponent_name,
+			playername: playername
 		};
-		if (name === ""){
+		if (opponent_name === ""){
 			http_post_data = {
 				uuid: uuid,
+				playername: playername
 			};
 		}
 
@@ -339,7 +341,7 @@ class Start extends Phaser.Scene {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				console.log(self.http_POST(apiUrl+"/against_random",uuid,""));
+				console.log(self.http_POST(apiUrl+"/against_random",uuid,"",nameInputBoxText.text));
 				self.scene.start("Gameboard");
 			}
 
@@ -347,7 +349,7 @@ class Start extends Phaser.Scene {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				console.log(self.http_POST(apiUrl+"/against_friend",uuid,idInputBoxText.text));
+				console.log(self.http_POST(apiUrl+"/against_friend",uuid,idInputBoxText.text, nameInputBoxText.text));
 				self.scene.start("Gameboard");
 			}
 		});
