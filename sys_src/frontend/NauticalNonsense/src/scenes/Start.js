@@ -71,33 +71,6 @@ class Start extends Phaser.Scene
 			self.stopHorn();
 			self.scene.start("Options");
         });
-
-		// leaderboardButton
-		const leaderboardButton = this.add.image(1100, 280, "leaderboardButton").setInteractive({ useHandCursor: true  });
-
-		leaderboardButton.on('pointerover', function (event)
-        {
-
-            this.setTint(0x808080);
-
-        });
-
-        leaderboardButton.on('pointerout', function (event)
-        {
-
-            this.clearTint();
-
-        });
-		
-		leaderboardButton.on('pointerdown', function (event)
-        {
-
-			this.clearTint();
-			self.playClick();
-			self.stopHorn();
-			self.scene.start("Leaderboard");
-		
-        });
 		
 		//nameInput
 		const nameInput = this.add.image(555, 545, "nameInput");
@@ -313,7 +286,7 @@ class Start extends Phaser.Scene
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				self.scene.start("Gameboard");
+				self.scene.start("Waiting");
 			}
 			
 			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0))
@@ -321,7 +294,7 @@ class Start extends Phaser.Scene
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				self.scene.start("Gameboard");
+				self.scene.start("Waiting");
 			}
         });
 		
