@@ -1,10 +1,8 @@
 from fastapi.testclient import TestClient
-from fastapi import WebSocket
 import uuid
 import time
 from websocket_manager import ConnectionManager
 import pytest
-from play_game import get_partner_id
 from unittest.mock import AsyncMock
 from main import handle_websocket_data
 

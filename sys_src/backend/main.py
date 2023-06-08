@@ -8,8 +8,6 @@ from database.examples import get_all_games
 from database.database import get_leaderboard, add_rank
 from database.models import LeaderboardWithRank
 
-import uvicorn
-
 app = FastAPI()
 
 app.add_middleware(
@@ -118,7 +116,3 @@ def get_leaderboard_api():
     leaders_computer = get_leaderboard(againstComputer=True)
     leaders_computer_rank = add_rank(leaders_computer)
     return LeaderboardWithRank(leadersHuman=leaders_human_rank, leadersComputer=leaders_computer_rank)
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
