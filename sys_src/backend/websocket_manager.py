@@ -21,8 +21,8 @@ class ConnectionManager:
             pass
 
     async def broadcast(self, message: dict):
-        for connection in self.active_connections:
+        for connection in self.active_connections.values():
             await connection.send_json(message)
 
     def all_websockets(self):
-        print(self.active_connections.keys())
+        return list(self.active_connections.keys())

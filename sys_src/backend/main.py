@@ -84,6 +84,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     try:
         while True:       
             data = await websocket.receive_json()
+            # Disconnect if partner has disconnected
+            if 'Client has left' in data:
+                raise WebSocketDisconnect
             # validate the data
             response = {"message received in the backend": data}
             await manager.send_personal_message(response, partner_id)
