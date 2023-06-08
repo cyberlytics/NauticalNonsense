@@ -8,6 +8,8 @@ from database.examples import get_all_games
 from database.database import get_leaderboard, add_rank
 from database.models import LeaderboardWithRank
 
+import uvicorn
+
 app = FastAPI()
 
 app.add_middleware(
@@ -73,6 +75,18 @@ def continue_game(player_id: int):
     pass
 
 
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+    # Disconnect command
+    print("manger in handle_websocket_data ist:" + str(id(manager)))
+
+    if 'Disconnect' in data:
+        await manager.disconnect(client_id)
+
+    # Disconnect if partner has disconnected
+    if 'Client has left' in data:
+        await manager.disconnect(client_id)
+
+
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
@@ -84,15 +98,15 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     try:
         while True:       
             data = await websocket.receive_json()
-            # Disconnect if partner has disconnected
-            if 'Client has left' in data:
-                raise WebSocketDisconnect
+
+            await handle_websocket_data(manager, data, client_id)
+            
             # validate the data
             response = {"message received in the backend": data}
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:
-        manager.disconnect(client_id)
+        await manager.disconnect(client_id)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
 
@@ -104,3 +118,7 @@ def get_leaderboard_api():
     leaders_computer = get_leaderboard(againstComputer=True)
     leaders_computer_rank = add_rank(leaders_computer)
     return LeaderboardWithRank(leadersHuman=leaders_human_rank, leadersComputer=leaders_computer_rank)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

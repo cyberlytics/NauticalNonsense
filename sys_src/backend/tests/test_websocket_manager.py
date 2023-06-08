@@ -51,7 +51,7 @@ async def test_send_personal_message(manager, websocket1, websocket2):
 async def test_disconnect(manager, websocket1, websocket2):
     await manager.connect(websocket1, '1')
     await manager.connect(websocket2, '2')
-    manager.disconnect('1')
+    await manager.disconnect('1')
 
     assert len(manager.active_connections) == 1
 
@@ -73,7 +73,7 @@ async def test_broadcast(manager, websocket1, websocket2):
 async def test_all_websockets(manager, websocket1, websocket2):
     await manager.connect(websocket1, '1')
     await manager.connect(websocket2, '2')
-    manager.disconnect('1')
+    await manager.disconnect('1')
 
     all_websockets = manager.all_websockets()
     assert len(all_websockets) == 1

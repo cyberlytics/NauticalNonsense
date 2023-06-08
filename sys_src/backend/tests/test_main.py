@@ -5,6 +5,8 @@ import time
 from websocket_manager import ConnectionManager
 import pytest
 from play_game import get_partner_id
+from unittest.mock import AsyncMock
+from main import handle_websocket_data
 
 
 
@@ -65,20 +67,32 @@ def test_websocket():
 
         websocket1.close()
 
-'''
+
 @pytest.mark.asyncio
-async def test_websocket_class():
+async def test_websocket_disconnect():
     manager = ConnectionManager()
     first_client_id = str(uuid.uuid4())
     second_client_id = str(uuid.uuid4())
-    client.post(f"/against_random?client_id={first_client_id}")
-    client.post(f"/against_random?client_id={second_client_id}")
-    with client.websocket_connect(f"/ws/{first_client_id}") as websocket1:
-        with client.websocket_connect(f"/ws/{second_client_id}") as websocket2:
-            await manager.connect(websocket1, first_client_id)
-            await manager.connect(websocket2, second_client_id)
-            await manager.disconnect(second_client_id)
-        received_break_data = websocket1.receive_json()
-        assert received_break_data == {"Client has left": second_client_id}
-        await websocket1.close()
-'''
+
+    # Mock the websockets
+    mock_websocket1 = AsyncMock()
+    mock_websocket1.accept = AsyncMock()
+    mock_websocket1.close = AsyncMock()
+    mock_websocket1.receive_json = AsyncMock(return_value={"Disconnect": ""})
+
+    mock_websocket2 = AsyncMock()
+    mock_websocket2.accept = AsyncMock()
+    mock_websocket2.close = AsyncMock()
+    mock_websocket2.receive_json = AsyncMock(return_value={"Client has left": first_client_id})
+
+    # Connect the clients
+    await manager.connect(mock_websocket1, first_client_id)
+    await manager.connect(mock_websocket2, second_client_id)
+
+    # Run the handle_websocket_data function
+    await handle_websocket_data(manager, {"Disconnect": ""}, first_client_id)
+    await handle_websocket_data(manager, {"Client has left": first_client_id}, second_client_id)
+
+    # Ensure the clients have been disconnected
+    assert second_client_id not in manager.all_websockets()
+    assert first_client_id not in manager.all_websockets()
