@@ -5,7 +5,7 @@ from websocket_manager import ConnectionManager
 import pytest
 from unittest.mock import AsyncMock
 from main import handle_websocket_data
-
+from fastapi.responses import JSONResponse
 
 
 from main import app
@@ -17,42 +17,93 @@ def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
     assert isinstance(response.json(), str)
+    
+    
+def test_play_no_data():
+    response = client.post("/play", json={})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
 
-def test_polling():
-    response = client.get("/polling")
-    assert response.status_code == 200
-    assert response.json() == {"message": "Es wurde 1 Mal gepollt"}
+    response = client.post("/play")
+    assert response.status_code == 422
 
-    response = client.get("/polling")
-    assert response.status_code == 200
-    assert response.json() == {"message": "Es wurde 2 Mal gepollt"}
 
-def test_against_random():
-    first_client_id = str(uuid.uuid4())
-    response = client.post(f"/against_random?client_id={first_client_id}")
-    # unit-test runs with one guy beforehand waiting for random guy.
-    # if that case happens, client.post() should run only one time
-    if len(response.json()) == 1:
-        assert len(response.json()) == 1
-        assert response.json() == {"not ready": False}
-        second_client_id = str(uuid.uuid4())
-        response = client.post(f"/against_random?client_id={second_client_id}")
-        assert len(response.json()) == 2
-        assert response.json() == {"player1": first_client_id, "player2": second_client_id}
-    elif len(response.json()) == 2:
-        assert len(response.json()) == 2
-        second_client_id = first_client_id
-        assert second_client_id in response.json()['player2']
+def test_play_false_data():
+    response = client.post("/play", json={"false1": 1, "false2": 3, "false3": 3})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+    response = client.post("/play", json=123)
+    assert response.status_code == 422
+
+    response = client.post("/play", json=["client_id", "mode", "friend"])
+    assert response.status_code == 422
+
+    response = client.post("/play", content=b"test")
+    assert response.status_code == 422
+
+
+def test_play_incomplete_data():
+    response = client.post("/play", json={"client_id": "some_id"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+    
+    response = client.post("/play", json={"mode": "random"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+    response = client.post("/play", json={"friend": "some_name"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+    response = client.post("/play", json={"client_id": "some_id", "mode": "random"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+    response = client.post("/play", json={"friend": "some_name", "mode": "random"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+    response = client.post("/play", json={"friend": "some_name", "client_id": "some_id"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+
+def test_play_against_random():
+    client_id1 = str(uuid.uuid4())
+    client_id2 = str(uuid.uuid4())
+
+    mock_data_player1 = {"client_id": client_id1, "mode": "random", "friend": None}
+    mock_data_player2 = {"client_id": client_id2, "mode": "random", "friend": None}
+
+    response = client.post(f"/play", json=mock_data_player1)
+
+    # need this check, if an imbalance in database is. because a open random game could hinder this unit-test
+    if response.json()['ready'] == False:
+        assert response.status_code == 200
+        assert response.json() == {"ready": False}
+
+        response = client.post(f"/play", json=mock_data_player2)
+        assert response.status_code == 200
+        assert set(response.json()['ready'].values()) == {client_id1, client_id2}
+
+    else:
+        assert response.status_code == 200
+        assert client_id1 in response.json()['ready'].values()
 
 
 def test_websocket():
-    first_client_id = str(uuid.uuid4())
-    second_client_id = str(uuid.uuid4())
-    client.post(f"/against_random?client_id={first_client_id}")
-    client.post(f"/against_random?client_id={second_client_id}")
+    client_id1 = str(uuid.uuid4())
+    client_id2 = str(uuid.uuid4())
 
-    with client.websocket_connect(f"/ws/{first_client_id}") as websocket1:
-        with client.websocket_connect(f"/ws/{second_client_id}") as websocket2:
+    mock_data_player1 = {"client_id": client_id1, "mode": "random", "friend": None}
+    mock_data_player2 = {"client_id": client_id2, "mode": "random", "friend": None}
+
+    client.post(f"/play", json=mock_data_player1)
+    client.post(f"/play", json=mock_data_player2)
+
+    with client.websocket_connect(f"/ws/{client_id1}") as websocket1:
+        with client.websocket_connect(f"/ws/{client_id2}") as websocket2:
             send_data = {"msg": "Hello WebSocket"}
             websocket1.send_json(send_data)
             time.sleep(1)
@@ -61,7 +112,7 @@ def test_websocket():
             websocket2.close()
 
         received_break_data = websocket1.receive_json()
-        assert received_break_data == {"Client has left": second_client_id}
+        assert received_break_data == {"Client has left": client_id2}
 
         websocket1.close()
 

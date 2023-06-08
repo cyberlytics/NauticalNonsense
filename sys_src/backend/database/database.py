@@ -25,7 +25,7 @@ def save_state(state: State) -> State:
     gamestates.insert_one(state.dict())
     return state
 
-def get_map(client_id: str, mode: str, game_id: uuid = None) -> State:
+def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
     '''
     return map_id for the connection in websockets.
     if there is no map with a player waiting create a new map
@@ -43,11 +43,11 @@ def get_map(client_id: str, mode: str, game_id: uuid = None) -> State:
             # you get an empty string
             ret_obj = {"player1": State.parse_obj(map_data).player1,
                        "player2": client_id}
-            return ret_obj
+            return {"ready": ret_obj}
         else:
             game_id = create_map(client_id, mode)
             map_data = games.find_one({"game_id": str(game_id), "gameMode": mode, "player1": {"$exists": True, "$ne": ""}, "player2": {"$exists": ""}})
-            return {"not ready": False}
+            return {"ready": False}
     
 
 def create_map(client_id: uuid, mode: str) -> uuid:
