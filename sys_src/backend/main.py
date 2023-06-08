@@ -73,6 +73,18 @@ def continue_game(player_id: int):
     pass
 
 
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+    # Disconnect command
+    print("manger in handle_websocket_data ist:" + str(id(manager)))
+
+    if 'Disconnect' in data:
+        await manager.disconnect(client_id)
+
+    # Disconnect if partner has disconnected
+    if 'Client has left' in data:
+        await manager.disconnect(client_id)
+
+
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
@@ -84,12 +96,15 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     try:
         while True:       
             data = await websocket.receive_json()
+
+            await handle_websocket_data(manager, data, client_id)
+            
             # validate the data
             response = {"message received in the backend": data}
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:
-        manager.disconnect(client_id)
+        await manager.disconnect(client_id)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
 

@@ -8,8 +8,14 @@ class ConnectionManager:
         await websocket.accept()
         self.active_connections[client_id] = websocket
 
-    def disconnect(self, client_id: str):
-        del self.active_connections[client_id]
+    async def disconnect(self, client_id: str):
+        websocket = self.active_connections.get(client_id)
+        if websocket:
+            await websocket.close()
+        try:
+            del self.active_connections[client_id]
+        except KeyError:
+            raise KeyError
 
     async def send_personal_message(self, message: dict, partner_id: str):
         try:
@@ -21,8 +27,8 @@ class ConnectionManager:
             pass
 
     async def broadcast(self, message: dict):
-        for connection in self.active_connections:
+        for connection in self.active_connections.values():
             await connection.send_json(message)
 
     def all_websockets(self):
-        print(self.active_connections.keys())
+        return list(self.active_connections.keys())
