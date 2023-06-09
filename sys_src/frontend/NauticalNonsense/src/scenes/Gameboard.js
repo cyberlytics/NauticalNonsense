@@ -210,72 +210,6 @@ class Gameboard extends Phaser.Scene {
 				playerGrid[row][col] = cell;
 			}
 		}
-
-		// Call the placeShipSprite function for each ship
-		for (let i = 0; i < ships.length; i++) {
-			const ship = ships[i];
-			const sprite = shipSprites[i];
-			this.placeShipSprite(sprite, ship, gridSize, playerGrid, playerCellSize, occupiedCells);
-		}
-
-		// draw fleet
-		this.fleetBoard = this.add.graphics();
-		this.fleetBoard.fillStyle(backgroundColor, 1);
-		this.fleetBoard.fillRoundedRect(playerBoardPos.x + playerBoardPos.width + playerBoardPos.cornerRadius + boardMargin, enemyBoardPos.y - smallCornerRadius, 5 * playerCellSize + smallCornerRadius, playerBoardPos.height + 2 * smallCornerRadius, smallCornerRadius);
-
-		// draw shoot and capitulate Board
-		this.shootBoard = this.add.graphics();
-		this.shootBoard.fillStyle(backgroundColor, 1);
-		this.shootBoard.fillRoundedRect(enemyBoardPos.x - smallCornerRadius, enemyBoardPos.y + enemyBoardPos.height + smallCornerRadius + boardMargin, enemyBoardPos.width + 2 * smallCornerRadius, 220, smallCornerRadius);
-
-		// startButton
-		const startButton = this.add.image(120, 540, "startButton").setInteractive({ useHandCursor: true });
-		startButton.scaleX = 0.5;
-		startButton.scaleY = 0.5;
-
-		startButton.on('pointerover', function (event) {
-
-			this.setTint(PositionFinished);
-
-		});
-
-		startButton.on('pointerout', function (event) {
-
-			this.clearTint();
-
-		});
-
-		startButton.on('pointerdown', function (event) {
-			this.clearTint();
-			for (let i = 0; i < shipSprites.length; i++) {
-				shipSprites[i].setInteractive(false).removeAllListeners();
-				console.log(1);
-				ships[i].placed = 3;
-			}
-			console.log(self.GetListOfPositions(ships,gridSize));
-		});
-
-		//startButtonText
-		const startButtonText = this.add.text(120, 540, "", {});
-		startButtonText.scaleX = 1;
-		startButtonText.scaleY = 1;
-		startButtonText.setOrigin(0.5, 0.5);
-		startButtonText.text = "Start";
-		startButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "25px" });
-
-
-
-		// draw capitulate button
-		this.capitulateButton = this.add.graphics();
-		this.capitulateButton.fillStyle(capitulateColor, 1);
-		this.capitulateButton.fillRoundedRect(enemyBoardPos.x, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + 110, 220, 50, tinyCornerRadius);
-		this.capitulateButton.setInteractive(new Phaser.Geom.Rectangle(enemyBoardPos.x, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + 110, 220, 50), Phaser.Geom.Rectangle.Contains);
-		this.capitulateButton.on('pointerdown', () => {
-			this.scene.start('Start');
-		});
-		this.capitulateText = this.add.text(enemyBoardPos.x + tinyCornerRadius + 5, enemyBoardPos.y + enemyBoardPos.height + boardMargin + 3 * smallCornerRadius + 110 + tinyCornerRadius, 'Capitulate', { fill: '#000000', fontSize: 30, fontFamily: "Sans" });
-
-
 	}
 
 	/* START-USER-CODE */
@@ -285,15 +219,24 @@ class Gameboard extends Phaser.Scene {
 	create() {
 		this.editorCreate();
 	}
-
-	preload() {
-
-		this.load.image("battleship", "assets/ships/battleship/battleship_2.png");
-		this.load.image("carrier", "assets/ships/carrier/carrier_2.png");
-		this.load.image("cruiser", "assets/ships/cruiser/cruiser_2.png");
-		this.load.image("destroyer", "assets/ships/destroyer/destroyer_2.png");
-		this.load.image("submarine", "assets/ships/submarine/submarine_2.png");
-		this.load.image("startButton", "assets/start/startButton.png");
+	
+	playClick() 
+	{
+		this.click.play();
+	}
+	
+	switchTurn(player, opponent, s)
+	{
+		if (s)
+		{
+			player.setTint(0x1ed013);
+			opponent.clearTint();
+		}
+		else
+		{
+			opponent.setTint(0xe50000);
+			player.clearTint();
+		}
 	}
 
 	/* END-USER-CODE */
