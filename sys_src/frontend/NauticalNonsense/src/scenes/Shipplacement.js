@@ -20,6 +20,11 @@ class Shipplacement extends Phaser.Scene {
 		var isEnemyReady = false;
 		var isPlayerReady = false;
 
+		sharedData.socket.onmessage = function(event) {
+			var message = JSON.parse(event.data);
+			console.log("Message received:", message)
+		};
+
 		//boardParams
 		const gridSize = 10;
 		const cellColor = 0xdae8fC;
@@ -400,6 +405,7 @@ class Shipplacement extends Phaser.Scene {
 				sent++;
 			}
 		}
+		
 	}
 
 	rotateShip(shipSprite, ship, occupiedCells, gridSize, playerGrid, playerCellSize) {
