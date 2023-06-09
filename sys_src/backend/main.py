@@ -86,6 +86,12 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     # partner is viable, because ws only build if 2 guys are waiting
     partner_id = await get_partner_id(client_id)
     
+    # if partner_id != None -> Get both players a message for ready
+    if partner_id != None:
+        init_message = {"Both player are ready": True}
+        await manager.send_personal_message(init_message, client_id)
+        await manager.send_personal_message(init_message, partner_id)
+
     try:
         while True:       
             data = await websocket.receive_json()
