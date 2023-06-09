@@ -12,6 +12,14 @@ window.addEventListener('load', function () {
 		}
 	});
 
+	game.sharedData = {
+		backend_url:"http://localhost:8000",
+		websocket_url:"ws://localhost:8000/ws/",
+		playername:"",
+		client_id:"",
+		socket: null // Initially set to null
+	};
+
 	game.scene.add("Preload", Preload);
 	game.scene.add("Start", Start);
 	game.scene.add("Waiting", Waiting);
