@@ -53,6 +53,9 @@ class Preload extends Phaser.Scene {
 		this.load.image("gbFireControl", "assets/gameboard/fireControl.png");
 		this.load.image("gbOpponentLamp", "assets/gameboard/opponentLamp.png");
 		this.load.image("gbReadyLamp", "assets/gameboard/readyLamp.png");
+		this.load.image("goBackground", "assets/gameover/background.png");
+		this.load.image("goExitWin", "assets/gameover/exitWin.png");
+		this.load.image("goExitLose", "assets/gameover/exitLose.png");
 
 	}
 
