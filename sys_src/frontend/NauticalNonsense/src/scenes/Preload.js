@@ -31,6 +31,28 @@ class Preload extends Phaser.Scene {
 		this.load.image("rulesBackground", "assets/rules/rulesBackground.png");
 		this.load.image("rulesRight", "assets/rules/buttonRight.png");
 		this.load.image("rulesLeft", "assets/rules/buttonLeft.png");
+		this.load.image("spBattlefieldBackground", "assets/shipplacement/battlefieldBackground.png");
+		this.load.image("spButtonBox", "assets/shipplacement/buttonBox.png");
+		this.load.image("spConfirmButton", "assets/shipplacement/confirmButton.png");
+		this.load.image("spFleetBox", "assets/shipplacement/fleetBox.png");
+		this.load.image("spOpponentStatus", "assets/shipplacement/opponentStatus.png");
+		this.load.image("spOpponentStatusGreen", "assets/shipplacement/opponentStatusGreen.png");
+		this.load.image("spOpponentStatusRed", "assets/shipplacement/opponentStatusRed.png");
+		this.load.image("spRandomButton", "assets/shipplacement/randomButton.png");
+		this.load.image("spResetButton", "assets/shipplacement/resetButton.png");
+		this.load.image("wLogo", "assets/waiting/waiting.png");
+		this.load.image("battleship", "assets/ships/battleship/battleship_2.png");
+		this.load.image("carrier", "assets/ships/carrier/carrier_2.png");
+		this.load.image("cruiser", "assets/ships/cruiser/cruiser_2.png");
+		this.load.image("destroyer", "assets/ships/destroyer/destroyer_2.png");
+		this.load.image("submarine", "assets/ships/submarine/submarine_2.png");
+		this.load.image("gbButtonBox", "assets/gameboard/buttonBox.png");
+		this.load.image("gbCapitulateButton", "assets/gameboard/capitulateButton.png");
+		this.load.image("gbCrosshair", "assets/gameboard/crosshair.png");
+		this.load.image("gbFireButton", "assets/gameboard/fireButton.png");
+		this.load.image("gbFireControl", "assets/gameboard/fireControl.png");
+		this.load.image("gbOpponentLamp", "assets/gameboard/opponentLamp.png");
+		this.load.image("gbReadyLamp", "assets/gameboard/readyLamp.png");
 
 	}
 

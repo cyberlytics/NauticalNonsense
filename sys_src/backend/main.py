@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from play_game import prepare_room, get_partner_id
 from websocket_manager import ConnectionManager
 import uuid
@@ -20,7 +20,7 @@ app.add_middleware(
 )
 
 manager = ConnectionManager()
-polling_count = 0
+
 
 @app.get("/")
 def startpage():
@@ -28,35 +28,28 @@ def startpage():
     return client_id
 
 
-@app.get("/polling")
-def polling():
-    global polling_count
-    polling_count += 1
-    return {"message": f"Es wurde {polling_count} Mal gepollt"}
-
-
-@app.post("/against_random")
-def against_random(client_id: str):
+@app.post("/play")
+def play(user_input: dict):
+    if 'client_id' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
+    if 'mode' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
+    if 'friend' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
+    
     # init to wait/play against random
     # if frontend gets two player_ids, then it should use websockets
-    ready = prepare_room(client_id, "random")
+    ready = prepare_room(user_input['client_id'], user_input['mode'], user_input['friend'])
     return ready
-
-@app.post("/against_friend")
-def against_friend(client_id, name: str):
-    # init to wait/play against friend
-    # rename get_new_room to prepare_room, doesnt have to return something
-    prepare_room(client_id, "friend")
-    return JSONResponse({"websocket_route": f"ws/{client_id}"})
-    
-
-@app.post("/against_computer")
-def against_computer(client_id):
-    # init to play against computer
-    # rename get_new_room to prepare_room, doesnt have to return something
-    prepare_room(client_id, "computer")
-    return JSONResponse({"websocket_route": f"ws/{client_id}"})
-
 
 @app.get("/mongo_entries")
 def mongo_entries():
@@ -74,6 +67,18 @@ def continue_game(player_id: int):
     pass
 
 
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+    # Disconnect command
+    print("manger in handle_websocket_data ist:" + str(id(manager)))
+
+    if 'Disconnect' in data:
+        await manager.disconnect(client_id)
+
+    # Disconnect if partner has disconnected
+    if 'Client has left' in data:
+        await manager.disconnect(client_id)
+
+
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
@@ -85,12 +90,15 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     try:
         while True:       
             data = await websocket.receive_json()
+
+            await handle_websocket_data(manager, data, client_id)
+            
             # validate the data
             response = {"message received in the backend": data}
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:
-        manager.disconnect(client_id)
+        await manager.disconnect(client_id)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
 
