@@ -29,10 +29,10 @@ class Start extends Phaser.Scene {
 				console.error('Fetch error:', error);
 			});
 	}
-
+	//Commit Test 
+	
 	http_POST(url, uuid, opponent_name, playername){
 		var http_post_data = {
-
 			uuid: uuid,
 			opponent_name: opponent_name,
 			playername: playername
