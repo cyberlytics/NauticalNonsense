@@ -53,7 +53,7 @@ class Gameover extends Phaser.Scene
 		loseText.setStyle({ "align": "center", "color": "#ea6b66", "fontFamily": "GodOfWar", "fontSize": "50px" });
 		
 		// statsText
-		const statsText = this.add.text(1280/2, 240, "", {});
+		const statsText = this.add.text(1280/2, 237, "", {});
 		statsText.scaleX = 1;
 		statsText.scaleY = 1;
 		statsText.setOrigin(0.5, 0.5);
