@@ -287,7 +287,6 @@ class Gameboard extends Phaser.Scene {
 	}
 
 	preload() {
-
 		this.load.image("battleship", "assets/ships/battleship/battleship_2.png");
 		this.load.image("carrier", "assets/ships/carrier/carrier_2.png");
 		this.load.image("cruiser", "assets/ships/cruiser/cruiser_2.png");
