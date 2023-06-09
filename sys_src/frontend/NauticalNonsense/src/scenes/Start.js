@@ -14,6 +14,64 @@ class Start extends Phaser.Scene
 		/* END-USER-CTR-CODE */
 	}
 
+	http_GET(url) {
+		return fetch(url)
+			.then(function (response) {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error('Network response was not ok.');
+			})
+			.then(function (data) {
+				//.log("Data:", data);
+				// Process the response data here
+				return data;
+			})
+			.catch(function (error) {
+				console.error('Fetch error:', error);
+			});
+	}
+	//Commit Test 
+	
+	http_POST(url, uuid, opponent_name, playername){
+		var http_post_data = {
+			uuid: uuid,
+			opponent_name: opponent_name,
+			playername: playername
+		};
+		if (opponent_name === ""){
+			http_post_data = {
+				uuid: uuid,
+				playername: playername
+			};
+		}
+
+		console.log(http_post_data);
+		fetch(url, {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(http_post_data),
+		  })
+			.then(response => {
+			  if (response.ok) {
+				return response.json();
+			  }
+			  throw new Error('Network response was not ok.');
+			})
+			.then(responseData => {
+			  // Process the response data
+			  console.log(responseData);
+			})
+			.catch(error => {
+			  console.error('Fetch error:', error);
+			});
+	}
+
+
+
+
 	/** @returns {void} */
 	editorCreate() 
 	{
