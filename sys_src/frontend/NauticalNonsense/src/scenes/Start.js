@@ -75,6 +75,17 @@ class Start extends Phaser.Scene {
 		sharedData.websocket_url += sharedData.client_id;
 		sharedData.socket = new WebSocket(sharedData.websocket_url);
 
+		// Listen for WebSocket events
+		sharedData.socket.onopen = function () {
+			console.log('WebSocket connection established');
+			// Perform any necessary actions when the connection is successfully established
+		};
+
+		sharedData.socket.onerror = function (error) {
+			console.error('WebSocket error:', error);
+			// Handle any errors that occur during the WebSocket connection
+		};
+
 		const backgroundColor = 0x3c3845
 		var isTypingName = false;
 		var isTypingId = false;
