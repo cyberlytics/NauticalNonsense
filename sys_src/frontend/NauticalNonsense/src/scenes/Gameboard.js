@@ -163,7 +163,7 @@ class Gameboard extends Phaser.Scene {
         {
 			self.playClick();
 			this.clearTint();
-			self.scene.start("Start");
+			self.scene.start("Gameover");
         });
 		
 		// capitulateButtonText
