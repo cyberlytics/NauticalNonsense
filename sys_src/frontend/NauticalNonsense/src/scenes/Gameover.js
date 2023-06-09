@@ -20,7 +20,7 @@ class Gameover extends Phaser.Scene
 	{
 		
 		const self = this;
-		var won = true;
+		var won = false;
 		
 		//sounds
 		this.click = this.sound.add("click");

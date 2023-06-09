@@ -75,7 +75,7 @@ class Waiting extends Phaser.Scene
 	{
   		this.time.delayedCall(1000, function() 
 		{
-  			this.scene.start("Gameover");
+  			this.scene.start("Shipplacement");
   		}, [], this);
 	}
 
