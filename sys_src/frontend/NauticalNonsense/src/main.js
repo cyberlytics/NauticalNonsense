@@ -17,7 +17,8 @@ window.addEventListener('load', function () {
 		websocket_url:"ws://localhost:8000/ws/",
 		playername:"",
 		client_id:"",
-		socket: null // Initially set to null
+		socket: null, // Initially set to null
+		ready: false
 	};
 
 	game.scene.add("Preload", Preload);
