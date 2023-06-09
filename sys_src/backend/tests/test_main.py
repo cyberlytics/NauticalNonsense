@@ -99,22 +99,38 @@ def test_websocket():
     mock_data_player1 = {"client_id": client_id1, "mode": "random", "friend": None}
     mock_data_player2 = {"client_id": client_id2, "mode": "random", "friend": None}
 
-    client.post(f"/play", json=mock_data_player1)
-    client.post(f"/play", json=mock_data_player2)
+    response = client.post(f"/play", json=mock_data_player1)
 
-    with client.websocket_connect(f"/ws/{client_id1}") as websocket1:
-        with client.websocket_connect(f"/ws/{client_id2}") as websocket2:
-            send_data = {"msg": "Hello WebSocket"}
-            websocket1.send_json(send_data)
-            time.sleep(1)
-            received_data = websocket2.receive_json()
-            assert received_data == {"message received in the backend": send_data}
-            websocket2.close()
+    if response.json()['ready'] == False:
+        client.post(f"/play", json=mock_data_player2)
+        with client.websocket_connect(f"/ws/{client_id1}") as websocket1:
+            assert websocket1.receive_json() == None
+            with client.websocket_connect(f"/ws/{client_id2}") as websocket2:
+                assert websocket1.receive_json() == {"message received in the backend": "ready"}
+                assert websocket2.receive_json() == {"message received in the backend": "ready"}
+                send_data = {"msg": "Hello WebSocket"}
+                websocket1.send_json(send_data)
+                time.sleep(1)
+                received_data = websocket2.receive_json()
+                assert received_data == {"message received in the backend": send_data}
+                websocket2.close()
 
-        received_break_data = websocket1.receive_json()
-        assert received_break_data == {"Client has left": client_id2}
+            websocket1.close()
+    
+    else:
+        with client.websocket_connect(f"/ws/{client_id1}") as websocket1:
+            with client.websocket_connect(f"/ws/{response.json()['player2']}") as websocket2:
+                assert websocket1.receive_json() == {"message received in the backend": "ready"}
+                assert websocket2.receive_json() == {"message received in the backend": "ready"}
+                send_data = {"msg": "Hello WebSocket"}
+                websocket1.send_json(send_data)
+                time.sleep(1)
+                received_data = websocket2.receive_json()
+                assert received_data == {"message received in the backend": send_data}
+                websocket2.close()
 
-        websocket1.close()
+            websocket1.close()
+
 
 
 @pytest.mark.asyncio
