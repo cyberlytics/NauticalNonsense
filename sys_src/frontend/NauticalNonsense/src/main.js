@@ -1,6 +1,7 @@
+var game;
 window.addEventListener('load', function () {
 
-	var game = new Phaser.Game({
+	game = new Phaser.Game({
 		width: 1280,
 		height: 720,
 		type: Phaser.AUTO,
@@ -13,12 +14,17 @@ window.addEventListener('load', function () {
 
 	game.scene.add("Preload", Preload);
 	game.scene.add("Start", Start);
+	game.scene.add("Waiting", Waiting);
+	game.scene.add("Shipplacement", Shipplacement);
+	game.scene.add("Waiting2", Waiting2);
 	game.scene.add("Options", Options);
+	game.scene.add("Rules", Rules);
 	game.scene.add("Credits", Credits);
 	game.scene.add("Level", Level);
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
 	game.scene.add("Leaderboard", Leaderboard);
+	game.scene.add("Gameover", Gameover);
 });
 
 class Boot extends Phaser.Scene {

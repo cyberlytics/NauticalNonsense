@@ -7,14 +7,14 @@ from utils import is_incremental
 
 import uuid
 
-def prepare_room(client_id: uuid, game_type: str, name: str = None) -> int:
+def prepare_room(client_id: str, game_mode: str, friend: str = None) -> dict:
     '''
     Check in Database if a map exists, which the client can use.
     If not, construct a new map will be constructed.
     name is for name of friend
     '''
-    ret = get_map(client_id, game_type)
-    return ret
+    ready = get_map(client_id, game_mode, friend)
+    return ready
 
 async def get_partner_id(client_id: str):
     '''

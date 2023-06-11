@@ -14,6 +14,64 @@ class Start extends Phaser.Scene
 		/* END-USER-CTR-CODE */
 	}
 
+	http_GET(url) {
+		return fetch(url)
+			.then(function (response) {
+				if (response.ok) {
+					return response.json();
+				}
+				throw new Error('Network response was not ok.');
+			})
+			.then(function (data) {
+				//.log("Data:", data);
+				// Process the response data here
+				return data;
+			})
+			.catch(function (error) {
+				console.error('Fetch error:', error);
+			});
+	}
+	//Commit Test 
+	
+	http_POST(url, uuid, opponent_name, playername){
+		var http_post_data = {
+			uuid: uuid,
+			opponent_name: opponent_name,
+			playername: playername
+		};
+		if (opponent_name === ""){
+			http_post_data = {
+				uuid: uuid,
+				playername: playername
+			};
+		}
+
+		console.log(http_post_data);
+		fetch(url, {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(http_post_data),
+		  })
+			.then(response => {
+			  if (response.ok) {
+				return response.json();
+			  }
+			  throw new Error('Network response was not ok.');
+			})
+			.then(responseData => {
+			  // Process the response data
+			  console.log(responseData);
+			})
+			.catch(error => {
+			  console.error('Fetch error:', error);
+			});
+	}
+
+
+
+
 	/** @returns {void} */
 	editorCreate() 
 	{
@@ -70,33 +128,6 @@ class Start extends Phaser.Scene
 			self.playClick();
 			self.stopHorn();
 			self.scene.start("Options");
-        });
-
-		// leaderboardButton
-		const leaderboardButton = this.add.image(1100, 280, "leaderboardButton").setInteractive({ useHandCursor: true  });
-
-		leaderboardButton.on('pointerover', function (event)
-        {
-
-            this.setTint(0x808080);
-
-        });
-
-        leaderboardButton.on('pointerout', function (event)
-        {
-
-            this.clearTint();
-
-        });
-		
-		leaderboardButton.on('pointerdown', function (event)
-        {
-
-			this.clearTint();
-			self.playClick();
-			self.stopHorn();
-			self.scene.start("Leaderboard");
-		
         });
 		
 		//nameInput
@@ -313,7 +344,7 @@ class Start extends Phaser.Scene
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				self.scene.start("Gameboard");
+				self.scene.start("Waiting");
 			}
 			
 			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0))
@@ -321,7 +352,7 @@ class Start extends Phaser.Scene
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				self.scene.start("Gameboard");
+				self.scene.start("Waiting");
 			}
         });
 		
