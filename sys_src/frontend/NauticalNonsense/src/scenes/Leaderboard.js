@@ -86,42 +86,6 @@ class Leaderboard extends Phaser.Scene {
 			this.scene.start('Options');
 		});
 
-
-
-		// Leaderboard
-
-		fetch('http://localhost:8000/leaderboard')
-		.then(response => response.json())
-		.then(data => {
-		  const leaders = data.leadersHuman;
-		  let result = '';
-		  let allNames = '';
-		  let allMoves = '';
-		  let allRanks = '';
-	  
-		  // Iterate over the leaders array
-		  leaders.forEach((leader, index) => {
-			const { name, moves, rank } = leader;
-			result += `${rank} ${name} ${moves}`;
-			
-			allNames += `${name}\n`
-			allMoves += `${moves}\n`
-			allRanks += `${rank}\n`
-			// Add line break except for the last entry
-			if (index < leaders.length - 1) {
-			  result += '\n';
-			}
-		  });
-	  
-		  // Print the result
-		  console.log(allNames);
-		  console.log(allMoves);
-		  console.log(allRanks);
-		})
-		.catch(error => {
-		  console.error('Error:', error);
-		});
-
 		// dummy data
 		const leaderboardData = [
 			{ rank: 1, name: 'Player 1', shots: 10 },
@@ -145,106 +109,30 @@ class Leaderboard extends Phaser.Scene {
 			{ rank: 8, name: 'Player 8', shots: 80 },
 			{ rank: 9, name: 'Player 9', shots: 90 },
 			{ rank: 10, name: 'Player 10', shots: 100 },
-
-			{ rank: 1, name: 'Player 1', shots: 10 },
-			{ rank: 2, name: 'Player 2', shots: 20 },
-			{ rank: 3, name: 'Player 3', shots: 30 },
-			{ rank: 4, name: 'Player 4', shots: 40 },
-			{ rank: 5, name: 'Player 5', shots: 50 },
-			{ rank: 6, name: 'Player 6', shots: 60 },
-			{ rank: 7, name: 'Player 7', shots: 70 },
-			{ rank: 8, name: 'Player 8', shots: 80 },
-			{ rank: 9, name: 'Player 9', shots: 90 },
-			{ rank: 10, name: 'Player 10', shots: 100 },
-
-			{ rank: 1, name: 'Player 1', shots: 10 },
-			{ rank: 2, name: 'Player 2', shots: 20 },
-			{ rank: 3, name: 'Player 3', shots: 30 },
-			{ rank: 4, name: 'Player 4', shots: 40 },
-			{ rank: 5, name: 'Player 5', shots: 50 },
-			{ rank: 6, name: 'Player 6', shots: 60 },
-			{ rank: 7, name: 'Player 7', shots: 70 },
-			{ rank: 8, name: 'Player 8', shots: 80 },
-			{ rank: 9, name: 'Player 9', shots: 90 },
-			{ rank: 10, name: 'Player 10', shots: 100 },
-
-			{ rank: 1, name: 'Player 1', shots: 10 },
-			{ rank: 2, name: 'Player 2', shots: 20 },
-			{ rank: 3, name: 'Player 3', shots: 30 },
-			{ rank: 4, name: 'Player 4', shots: 40 },
-			{ rank: 5, name: 'Player 5', shots: 50 },
-			{ rank: 6, name: 'Player 6', shots: 60 },
-			{ rank: 7, name: 'Player 7', shots: 70 },
-			{ rank: 8, name: 'Player 8', shots: 80 },
-			{ rank: 9, name: 'Player 9', shots: 90 },
-			{ rank: 10, name: 'Player 10', shots: 100 },
-
-			{ rank: 1, name: 'Player 1', shots: 10 },
-			{ rank: 2, name: 'Player 2', shots: 20 },
-			{ rank: 3, name: 'Player 3', shots: 30 },
-			{ rank: 4, name: 'Player 4', shots: 40 },
-			{ rank: 5, name: 'Player 5', shots: 50 },
-			{ rank: 6, name: 'Player 6', shots: 60 },
-			{ rank: 7, name: 'Player 7', shots: 70 },
-			{ rank: 8, name: 'Player 8', shots: 80 },
-			{ rank: 9, name: 'Player 9', shots: 90 },
-			{ rank: 10, name: 'Player 10', shots: 100 }
 		];
 		
-		/*
-		// old method to create the table
-		const tableBoardPos = {
-			x : 1270/2 - 700/2,
-			y : 720/2 - 550/2,
+	
+		var scrollablePanel = this.rexUI.add.scrollablePanel({
+			x : 1270/2,
+			y : 720/2,
 			width : 700,
 			height : 550,
-			cornerRadius : smallCornerRadius
-		}
 
-		this.tableBoard = this.add.graphics();
-		this.tableBoard.fillStyle(backgroundColor, 1);
-		this.tableBoard.fillRoundedRect(tableBoardPos.x-tableBoardPos.cornerRadius, tableBoardPos.y - tableBoardPos.cornerRadius, 
-										tableBoardPos.width+2*tableBoardPos.cornerRadius, tableBoardPos.height+2*tableBoardPos.cornerRadius, 20);
-	
-		// Add table headers
-		this.add.text(tableBoardPos.x + tableBoardMargin, tableBoardPos.y, 'RANK', headingStyle);
-		this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 2, tableBoardPos.y, 'NAME', headingStyle);
-		this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 10, tableBoardPos.y, 'SHOTS', headingStyle);
-	
-		// Add leaderboard entries
-		leaderboardData.forEach((entry, index) => {
-			const rowY = tableBoardPos.y + (index + 1) * rowSpacing;
-			this.add.text(tableBoardPos.x + tableBoardMargin, rowY, entry.rank, textStyle);
-			this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 2, rowY, entry.name, textStyle);
-			this.add.text(tableBoardPos.x + tableBoardMargin + columnSpacing * 10, rowY, entry.shots, textStyle);
-		});
-		*/
+            scrollMode: 0,
 
-		// Scrollbar
-		var textArea = this.rexUI.add.textArea({
-            x : 1270/2,
-			y : 720/2,
-			width : 700/2,
-			height : 550,
+            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, COLOR_PRIMARY),
 
-            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, smallCornerRadius, backgroundColor),
-
-            text: this.rexUI.add.BBCodeText(),
-
-            slider: {
-                track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 0, COLOR_DARK),
-                thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, tinyCornerRadius, COLOR_LIGHT),
+            panel: {
+                child: createGrid(this),
+                mask: {
+                    mask: true,
+                    padding: 1,
+                }
             },
 
-            space: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: tableBoardMargin,
-
-                text: tableBoardMargin,
-                header: 0,
-                footer: tableBoardMargin,
+            slider: {
+                track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
+                thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
             },
 
             mouseWheelScroller: {
@@ -254,18 +142,40 @@ class Leaderboard extends Phaser.Scene {
 
             header: this.rexUI.add.label({
                 height: 30,
+
                 orientation: 0,
                 background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
-                text: this.add.text(0, 0, 'Rank \t Name \t Shots',  headingStyle),
+                text: this.add.text(0, 0, 'Header'),
             }),
 
-            content: CreateContent(leaderboardData),
+            footer: this.rexUI.add.label({
+                height: 30,
+
+                orientation: 0,
+                background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
+                text: this.add.text(0, 0, 'Footer'),
+            }),
+
+            space: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+
+                panel: 10,
+                header: 10,
+                footer: 10,
+            }
         })
-            .layout();
+            .layout()
 
+        var print = this.add.text(0, 0, '');
 
+		// Wake scene
 		this.events.emit("scene-awake");
 	}
+
+
 
 	/* START-USER-CODE */
 
@@ -299,6 +209,83 @@ var CreateContent = function (data) {
 	});
 	return leaderboardString
 }
+
+async function fetchData(){
+	try {
+		const response = await fetch('http://localhost:8000/leaderboard');
+		const data = await response.json();
+
+		const result = [];
+		const leaders = data.leadersHuman;
+		leaders.forEach((leader, index) => {
+			const { name, moves, rank } = leader;
+			result.push(`${rank}`, `${name}`, `${moves}`);
+		});
+
+		return result;
+	} catch (error) {
+		console.error(error);
+		throw error;
+	}
+}
+(async () => {
+	try {
+	  const leadersResult = await fetchData();
+	} catch (error) {
+	  // Handle any error that occurred during the fetch operation
+	  console.error(error);
+	}
+})();
+
+var createGrid = function (scene) {
+    // Create table body
+	const humanResults = [];
+	const promise = fetchData();
+	console.log("Hello world 1");
+    var sizer = scene.rexUI.add.fixWidthSizer({
+        space: {
+            left: 3,
+            right: 3,
+            top: 3,
+            bottom: 3,
+            item: 0,
+            line: 8,
+        },
+    })
+        .addBackground(scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, COLOR_DARK))
+		promise.then(result => {
+			result.forEach((leader, index) => {
+				humanResults.push(leader);
+			});
+		}).catch(error => {
+			console.log(error);
+		});
+
+
+	console.log("humanResults outside : ");
+	console.log(humanResults);
+	for (let i = 0; i < 9; i++) {
+		console.log("In for loop");
+		console.log("humanResults inside : ");
+		console.log(humanResults[i]);
+		sizer.add(scene.rexUI.add.label({
+		width: 210,
+		height: 60,
+		background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 0, COLOR_LIGHT),
+		text: scene.add.text(0, 0, `${humanResults[i]}`, { fontSize: 18 }),
+		align: 'center',
+		space: {
+			left: 10,
+			right: 10,
+			top: 10,
+			bottom: 10,
+		}
+		}));
+	}
+
+    return sizer;
+}
+
 
 
 /* END OF COMPILED CODE */
