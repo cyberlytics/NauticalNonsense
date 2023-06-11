@@ -50,7 +50,7 @@ def new_game_init(
         board2=game_field_player_2,
         ships1=player_1_ships,
         ships2=player_2_ships,
-        timestamp=datetime.now()
+        timestamp=datetime.utcnow()
     )
 
     return game_state
@@ -63,7 +63,17 @@ def validate_move(client_json):
     pass
 
 
-def _create_game_field(ships: list[list[int]], size: int = 100) -> list[int]:
+def _create_game_field(
+    ships: list[list[int]], 
+    size: int = 100, 
+    num_ships: int = 6,
+    expected_ships: dict[int, int] = {
+        5: 1,
+        4: 2,
+        3: 3,
+        2: 4
+    }
+    ) -> list[int]:
     """
     Create a game field and check if the ship placement is valid.
 
@@ -80,19 +90,29 @@ def _create_game_field(ships: list[list[int]], size: int = 100) -> list[int]:
 
     if not ships:
         raise ValueError("No ships given")
+    
+    if len(ships) != num_ships:
+        raise ValueError("Wrong amount of ships given")
+    
+
+    ship_counts = {key: 0 for key in expected_ships.keys()}
 
     game_field = [0] * size
 
     for ship in ships:
 
         ship = sorted(ship)
+        size = len(ship)
+
+        if size in ship_counts.keys():
+            ship_counts[size] += 1
 
         if not all([isinstance(coord, int) for coord in ship]):
             raise ValueError("Ship coordinates are not integers")
         
         if not is_incremental(ship):
             raise ValueError("Ship coordinates are not one apart")
-        
+
         for coord in ship:
             if coord < len(game_field) and coord >= 0:
                 if game_field[coord] == 0:
@@ -101,6 +121,9 @@ def _create_game_field(ships: list[list[int]], size: int = 100) -> list[int]:
                     raise ValueError("Ship coordinates overlap")
             else:
                 raise ValueError("Ship coordinates out of range")
+            
+    if ship_counts != expected_ships:
+        raise ValueError("Wrong amount of ships given")
     
     return game_field
 
@@ -186,4 +209,4 @@ def make_move(
     else:
         raise ValueError("Move has been played before")
     
-    return won, hit, game_field
+    return won, hit, game_field, ships
