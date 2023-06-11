@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 
 from main import app
+from utils import is_valid_uuid
 
 client = TestClient(app)
 

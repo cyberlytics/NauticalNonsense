@@ -36,6 +36,7 @@ coverage-js:
     - build-js
   script:
     - cd sys_src/frontend/NauticalNonsense
+    - mkdir public/
     - npm test
   artifacts:
     when: always
