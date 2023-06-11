@@ -68,7 +68,7 @@ def test_make_move_water():
     move = 0
     ships = [[0]]
 
-    _, hit, game_field = make_move(move, game_field, ships)
+    _, hit, game_field, ships = make_move(move, game_field, ships)
 
     assert game_field == [2]
     assert hit is False
@@ -80,7 +80,7 @@ def test_make_move_hit():
     move = 0
     ships = [[0, 1]]
 
-    _, hit, game_field = make_move(move, game_field, ships)
+    _, hit, game_field, ships = make_move(move, game_field, ships)
 
     assert game_field == [3, 1, 0]
     assert ships == [[100, 1]]
@@ -93,7 +93,7 @@ def test_make_move_won():
     move = 0
     ships = [[0, 101]]
 
-    won, hit, game_field = make_move(move, game_field, ships)
+    won, hit, game_field, ships = make_move(move, game_field, ships)
 
     assert game_field == [4, 4, 0]
     assert ships == [[100, 101]]
@@ -154,7 +154,7 @@ def test_create_game_field():
 
     ships = [[0, 1]]
 
-    game_field = _create_game_field(ships, size=4)
+    game_field = _create_game_field(ships, size=4, num_ships=1, expected_ships={2: 1})
 
     assert game_field == [1, 1, 0, 0]
 
@@ -164,27 +164,27 @@ def test_create_game_field_invalid():
     ships = []
 
     with pytest.raises(ValueError, match="No ships given"):
-        _create_game_field(ships, size=4)
+        _create_game_field(ships, size=4, num_ships=0, expected_ships={})
 
     ships = [[0, 1], [0, 1]]
 
     with pytest.raises(ValueError, match="Ship coordinates overlap"):
-        _create_game_field(ships, size=4)
+        _create_game_field(ships, size=4, num_ships=2, expected_ships={2: 2})
 
     ships = [[0, -1]]
 
     with pytest.raises(ValueError, match="Ship coordinates out of range"):
-        _create_game_field(ships, size=4)
+        _create_game_field(ships, size=4, num_ships=1, expected_ships={2: 1})
 
     ships = [[0.4, 1.4]]
 
     with pytest.raises(ValueError, match="Ship coordinates are not integers"):
-        _create_game_field(ships, size=4)
+        _create_game_field(ships, size=4, num_ships=1, expected_ships={2: 1})
 
     ships = [[0, 4]]
 
     with pytest.raises(ValueError, match="Ship coordinates are not one apart"):
-        _create_game_field(ships, size=4)
+        _create_game_field(ships, size=4, num_ships=1, expected_ships={2: 1})
 
 
 def test_new_game_init():
@@ -196,7 +196,9 @@ def test_new_game_init():
         player_1_ships=[[0, 1]],
         player_2_ships=[[2, 3]],
         game_mode="random",
-        size=4
+        size=4,
+        num_ships=1,
+        expected_ships={2: 1},
     )
 
     assert isinstance(game_state, State)

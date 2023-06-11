@@ -31,11 +31,29 @@ def new_game_init(
     player_1_ships: list[list[int]],
     player_2_ships: list[list[int]],
     game_mode: str,
-    size: int = 100
+    size: int = 100,
+    num_ships: int = 6,
+    expected_ships: dict[int, int] = {
+        5: 1,
+        4: 2,
+        3: 3,
+        2: 4
+    }
     ) -> State:
     
-    game_field_player_1 = _create_game_field(player_1_ships, size=size)
-    game_field_player_2 = _create_game_field(player_2_ships, size=size)
+    game_field_player_1 = _create_game_field(
+        player_1_ships,
+        size=size,
+        num_ships=num_ships,
+        expected_ships=expected_ships
+    )
+
+    game_field_player_2 = _create_game_field(
+        player_2_ships,
+        size=size,
+        num_ships=num_ships,
+        expected_ships=expected_ships
+    )
 
     game_state = State(
         game_id=game_id,
