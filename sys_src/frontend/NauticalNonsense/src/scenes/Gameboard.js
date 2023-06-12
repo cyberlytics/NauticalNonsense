@@ -23,7 +23,8 @@ class Gameboard extends Phaser.Scene {
 
 		const self = this;
 		var isPlayerTurn = true;
-		
+		this.selectedCell = -1;
+
 		//boardParams
 		const gridSize = 10;
 		const cellColor = 0xdae8fC;
@@ -65,20 +66,20 @@ class Gameboard extends Phaser.Scene {
 			height: 350,
 			cornerRadius: smallCornerRadius
 		}
-		const enemyGrid = [];
+		this.enemyGrid = [];
 		const enemyCellSize = enemyBoardPos.width / (gridSize);
 
 		for (let row = 0; row < gridSize; row++) {
-			enemyGrid[row] = [];
+			this.enemyGrid[row] = [];
 			for (let col = 0; col < gridSize; col++) {
 				const cell = this.add.rectangle(enemyBoardPos.x + col * enemyCellSize, enemyBoardPos.y + row * enemyCellSize, enemyCellSize - 1, enemyCellSize - 1, enemyCellColor);
 				cell.setOrigin(0, 0);
 				cell.setInteractive();
 				cell.on('pointerdown', () => {
 					self.playClick();
-					// select cell
+					self.SelectCell(row*10+col)
 				});
-				enemyGrid[row][col] = cell;
+				this.enemyGrid[row][col] = cell;
 			}
 		}
 		
@@ -210,6 +211,47 @@ class Gameboard extends Phaser.Scene {
 				playerGrid[row][col] = cell;
 			}
 		}
+	}
+
+	GetDummyGameboard() {
+		var list = [];
+		for (let i = 0; i<100; i++) {
+			list[i] = Math.round(Math.random()*4);
+		}
+		console.log(list);
+		return list;
+	}
+
+	UpdateGameboardColors(Data, Grid) {
+		const colors = [
+			0xdae8fC,	// light blue; Water
+			0x1f1f1f,	// dark gray; Ship
+			0xc14324,	// light red; Missed Shot
+			0x2d8009,	// dark green; Hit Shot
+			0x1f1f1f	// dark gray; Sunk Ship
+		];
+		// Iterate over the cells array and adjust the filled value
+		for (let row = 0; row < Grid.length; row++) {
+			for (let col = 0; col < Grid[row].length; col++) {
+				const cell = Grid[row][col];
+				// set each Cell to its specified state
+				cell.setFillStyle(colors[Data[row*10 + col]]);
+			}
+		}
+	}
+
+	SelectCell(newpos) {
+		// first remove selection
+		console.log(newpos);
+
+		//draw new selection
+
+		
+		// update the new selected position
+		this.selectedCell = newpos;
+
+
+		this.UpdateGameboardColors(this.GetDummyGameboard(), this.enemyGrid);
 	}
 
 	/* START-USER-CODE */
