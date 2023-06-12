@@ -180,13 +180,26 @@ class Statistics extends Phaser.Scene {
 		shipBox.fillRoundedRect(shipBoxStyle.xStart, shipBoxStyle.yStart, shipBoxStyle.width, shipBoxStyle.height, shipBoxStyle.radius);
 
 
-
 		//Carrier
+		const carrierHits = 0.5;
+		
 		const carrierText = this.add.text(shipBoxStyle.xStart + shipBoxStyle.width / 2, 130, "Carrier", shipStyle);
 		carrierText.setOrigin(0.5, 0.5);
 		const carrierImg = this.add.image(shipBoxStyle.xStart + shipBoxStyle.width / 2, carrierText.y + 0.5 * carrierText.height + shipBoxStyle.gapY, 'carrier');
 		carrierImg.setOrigin(0.5, 0);
 		carrierImg.setScale(0.25);
+		//carrierImg.setDepth(1);
+
+		const carrierRect = this.add.graphics();
+		carrierRect.fillStyle(white, 0);
+		carrierRect.fillRect(carrierImg.x - 0.5 * carrierImg.displayWidth, carrierImg.y, carrierHits * carrierImg.displayWidth, carrierImg.displayHeight);
+		const carrierMask = carrierRect.createGeometryMask();
+
+		const carrierImgRed = this.add.image(shipBoxStyle.xStart + shipBoxStyle.width / 2, carrierText.y + 0.5 * carrierText.height + shipBoxStyle.gapY, 'carrierRed');
+		carrierImgRed.setOrigin(0.5, 0);
+		carrierImgRed.setScale(0.25);
+		//carrierImgRed.setDepth(3);
+		carrierImgRed.setMask(carrierMask);
 
 
 		//other (capitulations and wins against computer)
@@ -222,6 +235,11 @@ class Statistics extends Phaser.Scene {
 
 	preload() {
 		this.load.image("carrier", "assets/ships/carrier/carrier_stats.png");
+		this.load.image("battleship", "assets/ships/battleship/battleship_stats.png");
+		this.load.image("cruiser", "assets/ships/cruiser/cruiser_stats.png");
+		this.load.image("destroyer", "assets/ships/destroyer/destroyer_stats.png");
+		this.load.image("submarine", "assets/ships/submarine/submarine_stats.png");
+		this.load.image("carrierRed", "assets/ships/carrier/carrier_stats_red2.png");
 	}
 
 	makeBoard(boardStyle, title, data) {
