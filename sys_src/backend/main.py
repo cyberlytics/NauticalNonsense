@@ -87,7 +87,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     partner_id = await get_partner_id(client_id)
     
     # if partner_id != None -> Message partner that game is ready
-    if partner_id != None:
+    if partner_id != None and partner_id != "":
         init_message = {"message received in the backend": "ready"}
         await manager.send_personal_message(init_message, client_id)
         await manager.send_personal_message(init_message, partner_id)
