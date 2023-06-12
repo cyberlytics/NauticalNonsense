@@ -34,6 +34,11 @@ class Statistics extends Phaser.Scene {
 			fontSize: '28px',
 			fill: '#ffffff'
 		};
+		const shipStyle = {
+			fontSize: '20px',
+			fill: '#000000',
+			align: "center"
+		};
 
 
 		// background
@@ -157,7 +162,28 @@ class Statistics extends Phaser.Scene {
 		const txtShiphits = this.add.text(shiphitsStyle.x + shiphitsStyle.padding, shiphitsStyle.y + shiphitsStyle.padding, "Winner's Ships Hit", shiphitsStyle.textStyle);
 
 		//Schiffe einfügen
-		//...
+		const shipBoxStyle = {
+			xStart: 965,
+			yStart: shiphitsStyle.y + txtShiphits.height + 2*shiphitsStyle.padding,
+			width: 290,
+			height: 110,
+			radius: 20,
+			backgroundColor: white,
+			gapY: 10,
+			textStyle: textStyle
+		}
+		const shipBox = this.add.graphics();
+		shipBox.fillStyle(shipBoxStyle.backgroundColor, 1);
+		shipBox.fillRoundedRect(shipBoxStyle.xStart, shipBoxStyle.yStart, shipBoxStyle.width, shipBoxStyle.height, shipBoxStyle.radius);
+
+
+
+		//Carrier
+		const carrierText = this.add.text(shipBoxStyle.xStart + shipBoxStyle.width / 2, 130, "Carrier", shipStyle);
+		carrierText.setOrigin(0.5, 0.5);
+		const carrierImg = this.add.image(shipBoxStyle.xStart + shipBoxStyle.width / 2, carrierText.y + 0.5 * carrierText.height + shipBoxStyle.gapY, 'carrier');
+		carrierImg.setOrigin(0.5, 0);
+		carrierImg.setScale(0.25);
 
 
 		//other (capitulations and wins against computer)
@@ -192,7 +218,7 @@ class Statistics extends Phaser.Scene {
 	}
 
 	preload() {
-
+		this.load.image("carrier", "assets/ships/carrier/carrier_stats.png");
 	}
 
 	makeBoard(boardStyle, title, data) {
