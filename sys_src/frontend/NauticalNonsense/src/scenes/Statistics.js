@@ -28,16 +28,19 @@ class Statistics extends Phaser.Scene {
 		//text styles
 		const textStyle = {
 			fontSize: '24px',
-			fill: '#ffffff'
+			fill: '#ffffff',
+			fontFamily: "GodOfWar"
 		};
 		const headingStyle = {
 			fontSize: '28px',
-			fill: '#ffffff'
+			fill: '#ffffff',
+			fontFamily: "GodOfWar"
 		};
 		const shipStyle = {
 			fontSize: '20px',
 			fill: '#000000',
-			align: "center"
+			align: "center",
+			fontFamily: "GodOfWar"
 		};
 
 
