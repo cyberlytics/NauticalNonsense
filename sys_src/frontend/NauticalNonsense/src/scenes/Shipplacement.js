@@ -20,11 +20,17 @@ class Shipplacement extends Phaser.Scene {
 		var isEnemyReady = false;
 		var isPlayerReady = false;
 
-		//Eventuell für OppenentStatus notwendig, wobei ich nicht weiß ob wir das brauchen? 
-		sharedData.socket.onmessage = function(event) {
+		
+		sharedData.socket.onmessage = function (event) {
+			console.log("Received message:", event.data);
 			var message = JSON.parse(event.data);
-			console.log("Message received:", message)
+			console.log("Parsed message:", message);
+			if (message === "ready") {
+				sharedData.ready = true;
+			}
 		};
+
+
 
 		//boardParams
 		const gridSize = 10;

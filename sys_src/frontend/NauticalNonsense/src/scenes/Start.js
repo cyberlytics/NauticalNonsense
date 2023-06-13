@@ -316,16 +316,29 @@ class Start extends Phaser.Scene {
 				self.playClick();
 				var ready = self.http_POST(apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername);
 				sharedData.socket = new WebSocket(sharedData.websocket_url);
-				// Listen for WebSocket events
+
+				// Handle WebSocket events
 				sharedData.socket.onopen = function () {
 					console.log('WebSocket connection established');
 					// Perform any necessary actions when the connection is successfully established
+				};
+
+				sharedData.socket.onmessage = function (event) {
+					console.log("Received message:", event.data);
+					var message = JSON.parse(event.data);
+					console.log("Parsed message:", message);
 				};
 
 				sharedData.socket.onerror = function (error) {
 					console.error('WebSocket error:', error);
 					// Handle any errors that occur during the WebSocket connection
 				};
+
+				sharedData.socket.onclose = function () {
+					console.log('WebSocket connection closed');
+					// Perform any necessary actions when the connection is closed
+				};
+
 				self.scene.start("Waiting");
 			}
 

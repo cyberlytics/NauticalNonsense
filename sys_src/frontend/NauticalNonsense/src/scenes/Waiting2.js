@@ -19,24 +19,6 @@ class Waiting2 extends Phaser.Scene
 	editorCreate() 
 	{
 		var sharedData = this.game.sharedData;
-		sharedData.ready = false;
-
-		// Check WebSocket connection status
-		if (sharedData.socket.readyState === WebSocket.OPEN) {
-			console.log("WebSocket connection is open.");
-		} else {
-			console.log("WebSocket connection is not open.");
-		}
-
-		sharedData.socket.onMessage = function(event) {
-			console.log("TESTING");
-			var message = JSON.parse(event.data);
-			if (message === "ready") {
-				sharedData.ready = true;
-			}
-			console.log("Message received:", message)
-		};
-
 		const self = this;
 		
 		//sounds
