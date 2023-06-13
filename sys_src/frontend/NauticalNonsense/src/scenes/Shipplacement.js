@@ -20,7 +20,7 @@ class Shipplacement extends Phaser.Scene {
 		var isEnemyReady = false;
 		var isPlayerReady = false;
 
-		
+
 		sharedData.socket.onmessage = function (event) {
 			console.log("Received message:", event.data);
 			var message = JSON.parse(event.data);
@@ -129,7 +129,6 @@ class Shipplacement extends Phaser.Scene {
 
 		const ships = [battleship, carrier, cruiser, destroyer, destroyer1, submarine, submarine1];
 		const shipSprites = [battleshipSprite, carrierSprite, cruiserSprite, destroyerSprite, destroyerSprite1, submarineSprite, submarineSprite1]; let selectedShipIndex = -1; // Initialize with an invalid index
-
 		let occupiedCells = [];
 
 		//sounds
@@ -193,6 +192,8 @@ class Shipplacement extends Phaser.Scene {
 				console.log(1);
 				ships[i].placed = 3;
 			}
+			sharedData.sprites = shipSprites;
+			sharedData.occupiedCells = occupiedCells;
 			self.sendMessage(sharedData, self.GetListOfPositions(ships, gridSize));
 			self.scene.start("Waiting2");
 		});

@@ -46,6 +46,7 @@ class Gameboard extends Phaser.Scene {
 		var selectedRow = -1;
 		var selectedCol = -1;
 
+
 		//boardParams
 		const gridSize = 10;
 		const cellColor = 0xdae8fC;
@@ -252,6 +253,15 @@ class Gameboard extends Phaser.Scene {
 			}
 		}
 
+		//ships
+		for (let index = 0; index < sharedData.sprites.length; index++) {
+			sharedData.sprites[index].setVisible(true);
+			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
+			this.add.existing(sharedData.sprites[index]);
+			this.highlightCells(sharedData.occupiedCells, playerGrid)
+		}
+
+
 		sharedData.socket.onmessage = function(event) {
 			var message = JSON.parse(event.data);
 			console.log("Message received:", message)
@@ -278,6 +288,22 @@ class Gameboard extends Phaser.Scene {
 		else {
 			opponent.setTint(0xe50000);
 			player.clearTint();
+		}
+	}
+
+	highlightCells(occupiedCells, playerGrid) {
+		// Iterate over the cells array and adjust the alpha value accordingly
+		for (let row = 0; row < playerGrid.length; row++) {
+			for (let col = 0; col < playerGrid[row].length; col++) {
+				const cell = playerGrid[row][col];
+
+				// Check if the cell is in the occupiedCells array
+				if (occupiedCells.some(({ row: occupiedRow, col: occupiedCol }) => occupiedRow === row && occupiedCol === col)) {
+					cell.setAlpha(0.5);  // Highlight occupied cell
+				} else {
+					cell.setAlpha(1);    // Set other cells to normal
+				}
+			}
 		}
 	}
 
