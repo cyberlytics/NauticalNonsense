@@ -20,7 +20,6 @@ class Shipplacement extends Phaser.Scene {
 		var isEnemyReady = false;
 		var isPlayerReady = false;
 
-
 		sharedData.socket.onmessage = function (event) {
 			console.log("Received message:", event.data);
 			var message = JSON.parse(event.data);

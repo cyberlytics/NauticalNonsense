@@ -327,6 +327,10 @@ class Start extends Phaser.Scene {
 					console.log("Received message:", event.data);
 					var message = JSON.parse(event.data);
 					console.log("Parsed message:", message);
+
+					if (message === "ready") {
+						sharedData.ready = true;
+					}
 				};
 
 				sharedData.socket.onerror = function (error) {
