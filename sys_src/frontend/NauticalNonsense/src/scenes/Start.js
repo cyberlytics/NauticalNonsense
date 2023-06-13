@@ -326,11 +326,6 @@ class Start extends Phaser.Scene {
 					console.error('WebSocket error:', error);
 					// Handle any errors that occur during the WebSocket connection
 				};
-				if (ready) {
-					console.log("ready")
-				} else {
-					console.log("Not ready!")
-				}
 				self.scene.start("Waiting");
 			}
 

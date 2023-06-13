@@ -19,7 +19,17 @@ class Waiting2 extends Phaser.Scene
 	editorCreate() 
 	{
 		var sharedData = this.game.sharedData;
-		sharedData.socket.onmessage = function(event) {
+		sharedData.ready = false;
+
+		// Check WebSocket connection status
+		if (sharedData.socket.readyState === WebSocket.OPEN) {
+			console.log("WebSocket connection is open.");
+		} else {
+			console.log("WebSocket connection is not open.");
+		}
+
+		sharedData.socket.onMessage = function(event) {
+			console.log("TESTING");
 			var message = JSON.parse(event.data);
 			if (message === "ready") {
 				sharedData.ready = true;
@@ -53,8 +63,9 @@ class Waiting2 extends Phaser.Scene
         {
 			self.playHorn();
         });
-
-		if (sharedData.ready || true) {
+		console.log("ready? ", sharedData.ready)
+		if (sharedData.ready) {
+			console.log("test");
 			self.switchScene();
 		}
 		
@@ -89,7 +100,6 @@ class Waiting2 extends Phaser.Scene
   			this.scene.start("Gameboard");
   		}, [], this);
 	}
-
 	/* END-USER-CODE */
 	
 }
