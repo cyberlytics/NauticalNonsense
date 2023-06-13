@@ -51,7 +51,7 @@ class Statistics extends Phaser.Scene {
 		background.setOrigin(0, 0);
 
 		//returnButton
-		const returnButton = this.add.image(70, 650, "optionsBack").setInteractive({ useHandCursor: true })
+		const returnButton = this.add.image(70, 650, "backButton").setInteractive({ useHandCursor: true })
 		returnButton.scaleX = 0.7;
 		returnButton.scaleY = 0.7;
 
@@ -68,6 +68,25 @@ class Statistics extends Phaser.Scene {
 			this.clearTint();
 			statistics.scene.start('Options');
 						//boardShips[0].setFillStyle(boardShips[0].fillColor, 0.2);
+		})
+
+		//homeButton
+		const homeButton = this.add.image(70, 580, "homeButton").setInteractive({ useHandCursor: true })
+		homeButton.scaleX = 0.7;
+		homeButton.scaleY = 0.7;
+
+		homeButton.on('pointerover', function (event) {
+			this.setTint(0x808080);
+		})
+
+		homeButton.on('pointerout', function (event) {
+			this.clearTint();
+		})
+
+		homeButton.on('pointerdown', function (event) {
+			statistics.sound.add("click").play();
+			this.clearTint();
+			statistics.scene.start('Start');
 		})
 
 
@@ -93,13 +112,13 @@ class Statistics extends Phaser.Scene {
 		games.fillRoundedRect(gamesStyle.x, gamesStyle.y, gamesStyle.width, gamesStyle.height, gamesStyle.radius);
 
 		const txtGamesPlayed = this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding, "GAMES PLAYED", textStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 250, gamesStyle.y + gamesStyle.padding, "2-Player: " + stats.gamesCountHuman, textStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 530, gamesStyle.y + gamesStyle.padding, "PC: " + stats.gamesCountComputer, textStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 700, gamesStyle.y + gamesStyle.padding, "Total: "+stats.gamesCount, textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 270, gamesStyle.y + gamesStyle.padding, "2-Player: " + stats.gamesCountHuman, textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 520, gamesStyle.y + gamesStyle.padding, "PC: " + stats.gamesCountComputer, textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 690, gamesStyle.y + gamesStyle.padding, "Total: "+stats.gamesCount, textStyle);
 		this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "AVERAGE SHOTS", textStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 250, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "2-Player: " + stats.averageMovesHuman.toFixed(2), textStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 530, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "PC: " + stats.averageMovesComputer.toFixed(2), textStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 700, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "Total: " + stats.averageMoves.toFixed(2), textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 270, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "2-Player: " + stats.averageMovesHuman.toFixed(2), textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 520, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "PC: " + stats.averageMovesComputer.toFixed(2), textStyle);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 690, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "Total: " + stats.averageMoves.toFixed(2), textStyle);
 		
 
 		//board for most used ship positions
@@ -202,13 +221,12 @@ class Statistics extends Phaser.Scene {
 		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, submarineY, 'Submarine', 'submarine', 'submarineRed', submarineHits);
 
 
-
 		//other (capitulations and wins against computer)
 		const otherStyle = {
 			x: 120,
 			y: 545,
-			width: 910,
-			height: 100,
+			width: 825, //515
+			height: 132,
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
@@ -235,6 +253,8 @@ class Statistics extends Phaser.Scene {
 	}
 
 	preload() {
+		this.load.image("backButton", "assets/options/backButton.png");
+		this.load.image("homeButton", "assets/leaderboard/homeButton.png");
 		this.load.image("carrier", "assets/ships/carrier/carrier_stats.png");
 		this.load.image("battleship", "assets/ships/battleship/battleship_stats.png");
 		this.load.image("cruiser", "assets/ships/cruiser/cruiser_stats.png");
