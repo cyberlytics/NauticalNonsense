@@ -36,7 +36,7 @@ class Statistics extends Phaser.Scene {
 			fill: '#ffffff',
 			fontFamily: "GodOfWar"
 		};
-		const shipStyle = {
+		const shiptextStyle = {
 			fontSize: '20px',
 			fill: '#000000',
 			align: "center",
@@ -146,13 +146,14 @@ class Statistics extends Phaser.Scene {
 			textStyle: textStyle
 		}
 		this.boardFirsts = this.makeBoard(boardStyleFirsts, "Most First Shots", stats.moves); //data noch ändern
-		
+
+
 		//winner's ships hit
 		const shiphitsStyle = {
 			x: 965,
 			y: 50,
 			width: 290,
-			height: 473,
+			height: 627,
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
@@ -164,42 +165,42 @@ class Statistics extends Phaser.Scene {
 
 		const txtShiphits = this.add.text(shiphitsStyle.x + shiphitsStyle.padding, shiphitsStyle.y + shiphitsStyle.padding, "Winner's Ships Hit", shiphitsStyle.textStyle);
 
-		//Schiffe einfügen
-		const shipBoxStyle = {
-			xStart: 965,
-			yStart: shiphitsStyle.y + txtShiphits.height + 2*shiphitsStyle.padding,
-			width: 290,
+		const shipboxStyle = {
+			width: 286,
 			height: 110,
-			radius: 20,
+			radius: 25,
 			backgroundColor: white,
+			paddingTop: 5,
 			gapY: 10,
-			textStyle: textStyle
+			margin: 2,
+			textStyle: shiptextStyle
 		}
-		const shipBox = this.add.graphics();
-		shipBox.fillStyle(shipBoxStyle.backgroundColor, 1);
-		shipBox.fillRoundedRect(shipBoxStyle.xStart, shipBoxStyle.yStart, shipBoxStyle.width, shipBoxStyle.height, shipBoxStyle.radius);
 
+		//carrier
+		const carrierHits = stats.averageShiphits[0];
+		const carrierY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding;
+		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, carrierY, 'Carrier', 'carrier', 'carrierRed', carrierHits);
 
-		//Carrier
-		const carrierHits = 0.5;
-		
-		const carrierText = this.add.text(shipBoxStyle.xStart + shipBoxStyle.width / 2, 130, "Carrier", shipStyle);
-		carrierText.setOrigin(0.5, 0.5);
-		const carrierImg = this.add.image(shipBoxStyle.xStart + shipBoxStyle.width / 2, carrierText.y + 0.5 * carrierText.height + shipBoxStyle.gapY, 'carrier');
-		carrierImg.setOrigin(0.5, 0);
-		carrierImg.setScale(0.25);
-		//carrierImg.setDepth(1);
+		//battleship
+		const battleshipHits = stats.averageShiphits[1];
+		const battleshipY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 1 * (shipboxStyle.height + shipboxStyle.margin);
+		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, battleshipY, 'Battleship', 'battleship', 'battleshipRed', battleshipHits);
 
-		const carrierRect = this.add.graphics();
-		carrierRect.fillStyle(white, 0);
-		carrierRect.fillRect(carrierImg.x - 0.5 * carrierImg.displayWidth, carrierImg.y, carrierHits * carrierImg.displayWidth, carrierImg.displayHeight);
-		const carrierMask = carrierRect.createGeometryMask();
+		//cruiser
+		const cruiserHits = stats.averageShiphits[2];
+		const cruiserY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 2 * (shipboxStyle.height + shipboxStyle.margin);
+		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, cruiserY, 'Cruiser', 'cruiser', 'cruiserRed', cruiserHits);
 
-		const carrierImgRed = this.add.image(shipBoxStyle.xStart + shipBoxStyle.width / 2, carrierText.y + 0.5 * carrierText.height + shipBoxStyle.gapY, 'carrierRed');
-		carrierImgRed.setOrigin(0.5, 0);
-		carrierImgRed.setScale(0.25);
-		//carrierImgRed.setDepth(3);
-		carrierImgRed.setMask(carrierMask);
+		//destroyer
+		const destroyerHits = stats.averageShiphits[3];
+		const destroyerY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 3 * (shipboxStyle.height + shipboxStyle.margin);
+		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, destroyerY, 'Destroyer', 'destroyer', 'destroyerRed', destroyerHits);
+
+		//submarine
+		const submarineHits = stats.averageShiphits[4];
+		const submarineY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 4 * (shipboxStyle.height + shipboxStyle.margin);
+		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, submarineY, 'Submarine', 'submarine', 'submarineRed', submarineHits);
+
 
 
 		//other (capitulations and wins against computer)
@@ -239,7 +240,11 @@ class Statistics extends Phaser.Scene {
 		this.load.image("cruiser", "assets/ships/cruiser/cruiser_stats.png");
 		this.load.image("destroyer", "assets/ships/destroyer/destroyer_stats.png");
 		this.load.image("submarine", "assets/ships/submarine/submarine_stats.png");
-		this.load.image("carrierRed", "assets/ships/carrier/carrier_stats_red2.png");
+		this.load.image("carrierRed", "assets/ships/carrier/carrier_stats_red.png");
+		this.load.image("battleshipRed", "assets/ships/battleship/battleship_stats_red.png");
+		this.load.image("cruiserRed", "assets/ships/cruiser/cruiser_stats_red.png");
+		this.load.image("destroyerRed", "assets/ships/destroyer/destroyer_stats_red.png");
+		this.load.image("submarineRed", "assets/ships/submarine/submarine_stats_red.png");
 	}
 
 	makeBoard(boardStyle, title, data) {
@@ -266,6 +271,29 @@ class Statistics extends Phaser.Scene {
 			}
 		}
 		return board;
+	}
+	
+	makeShip(shipboxStyle, shipboxX, shipboxY, name, img, imgRed, hits) {
+		const shipbox = this.add.graphics();
+		shipbox.fillStyle(shipboxStyle.backgroundColor, 1);
+		shipbox.fillRoundedRect(shipboxX, shipboxY, shipboxStyle.width, shipboxStyle.height, shipboxStyle.radius);
+
+		const text = this.add.text(shipboxX + shipboxStyle.width / 2, shipboxY + shipboxStyle.paddingTop, name, shipboxStyle.textStyle);
+		text.setOrigin(0.5, 0);
+
+		const image = this.add.image(shipboxX + shipboxStyle.width / 2, text.y + text.height + 0.5 * (shipboxY + shipboxStyle.height - text.y - text.height), img);
+		image.setOrigin(0.5, 0.5);
+		image.setScale(0.22);
+
+		const rect = this.add.graphics();
+		rect.fillStyle(shipboxStyle.backgroundColor, 0);
+		rect.fillRect(image.x - 0.5 * image.displayWidth, image.y - 0.5*image.displayHeight, hits * image.displayWidth, image.displayHeight);
+		const mask = rect.createGeometryMask();
+
+		const imageRed = this.add.image(shipboxX + shipboxStyle.width / 2, text.y + text.height + 0.5 * (shipboxY + shipboxStyle.height - text.y - text.height), imgRed);
+		imageRed.setOrigin(0.5, 0.5);
+		imageRed.setScale(0.22);
+		imageRed.setMask(mask);
 	}
 
 	/* END-USER-CODE */
