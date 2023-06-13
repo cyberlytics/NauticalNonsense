@@ -73,18 +73,6 @@ class Start extends Phaser.Scene {
 		const apiUrl = sharedData.backend_url;
 		sharedData.client_id = await this.http_GET(apiUrl);
 		sharedData.websocket_url += sharedData.client_id;
-		sharedData.socket = new WebSocket(sharedData.websocket_url);
-
-		// Listen for WebSocket events
-		sharedData.socket.onopen = function () {
-			console.log('WebSocket connection established');
-			// Perform any necessary actions when the connection is successfully established
-		};
-
-		sharedData.socket.onerror = function (error) {
-			console.error('WebSocket error:', error);
-			// Handle any errors that occur during the WebSocket connection
-		};
 
 		const backgroundColor = 0x3c3845
 		var isTypingName = false;
@@ -326,8 +314,18 @@ class Start extends Phaser.Scene {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-
 				var ready = self.http_POST(apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername);
+				sharedData.socket = new WebSocket(sharedData.websocket_url);
+				// Listen for WebSocket events
+				sharedData.socket.onopen = function () {
+					console.log('WebSocket connection established');
+					// Perform any necessary actions when the connection is successfully established
+				};
+
+				sharedData.socket.onerror = function (error) {
+					console.error('WebSocket error:', error);
+					// Handle any errors that occur during the WebSocket connection
+				};
 				if (ready) {
 					console.log("ready")
 				} else {

@@ -20,6 +20,7 @@ class Shipplacement extends Phaser.Scene {
 		var isEnemyReady = false;
 		var isPlayerReady = false;
 
+		//Eventuell für OppenentStatus notwendig, wobei ich nicht weiß ob wir das brauchen? 
 		sharedData.socket.onmessage = function(event) {
 			var message = JSON.parse(event.data);
 			console.log("Message received:", message)
@@ -405,7 +406,6 @@ class Shipplacement extends Phaser.Scene {
 				sent++;
 			}
 		}
-		
 	}
 
 	rotateShip(shipSprite, ship, occupiedCells, gridSize, playerGrid, playerCellSize) {

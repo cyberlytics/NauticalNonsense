@@ -18,7 +18,15 @@ class Waiting2 extends Phaser.Scene
 	/** @returns {void} */
 	editorCreate() 
 	{
-		
+		var sharedData = this.game.sharedData;
+		sharedData.socket.onmessage = function(event) {
+			var message = JSON.parse(event.data);
+			if (message === "ready") {
+				sharedData.ready = true;
+			}
+			console.log("Message received:", message)
+		};
+
 		const self = this;
 		
 		//sounds
@@ -45,8 +53,11 @@ class Waiting2 extends Phaser.Scene
         {
 			self.playHorn();
         });
+
+		if (sharedData.ready || true) {
+			self.switchScene();
+		}
 		
-		self.switchScene();
 
 		this.events.emit("scene-awake");
 	}
