@@ -204,9 +204,9 @@ class Gameboard extends Phaser.Scene {
 		capitulateButton.on('pointerdown', function (event) {
 			self.playClick();
 			this.clearTint();
-			self.scene.start("Start");
-		});
-
+			self.scene.start("Gameover");
+        });
+		
 		// capitulateButtonText
 		const capitulateButtonText = this.add.text(1280 / 2 - 390, 720 / 2 + 290, "", {});
 		capitulateButtonText.scaleX = 1;
