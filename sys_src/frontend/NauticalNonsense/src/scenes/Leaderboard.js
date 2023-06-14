@@ -11,6 +11,8 @@ const smallCornerRadius = 20
 const tinyCornerRadius = 10
 const tableBoardMargin = 30
 
+let preloadPromise;
+
 const headingStyle = {
 	fontSize: '20px',
 	fill: '#ffffff'
@@ -117,59 +119,61 @@ class Leaderboard extends Phaser.Scene {
 			y : 720/2,
 			width : 700,
 			height : 550,
+	
+			scrollMode: 0,
+	
+			background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, COLOR_PRIMARY),
+	
+			panel: {
+				child: createGrid(this),
+				mask: {
+					mask: true,
+					padding: 1,
+				}
+			},
+	
+			slider: {
+				track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
+				thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
+			},
+	
+			mouseWheelScroller: {
+				focus: false,
+				speed: 0.1
+			},
+	
+			header: this.rexUI.add.label({
+				height: 30,
+	
+				orientation: 0,
+				background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
+				text: this.add.text(0, 0, 'Header'),
+			}),
+	
+			footer: this.rexUI.add.label({
+				height: 30,
+	
+				orientation: 0,
+				background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
+				text: this.add.text(0, 0, 'Footer'),
+			}),
+	
+			space: {
+				left: 10,
+				right: 10,
+				top: 10,
+				bottom: 10,
+	
+				panel: 10,
+				header: 10,
+				footer: 10,
+			}
+		})
+			.layout()
+	
+		
 
-            scrollMode: 0,
-
-            background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, COLOR_PRIMARY),
-
-            panel: {
-                child: createGrid(this),
-                mask: {
-                    mask: true,
-                    padding: 1,
-                }
-            },
-
-            slider: {
-                track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, COLOR_DARK),
-                thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, COLOR_LIGHT),
-            },
-
-            mouseWheelScroller: {
-                focus: false,
-                speed: 0.1
-            },
-
-            header: this.rexUI.add.label({
-                height: 30,
-
-                orientation: 0,
-                background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
-                text: this.add.text(0, 0, 'Header'),
-            }),
-
-            footer: this.rexUI.add.label({
-                height: 30,
-
-                orientation: 0,
-                background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, COLOR_DARK),
-                text: this.add.text(0, 0, 'Footer'),
-            }),
-
-            space: {
-                left: 10,
-                right: 10,
-                top: 10,
-                bottom: 10,
-
-                panel: 10,
-                header: 10,
-                footer: 10,
-            }
-        })
-            .layout()
-
-        var print = this.add.text(0, 0, '');
+        //var print = this.add.text(0, 0, '');
 
 		// Wake scene
 		this.events.emit("scene-awake");
@@ -189,6 +193,7 @@ class Leaderboard extends Phaser.Scene {
 		this.load.pack("asset-pack", "assets/leaderboard-asset-pack.json");
 		this.load.audio("click", ["assets/sounds/click_1.mp3"]);
 		this.load.scenePlugin('rexuiplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js', 'rexUI', 'rexUI');
+		preloadPromise = processPromise();
 	}
 
 	playClick() 
@@ -228,20 +233,19 @@ async function fetchData(){
 		throw error;
 	}
 }
-(async () => {
-	try {
-	  const leadersResult = await fetchData();
-	} catch (error) {
-	  // Handle any error that occurred during the fetch operation
-	  console.error(error);
-	}
-})();
+
+async function processPromise() {
+	const dataPromise = await fetchData();
+	return dataPromise;
+}
 
 var createGrid = function (scene) {
     // Create table body
 	const humanResults = [];
-	const promise = fetchData();
-	console.log("Hello world 1");
+	//const promise = processPromise();
+	//console.log("Promise: ");
+	//console.log(promise);
+	//console.log("Hello world 1");
     var sizer = scene.rexUI.add.fixWidthSizer({
         space: {
             left: 3,
@@ -253,26 +257,24 @@ var createGrid = function (scene) {
         },
     })
         .addBackground(scene.rexUI.add.roundRectangle(0, 0, 10, 10, 0, COLOR_DARK))
-		promise.then(result => {
+		/*
+		preloadPromise.then(result => {
 			result.forEach((leader, index) => {
 				humanResults.push(leader);
 			});
 		}).catch(error => {
 			console.log(error);
-		});
+		}); */
 
-
-	console.log("humanResults outside : ");
-	console.log(humanResults);
+	
 	for (let i = 0; i < 9; i++) {
-		console.log("In for loop");
-		console.log("humanResults inside : ");
-		console.log(humanResults[i]);
+		console.log("PreloadPromise for loop : ");
+		console.log(preloadPromise);
 		sizer.add(scene.rexUI.add.label({
 		width: 210,
 		height: 60,
 		background: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 0, COLOR_LIGHT),
-		text: scene.add.text(0, 0, `${humanResults[i]}`, { fontSize: 18 }),
+		text: scene.add.text(0, 0, `${preloadPromise[i]}`, { fontSize: 18 }),
 		align: 'center',
 		space: {
 			left: 10,
@@ -282,11 +284,10 @@ var createGrid = function (scene) {
 		}
 		}));
 	}
+	
 
     return sizer;
 }
-
-
 
 /* END OF COMPILED CODE */
 

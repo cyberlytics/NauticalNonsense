@@ -105,6 +105,8 @@ class Preload extends Phaser.Scene {
 		this.load.on(Phaser.Loader.Events.COMPLETE, () => this.scene.start("Start"));
 	}
 
+	
+
 	/* END-USER-CODE */
 }
 
