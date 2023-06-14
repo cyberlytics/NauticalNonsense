@@ -220,7 +220,13 @@ class Shipplacement extends Phaser.Scene
 			self.playClick();
 			this.clearTint();
 			isEnemyReady = true;
-			self.switchReady(opponentStatusRed, opponentStatusGreen, isEnemyReady);
+			
+			for (let i = 0; i < ships.length; i++) {
+				const sprite = shipSprites[i];
+				sprite.emit('pointerdown');
+			}
+			
+			//self.switchReady(opponentStatusRed, opponentStatusGreen, isEnemyReady);
         });
 		
 		// randomButtonText
@@ -250,6 +256,7 @@ class Shipplacement extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
+			self.scene.restart("Shipplacement");
         });
 		
 		// resetButtonText
