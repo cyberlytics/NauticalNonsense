@@ -77,7 +77,7 @@ async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, cl
         
 
 async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
-    uuid_client = manager.get_uuid_from_websocket()
+    uuid_client = manager.get_uuid_from_websocket(manager)
     # ship placement
     if len(data) == 7:
         # validate ship placement
