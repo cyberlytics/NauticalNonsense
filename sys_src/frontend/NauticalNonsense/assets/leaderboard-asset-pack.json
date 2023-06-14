@@ -2,16 +2,19 @@
     "section1": {
         "files": [
             {
-                "url": [
-                    "assets/sounds/click_1.mp3"
-                ],
+                "url": ["assets/sounds/click_1.mp3"],
                 "type": "audio",
-                "key": "click_1"
+                "key": "click"
             },
             {
-                "url": "assets/start/homeButton.png",
+                "url": "assets/leaderboard/homeButton.png",
                 "type": "image",
                 "key": "homeButton"
+            },
+            {
+                "url": "assets/leaderboard/backButton.png",
+                "type": "image",
+                "key": "backButton"
             }
         ]
     },
