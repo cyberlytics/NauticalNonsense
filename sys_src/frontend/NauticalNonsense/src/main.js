@@ -17,10 +17,12 @@ window.addEventListener('load', function () {
 		websocket_url:"ws://localhost:8000/ws/",
 		playername:"",
 		client_id:"",
+		game_id:"",
 		sprites:[],
 		highlightedCells:[],
 		socket: null, // Initially set to null
-		ready: false
+		ready: false,
+		ship_placement_ready : false
 	};
 
 	game.scene.add("Preload", Preload);

@@ -61,7 +61,7 @@ class Start extends Phaser.Scene {
 				console.error('Fetch error:', error);
 			});
 	}
-	
+
 
 
 
@@ -318,55 +318,42 @@ class Start extends Phaser.Scene {
 				self.playClick();
 				var ready = self.http_POST(apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername, function () {
 					sharedData.socket = new WebSocket(sharedData.websocket_url);
-				
+
 					// Handle WebSocket events
 					sharedData.socket.onopen = function () {
 						console.log('WebSocket connection established');
 						// Perform any necessary actions when the connection is successfully established
 					};
-				
+
 					sharedData.socket.onmessage = function (event) {
 						console.log("Received message:", event.data);
 						//var message = JSON.parse(event.data);
-						var message = JSON.parse(event.data)['message received in the backend'];
+						var message = JSON.parse(event.data)['message'];
 						console.log("Parsed message:", message);
-				
 						if (message === "ready") {
 							sharedData.ready = true;
 						}
+
+						if (message && message.includes("game_id")) {
+							var splitMessage = message.split(":");
+							var gameID = splitMessage[1].trim();
+							console.log("Game ID:", gameID);
+							sharedData.game_id = gameID;
+						}
+
 					};
 					sharedData.socket.onerror = function (error) {
 						console.error('WebSocket error:', error);
 						// Handle any errors that occur during the WebSocket connection
 					};
-	
+
 					sharedData.socket.onclose = function () {
 						console.log('WebSocket connection closed');
 						// Perform any necessary actions when the connection is closed
 					};
 				});
-				
-				// sharedData.socket = new WebSocket(sharedData.websocket_url);
 
-				// // Handle WebSocket events
-				// sharedData.socket.onopen = function () {
-				// 	console.log('WebSocket connection established');
-				// 	// Perform any necessary actions when the connection is successfully established
-				// };
 
-				// sharedData.socket.onmessage = function (event) {
-				// 	console.log("Received message:", event.data);
-				// 	//var message = JSON.parse(event.data);
-				// 	var message = JSON.parse(event.data)['message received in the backend'];
-				// 	console.log("Parsed message:", message);
-					
-
-				// 	if (message === "ready") {
-				// 		sharedData.ready = true;
-				// 	}
-				// };
-
-				
 
 				self.scene.start("Waiting");
 			}

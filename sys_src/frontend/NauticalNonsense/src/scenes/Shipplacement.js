@@ -23,14 +23,15 @@ class Shipplacement extends Phaser.Scene {
 		sharedData.socket.onmessage = function (event) {
 			console.log("Received message:", event.data);
 			//var message = JSON.parse(event.data);
-			var message = JSON.parse(event.data)['message received in the backend'];
+			var message = JSON.parse(event.data)['message'];
 			console.log("Parsed message:", message);
 			if (message === "ready") {
 				sharedData.ready = true;
+				self.switchReady(opponentStatusRed, opponentStatusGreen, sharedData.ready);
+			} else if (message === "ship_placement_ready") {
+				ship_placement_ready = true;
 			}
 		};
-
-
 
 		//boardParams
 		const gridSize = 10;
@@ -158,11 +159,14 @@ class Shipplacement extends Phaser.Scene {
 		opponentStatusGreen.scaleX = 0.7;
 		opponentStatusGreen.scaleY = 0.7;
 
+		// Set the initial tint color
+		opponentStatusGreen.tint = 0xffffff; // White
+
 		// opponentStatusRed
 		const opponentStatusRed = this.add.image(1280 / 2 - 544.5, 169.5, "spOpponentStatusRed");
 		opponentStatusRed.scaleX = 0.7;
 		opponentStatusRed.scaleY = 0.7;
-		self.switchReady(opponentStatusRed, opponentStatusGreen, isEnemyReady);
+		self.switchReady(opponentStatusRed, opponentStatusGreen, sharedData.ready);
 
 		// buttonBox
 		const buttonBox = this.add.image(1280 / 2 - 485, 720 / 2 + 30, "spButtonBox");
@@ -175,7 +179,12 @@ class Shipplacement extends Phaser.Scene {
 		confirmButton.scaleY = 0.7;
 
 		confirmButton.on('pointerover', function (event) {
-			this.setTint(0x1ed013);
+			if (sharedData.ready) {
+				this.setTint(0x1ed013);
+			}
+			else {
+				this.setTint(0xe50000);
+			}
 		});
 
 		confirmButton.on('pointerout', function (event) {
@@ -184,18 +193,28 @@ class Shipplacement extends Phaser.Scene {
 
 		confirmButton.on('pointerdown', function (event) {
 			self.playClick();
-			this.clearTint();
-			isPlayerReady = true;
 
+			isPlayerReady = true;
+			var allshipsplaced = 0;
 			for (let i = 0; i < shipSprites.length; i++) {
-				shipSprites[i].setInteractive(false).removeAllListeners();
-				console.log(1);
-				ships[i].placed = 3;
+				allshipsplaced = allshipsplaced + ships[i].placed
 			}
 			sharedData.sprites = shipSprites;
 			sharedData.occupiedCells = occupiedCells;
-			self.sendMessage(sharedData, self.GetListOfPositions(ships, gridSize));
-			self.scene.start("Waiting2");
+
+			console.log("14?", allshipsplaced);
+			console.log("ready?", sharedData.ready);
+
+			if (allshipsplaced === 7 && sharedData.ready) {
+				this.clearTint();
+				self.sendMessage(sharedData, self.GetListOfPositions(ships, gridSize));
+				for (let i = 0; i < shipSprites.length; i++) {
+					shipSprites[i].setInteractive(false).removeAllListeners();
+					ships[i].placed = 3;
+				}
+
+				self.scene.start("Waiting2");
+			}
 		});
 
 		// confirmButtonText
@@ -223,7 +242,7 @@ class Shipplacement extends Phaser.Scene {
 			self.playClick();
 			this.clearTint();
 			isEnemyReady = true;
-			self.switchReady(opponentStatusRed, opponentStatusGreen, isEnemyReady);
+			self.switchReady(opponentStatusRed, opponentStatusGreen, true);
 		});
 
 		// randomButtonText
@@ -376,10 +395,10 @@ class Shipplacement extends Phaser.Scene {
 	switchReady(red, green, s) {
 		if (s) {
 			red.clearTint();
-			green.setTint(0x1ed013);
+			green.setTint(0x00ff00);
 		}
 		else {
-			red.setTint(0xe50000);
+			red.setTint(0xff0000);
 			green.clearTint();
 		}
 	}
@@ -403,7 +422,7 @@ class Shipplacement extends Phaser.Scene {
 		var sent = 0;
 		while (sent < 5) {
 			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
-				var jsonMessage = JSON.stringify(message);
+				var jsonMessage = JSON.stringify({"Shiplist" : message});
 				sharedData.socket.send(jsonMessage);
 				console.log(jsonMessage);
 				sent = 5;
