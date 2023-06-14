@@ -31,7 +31,7 @@ class Start extends Phaser.Scene {
 	}
 	//Commit Test 
 
-	http_POST(url, uuid, friend, mode, playername) {
+	http_POST(url, uuid, friend, mode, playername, callback) {
 		var http_post_data = {
 			client_id: uuid,
 			mode: mode,
@@ -55,11 +55,13 @@ class Start extends Phaser.Scene {
 			.then(responseData => {
 				// Process the response data
 				console.log(responseData);
+				callback(); // Invoke the provided callback function
 			})
 			.catch(error => {
 				console.error('Fetch error:', error);
 			});
 	}
+	
 
 
 
@@ -314,36 +316,57 @@ class Start extends Phaser.Scene {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				var ready = self.http_POST(apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername);
-				sharedData.socket = new WebSocket(sharedData.websocket_url);
+				var ready = self.http_POST(apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername, function () {
+					sharedData.socket = new WebSocket(sharedData.websocket_url);
+				
+					// Handle WebSocket events
+					sharedData.socket.onopen = function () {
+						console.log('WebSocket connection established');
+						// Perform any necessary actions when the connection is successfully established
+					};
+				
+					sharedData.socket.onmessage = function (event) {
+						console.log("Received message:", event.data);
+						//var message = JSON.parse(event.data);
+						var message = JSON.parse(event.data)['message received in the backend'];
+						console.log("Parsed message:", message);
+				
+						if (message === "ready") {
+							sharedData.ready = true;
+						}
+					};
+					sharedData.socket.onerror = function (error) {
+						console.error('WebSocket error:', error);
+						// Handle any errors that occur during the WebSocket connection
+					};
+	
+					sharedData.socket.onclose = function () {
+						console.log('WebSocket connection closed');
+						// Perform any necessary actions when the connection is closed
+					};
+				});
+				
+				// sharedData.socket = new WebSocket(sharedData.websocket_url);
 
-				// Handle WebSocket events
-				sharedData.socket.onopen = function () {
-					console.log('WebSocket connection established');
-					// Perform any necessary actions when the connection is successfully established
-				};
+				// // Handle WebSocket events
+				// sharedData.socket.onopen = function () {
+				// 	console.log('WebSocket connection established');
+				// 	// Perform any necessary actions when the connection is successfully established
+				// };
 
-				sharedData.socket.onmessage = function (event) {
-					console.log("Received message:", event.data);
-					//var message = JSON.parse(event.data);
-					var message = JSON.parse(event.data)['message received in the backend'];
-					console.log("Parsed message:", message);
+				// sharedData.socket.onmessage = function (event) {
+				// 	console.log("Received message:", event.data);
+				// 	//var message = JSON.parse(event.data);
+				// 	var message = JSON.parse(event.data)['message received in the backend'];
+				// 	console.log("Parsed message:", message);
 					
 
-					if (message === "ready") {
-						sharedData.ready = true;
-					}
-				};
+				// 	if (message === "ready") {
+				// 		sharedData.ready = true;
+				// 	}
+				// };
 
-				sharedData.socket.onerror = function (error) {
-					console.error('WebSocket error:', error);
-					// Handle any errors that occur during the WebSocket connection
-				};
-
-				sharedData.socket.onclose = function () {
-					console.log('WebSocket connection closed');
-					// Perform any necessary actions when the connection is closed
-				};
+				
 
 				self.scene.start("Waiting");
 			}

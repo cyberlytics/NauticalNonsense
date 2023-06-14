@@ -46,8 +46,7 @@ class Waiting2 extends Phaser.Scene
 			self.playHorn();
         });
 		console.log("ready? ", sharedData.ready)
-		if (sharedData.ready) {
-			
+		if (sharedData.ready || true) {
 			self.switchScene();
 		}
 		
