@@ -25,24 +25,30 @@ class Statistics extends Phaser.Scene {
 		//1280 x 720
 
 		//text styles
-		const normaltextStyle = {
+		const normaltext = {
 			fontSize: '24px',
 			fill: '#ffffff',
 			fontFamily: "GodOfWar"
 		};
-		const headingStyle = {
+		const headingtext = {
 			fontSize: '28px',
 			fill: '#ffffff',
 			fontFamily: "GodOfWar"
 		};
-		const shiptextStyle = {
+		const shiptext = {
 			fontSize: '20px',
 			fill: '#000000',
 			align: "center",
 			fontFamily: "GodOfWar"
 		};
-		const tooltiptextStyle = {
+		const tooltiptext = {
 			fontSize: '20px',
+			fill: '#ffffff',
+			align: "center",
+			fontFamily: "GodOfWar"
+		};
+		const tooltiptextSmall = {
+			fontSize: '14px',
 			fill: '#ffffff',
 			align: "center",
 			fontFamily: "GodOfWar"
@@ -116,15 +122,24 @@ class Statistics extends Phaser.Scene {
 		games.fillStyle(gamesStyle.backgroundColor, 1);
 		games.fillRoundedRect(gamesStyle.x, gamesStyle.y, gamesStyle.width, gamesStyle.height, gamesStyle.radius);
 
-		const txtGamesPlayed = this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding, "GAMES PLAYED", normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 270, gamesStyle.y + gamesStyle.padding, "2-Player: " + stats.gamesCountHuman, normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 520, gamesStyle.y + gamesStyle.padding, "PC: " + stats.gamesCountComputer, normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 690, gamesStyle.y + gamesStyle.padding, "Total: "+stats.gamesCount, normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "AVERAGE SHOTS", normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 270, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "2-Player: " + stats.averageMovesHuman.toFixed(2), normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 520, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "PC: " + stats.averageMovesComputer.toFixed(2), normaltextStyle);
-		this.add.text(gamesStyle.x + gamesStyle.padding + 690, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "Total: " + stats.averageMoves.toFixed(2), normaltextStyle);
+		const txtGamesPlayed = this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding, "GAMES PLAYED", normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 270, gamesStyle.y + gamesStyle.padding, "2-Player: " + stats.gamesCountHuman, normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 520, gamesStyle.y + gamesStyle.padding, "PC: " + stats.gamesCountComputer, normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 690, gamesStyle.y + gamesStyle.padding, "Total: "+stats.gamesCount, normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "AVERAGE SHOTS", normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 270, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "2-Player: " + stats.averageMovesHuman.toFixed(2), normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 520, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "PC: " + stats.averageMovesComputer.toFixed(2), normaltext);
+		this.add.text(gamesStyle.x + gamesStyle.padding + 690, gamesStyle.y + gamesStyle.padding + txtGamesPlayed.height + gamesStyle.gapY, "Total: " + stats.averageMoves.toFixed(2), normaltext);
 		
+
+		//boards
+		const tooltipBoardStyle = {
+			width: 50,
+			height: 20,
+			radius: 5,
+			backgroundColor: '0x3c3845',
+			textStyle: tooltiptextSmall
+		}
 
 		//board for most used ship positions
 		const boardStyleShips = {
@@ -137,9 +152,9 @@ class Statistics extends Phaser.Scene {
 			cellsize: 25,
 			cellColor: 0x387c00,
 			cellBackground: white,
-			textStyle: normaltextStyle
+			textStyle: normaltext
 		}
-		this.boardShips = this.makeBoard(boardStyleShips, "Ship Positions", stats.shipPositions);
+		this.boardShips = this.makeBoard(boardStyleShips, "Ship Positions", stats.shipPositions, tooltipBoardStyle);
 
 		//board for positions most shot
 		const boardStyleShots = {
@@ -152,9 +167,9 @@ class Statistics extends Phaser.Scene {
 			cellsize: 25,
 			cellColor: 0xff003c,
 			cellBackground: white,
-			textStyle: normaltextStyle
+			textStyle: normaltext
 		}
-		this.boardShots = this.makeBoard(boardStyleShots, "Most Shot Fields", stats.moves);
+		this.boardShots = this.makeBoard(boardStyleShots, "Most Shot Fields", stats.moves, tooltipBoardStyle);
 
 		//board for first shots
 		const boardStyleFirsts = {
@@ -167,9 +182,9 @@ class Statistics extends Phaser.Scene {
 			cellsize: 25,
 			cellColor: 0xff7700,
 			cellBackground: white,
-			textStyle: normaltextStyle
+			textStyle: normaltext
 		}
-		this.boardFirsts = this.makeBoard(boardStyleFirsts, "Most First Shots", stats.moves); //data noch ändern
+		this.boardFirsts = this.makeBoard(boardStyleFirsts, "Most First Shots", stats.moves, tooltipBoardStyle); //data noch ändern
 
 
 		//winner's ships hit
@@ -181,7 +196,7 @@ class Statistics extends Phaser.Scene {
 			radius: 20,
 			backgroundColor: darkgrey,
 			padding: 20,
-			textStyle: normaltextStyle
+			textStyle: normaltext
 		}
 		const shiphits = this.add.graphics();
 		shiphits.fillStyle(shiphitsStyle.backgroundColor, 1);
@@ -197,40 +212,42 @@ class Statistics extends Phaser.Scene {
 			paddingTop: 5,
 			gapY: 10,
 			margin: 2,
-			textStyle: shiptextStyle
+			textStyle: shiptext
 		}
 		const tooltipStyle = {
 			width: 105,
 			height: 40,
 			radius: 5,
 			backgroundColor: darkgrey,
-			textStyle: tooltiptextStyle
+			textStyle: tooltiptext
 		}
+
+		const shipX = shiphitsStyle.x + 2;
 
 		//carrier
 		const carrierHits = stats.averageShiphits[0];
 		const carrierY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding;
-		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, carrierY, 'Carrier', 'carrier', 'carrierRed', carrierHits, tooltipStyle);
+		this.makeShip(shipboxStyle, shipX, carrierY, 'Carrier', 'carrier', 'carrierRed', carrierHits, tooltipStyle);
 
 		//battleship
 		const battleshipHits = stats.averageShiphits[1];
 		const battleshipY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 1 * (shipboxStyle.height + shipboxStyle.margin);
-		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, battleshipY, 'Battleship', 'battleship', 'battleshipRed', battleshipHits, tooltipStyle);
+		this.makeShip(shipboxStyle, shipX, battleshipY, 'Battleship', 'battleship', 'battleshipRed', battleshipHits, tooltipStyle);
 
 		//cruiser
 		const cruiserHits = stats.averageShiphits[2];
 		const cruiserY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 2 * (shipboxStyle.height + shipboxStyle.margin);
-		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, cruiserY, 'Cruiser', 'cruiser', 'cruiserRed', cruiserHits, tooltipStyle);
+		this.makeShip(shipboxStyle, shipX, cruiserY, 'Cruiser', 'cruiser', 'cruiserRed', cruiserHits, tooltipStyle);
 
 		//destroyer
 		const destroyerHits = stats.averageShiphits[3];
 		const destroyerY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 3 * (shipboxStyle.height + shipboxStyle.margin);
-		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, destroyerY, 'Destroyer', 'destroyer', 'destroyerRed', destroyerHits, tooltipStyle);
+		this.makeShip(shipboxStyle, shipX, destroyerY, 'Destroyer', 'destroyer', 'destroyerRed', destroyerHits, tooltipStyle);
 
 		//submarine
 		const submarineHits = stats.averageShiphits[4];
 		const submarineY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 4 * (shipboxStyle.height + shipboxStyle.margin);
-		this.makeShip(shipboxStyle, shiphitsStyle.x + 2, submarineY, 'Submarine', 'submarine', 'submarineRed', submarineHits, tooltipStyle);
+		this.makeShip(shipboxStyle, shipX, submarineY, 'Submarine', 'submarine', 'submarineRed', submarineHits, tooltipStyle);
 
 
 		//other (capitulations and wins against computer)
@@ -243,7 +260,7 @@ class Statistics extends Phaser.Scene {
 			backgroundColor: darkgrey,
 			padding: 20,
 			gapY: 15,
-			textStyle: normaltextStyle
+			textStyle: normaltext
 		}
 		const other = this.add.graphics();
 		other.fillStyle(otherStyle.backgroundColor, 1);
@@ -279,9 +296,10 @@ class Statistics extends Phaser.Scene {
 		this.load.image("submarineRed", "assets/ships/submarine/submarine_stats_red.png");
 	}
 
-	makeBoard(boardStyle, title, data) {
+	makeBoard(boardStyle, title, data, tooltipStyle) {
+		let boardWhite = []
 		let board = []
-
+		
 		const txtTitle = this.add.text(boardStyle.x + boardStyle.padding, boardStyle.y + boardStyle.padding, title, boardStyle.textStyle).setDepth(1);
 
 		const boardBG = this.add.graphics();
@@ -293,9 +311,36 @@ class Statistics extends Phaser.Scene {
 
 		let dataMax = Math.max(...data);
 
+
 		for (let i = 1; i <= boardStyle.boardsize; i++) {
-			this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellBackground).setOrigin(0, 0);
+			boardWhite[i - 1] = this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellBackground).setOrigin(0, 0);
+			boardWhite[i - 1].setInteractive();
 			board[i - 1] = this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellColor).setOrigin(0, 0).setAlpha(data[i - 1] / dataMax);
+
+			const tooltip = this.add.graphics();
+			tooltip.fillStyle(tooltipStyle.backgroundColor, 1);
+			//const tooltipWidth = tooltipStyle.width;
+			const digits = data[i - 1].toString().length;
+			const tooltipWidth = digits * 9 + 15;			
+			tooltip.fillRoundedRect(cellX + 0.5 * boardStyle.cellsize, cellY + 0.5 * boardStyle.cellsize, tooltipWidth, tooltipStyle.height, 5);
+			tooltip.setDepth(5);
+			tooltip.setAlpha(0);
+
+			const tooltipText = this.add.text(cellX + 0.5 * boardStyle.cellsize + 0.5 * tooltipWidth, cellY + 0.5 * boardStyle.cellsize + 0.5 * tooltipStyle.height, data[i - 1], tooltipStyle.textStyle);
+			tooltipText.setOrigin(0.5, 0.5);
+			tooltipText.setDepth(6);
+			tooltipText.setAlpha(0);
+
+			boardWhite[i - 1].on('pointerover', function (event) {
+				tooltip.setAlpha(1);
+				tooltipText.setAlpha(1);
+			})
+
+			boardWhite[i - 1].on('pointerout', function (event) {
+				tooltip.setAlpha(0);
+				tooltipText.setAlpha(0);
+			})
+
 			cellX = cellX + boardStyle.cellsize;
 			if (i % 10 == 0) {
 				cellX = boardStyle.x + boardStyle.padding;
@@ -316,7 +361,7 @@ class Statistics extends Phaser.Scene {
 		const image = this.add.image(shipboxX + shipboxStyle.width / 2, text.y + text.height + 0.5 * (shipboxY + shipboxStyle.height - text.y - text.height), img);
 		image.setOrigin(0.5, 0.5);
 		image.setScale(0.22);
-		image.setInteractive({ useHandCursor: true });
+		image.setInteractive();
 
 		const rect = this.add.graphics();
 		rect.fillStyle(shipboxStyle.backgroundColor, 0);
