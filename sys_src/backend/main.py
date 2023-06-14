@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from play_game import prepare_room, get_partner_id
+from play_game import prepare_room, get_partner_id, new_game_init
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
@@ -66,17 +66,23 @@ def continue_game(player_id: int):
     pass
 
 
-async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, client_id: str):
     # Disconnect command
-    print("manger in handle_websocket_data ist:" + str(id(manager)))
-
     if 'Disconnect' in data:
         await manager.disconnect(client_id)
 
     # Disconnect if partner has disconnected
     if 'Client has left' in data:
         await manager.disconnect(client_id)
+        
 
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+
+    # Schiffe werden platziert
+    if len(data) == 7:
+        new_game_init()
+
+    pass
 
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
@@ -88,18 +94,24 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     
     # if partner_id != None -> Message partner that game is ready
     if partner_id != None and partner_id != "":
-        init_message = {"message received in the backend": "ready"}
+        init_message = {"message": "ready"}
         await manager.send_personal_message(init_message, client_id)
         await manager.send_personal_message(init_message, partner_id)
+        game_id = str(uuid.uuid4)
+        send_game_id = {"message": f"game_id: {game_id}"}
+        await manager.send_personal_message(send_game_id, client_id)
+        await manager.send_personal_message(send_game_id, partner_id)
+        
 
     try:
         while True:       
             data = await websocket.receive_json()
 
+            await handle_websocket_disconnect(manager, data, client_id)
             await handle_websocket_data(manager, data, client_id)
-            
+
             # validate the data
-            response = {"message received in the backend": data}
+            response = {"message": data}
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:
