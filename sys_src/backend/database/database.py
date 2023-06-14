@@ -42,12 +42,13 @@ def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None)
             # in addition is the map_data still the old one before games.update_one(), so if you query the same way as player1,
             # you get an empty string
             ret_obj = {"player1": State.parse_obj(map_data).player1,
-                       "player2": client_id}
+                       "player2": client_id,
+                       "game_id": State.parse_obj(map_data).game_id}
             return {"ready": ret_obj}
         else:
             game_id = create_map(client_id, mode)
             map_data = games.find_one({"game_id": str(game_id), "gameMode": mode, "player1": {"$exists": True, "$ne": ""}, "player2": {"$exists": ""}})
-            return {"ready": False}
+            return {"ready": False, "game_id": State.parse_obj(map_data).game_id}
     
 
 def create_map(client_id: uuid, mode: str) -> uuid:
@@ -82,6 +83,16 @@ async def get_partner(client_id: str):
     else:
         return None
 
+
+def add_ship_placement(client_id, list_of_ships):
+    map_data = games.find_one({"$or": [{"player1": client_id}, {"player2": client_id}]})
+    if map_data:
+        if map_data["player1"] == client_id:
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships1": list_of_ships}})
+        elif map_data["player2"] == client_id:
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships2": list_of_ships}})
+    else:
+        print("No matching game for this client")
 
 # deletes all entrys
 #games.delete_many({})
