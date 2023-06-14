@@ -1,11 +1,11 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from play_game import prepare_room, get_partner_id, new_game_init
+from play_game import prepare_room, get_partner_id
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank
+from database.database import get_leaderboard, add_rank, add_ship_placement
 from database.models import LeaderboardWithRank
 
 app = FastAPI()
@@ -77,12 +77,24 @@ async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, cl
         
 
 async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
-
-    # Schiffe werden platziert
+    uuid_client = manager.get_uuid_from_websocket()
+    # ship placement
     if len(data) == 7:
-        new_game_init()
+        # validate ship placement
 
-    pass
+        # add ship placement to map
+        add_ship_placement(uuid_client, data)
+        return {"message": "ship_placement_ready"}
+
+    # fire at location
+    if len(data) == 1:
+        # validate data (e.g. out of map)
+
+        # get map data
+        # if hit
+        # if water
+
+        pass
 
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
@@ -97,11 +109,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         init_message = {"message": "ready"}
         await manager.send_personal_message(init_message, client_id)
         await manager.send_personal_message(init_message, partner_id)
-        game_id = str(uuid.uuid4)
-        send_game_id = {"message": f"game_id: {game_id}"}
-        await manager.send_personal_message(send_game_id, client_id)
-        await manager.send_personal_message(send_game_id, partner_id)
-        
 
     try:
         while True:       
