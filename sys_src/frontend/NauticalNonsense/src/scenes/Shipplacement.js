@@ -242,9 +242,15 @@ class Shipplacement extends Phaser.Scene {
 			self.playClick();
 			this.clearTint();
 			isEnemyReady = true;
-			self.switchReady(opponentStatusRed, opponentStatusGreen, true);
-		});
-
+			
+			for (let i = 0; i < ships.length; i++) {
+				const sprite = shipSprites[i];
+				sprite.emit('pointerdown');
+			}
+			
+			//self.switchReady(opponentStatusRed, opponentStatusGreen, isEnemyReady);
+        });
+		
 		// randomButtonText
 		const randomButtonText = this.add.text(1280 / 2 - 485, 720 / 2 + 54, "", {});
 		randomButtonText.scaleX = 1;
@@ -269,8 +275,9 @@ class Shipplacement extends Phaser.Scene {
 		resetButton.on('pointerdown', function (event) {
 			self.playClick();
 			this.clearTint();
-		});
-
+			self.scene.restart("Shipplacement");
+        });
+		
 		// resetButtonText
 		const resetButtonText = this.add.text(1280 / 2 - 485, 720 / 2 + 115, "", {});
 		resetButtonText.scaleX = 1;
