@@ -14,6 +14,8 @@ stats = db.stats
 leaderboard = db.leaderboard
 games = db.games
 
+shipsCount = [2,2,1,1,1] #number of ships per type
+shipsTiles = [2,4,3,4,5] #number of tiles per shiptype
 
 #Gamestates
 def get_current_state(game_id: str) -> State:
@@ -136,7 +138,7 @@ def get_stat() -> Stat:
     stat = stats.find_one({}, sort=[("timestamp",pymongo.DESCENDING)])
     return Stat.parse_obj(stat)
 
-def update_stats(end_state: State) -> Stat:
+def update_stats(end_state: State, capitulation: bool) -> Stat:
     #old stats
     stat_old = get_stat()
     
@@ -153,12 +155,16 @@ def update_stats(end_state: State) -> Stat:
     else:
         stat.gamesCountHuman += 1
         stat.totalMovesHuman += end_state.step
-    stat.averageMoves = stat.totalMoves / stat.gamesCount
+    if stat.gamesCount !=0:
+        stat.averageMoves = stat.totalMoves / stat.gamesCount
     if stat.gamesCountHuman != 0:
         stat.averageMovesHuman = stat.totalMovesHuman / stat.gamesCountHuman
     if stat.gamesCountComputer != 0:
         stat.averageMovesComputer = stat.totalMovesComputer / stat.gamesCountComputer
     
+    if capitulation == True:
+        stat.capitulations += 1
+
     shipPositions1 = [1 if pos==1 or pos==3 or pos==4 else 0 for pos in end_state.board1] #part of ship if 1,3,4
     shipPositions2 = [1 if pos==1 or pos==3 or pos==4 else 0 for pos in end_state.board2]
     stat.shipPositions = [sum(p) for p in zip(stat.shipPositions, shipPositions1)]
@@ -169,12 +175,11 @@ def update_stats(end_state: State) -> Stat:
     stat.moves = [sum(p) for p in zip(stat.moves, moves1)]
     stat.moves = [sum(p) for p in zip(stat.moves, moves2)]
     
-    #for move in end_state.firstMoves: #in end_state.firstMoves die zwei ersten geklickten Felder
-    #    stat.firstMoves[move] += 1
+    firstMoves = get_first_moves(end_state.game_id)
+    for move in firstMoves:
+        stat.firstMoves[move] += 1
         
-    #popularShipPositions
-    
-    if end_state.winner == end_state.player1:
+    if end_state.winner == end_state.player1Name:
         ships_winner = end_state.ships1
     else:
         ships_winner = end_state.ships2
@@ -182,15 +187,42 @@ def update_stats(end_state: State) -> Stat:
     for ship in ships_winner:
         if any(pos > 100 for pos in ship):
             stat.totalShipsHit[len(ship)-1] += 1
-    stat.averageShipsHit = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShipsHit, [2,2,1,1,1])] #number of ships per type #oder gamesCountHuman
+    stat.averageShipsHit = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShipsHit, shipsCount)]#oder gamesCountHuman
     
     for ship in ships_winner:
         for pos in ship:
             if pos > 100:
                 stat.totalShiphits[len(ship)-1] += 1                
-    stat.averageShiphits = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShiphits, [2,4,3,4,5])] #number of tiles per shiptype #oder gamesCountHuman
+    stat.averageShiphits = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShiphits, shipsTiles)]#oder gamesCountHuman
     
     stat.timestamp = datetime.datetime.utcnow()    
     
     stats.insert_one(stat.dict())
     return stat
+
+
+def get_first_moves(game_id: str) -> list[int]:
+    firstMoves = []
+
+    start_state = State.parse_obj(gamestates.find_one({"game_id": game_id, "step": 0}, sort=[("timestamp",pymongo.DESCENDING)]))
+    board1Start = start_state.board1
+    board2Start = start_state.board2
+    
+    cursor = gamestates.find({"game_id": game_id, "step": { "$gte": 1 }}, sort=[("timestamp",pymongo.ASCENDING)], limit=18)
+    states = [State.parse_obj(c) for c in cursor]
+    
+    for state in states:
+        diff = [b-bStart for bStart, b in zip(board1Start, state.board1)]
+        move = [index for index, d in enumerate(diff) if d != 0]
+        if(move):
+            firstMoves.append(move[0])
+            break
+            
+    for state in states:
+        diff = [b-bStart for bStart, b in zip(board2Start, state.board2)]
+        move = [index for index, d in enumerate(diff) if d != 0]
+        if(move):
+            firstMoves.append(move[0])
+            break
+            
+    return firstMoves
