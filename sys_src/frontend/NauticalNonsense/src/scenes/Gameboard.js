@@ -132,7 +132,7 @@ class Gameboard extends Phaser.Scene {
 					self.DrawDemoBoard("enemy");
 
 					if (isCellSelected) {
-						enemyGrid[selectedRow][selectedCol].setAlpha(1);
+						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
 						if (selectedRow === row && selectedCol === col) {
 							selectedRow = -1;
 							selectedCol = -1;
@@ -204,7 +204,7 @@ class Gameboard extends Phaser.Scene {
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
 			if(self.Shoot(selectedRow,selectedCol,gridSize,sharedData)){
-				enemyGrid[selectedRow][selectedCol].setAlpha(1);
+				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
 				selectedCol = -1;
 				selectedRow = -1;
 				isCellSelected = false;
@@ -285,7 +285,7 @@ class Gameboard extends Phaser.Scene {
 					self.playClick();
 					self.DrawDemoBoard("player");
 				});
-				playerGrid[row][col] = cell;
+				this.playerGrid[row][col] = cell;
 			}
 		}
 
@@ -294,7 +294,7 @@ class Gameboard extends Phaser.Scene {
 			sharedData.sprites[index].setVisible(true);
 			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
 			this.add.existing(sharedData.sprites[index]);
-			this.highlightCells(sharedData.occupiedCells, playerGrid)
+			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
 			}
 			
 			
@@ -323,8 +323,15 @@ class Gameboard extends Phaser.Scene {
 		var explosionstarList = this.enemyExplosionStarList;
 		var crossSize = 350/600;
 		var explosionSize = 350/600;
-
+		var colors = [
+			0xd5e8d4,	// light blue; Water
+			0xdae8fC, // light blue; ship is on Water 0x8b8b8b,	// light gray; Ship
+			0xdae8fC, // used cross instead of red; keeps background light blue 0xed6666,	// light red; Missed Shot
+			0xdae8fC,	// light green; Hit Shot
+			0x8b8b8b	// light gray; Sunk Ship
+		];
 		if (GridName=="player") {
+			colors[0] = 0xdae8fC // use light blue if playerboard is drawn
 			Grid = this.playerGrid;
 			BoardPos = this.playerBoardPos;
 			redCrossList = this.playerRedCrossList;
@@ -332,13 +339,6 @@ class Gameboard extends Phaser.Scene {
 			crossSize = 1;
 			explosionSize = 1;
 		}
-		const colors = [
-			0xdae8fC,	// light blue; Water
-			0xdae8fC, // light blue; ship is on Water 0x8b8b8b,	// light gray; Ship
-			0xdae8fC, // used cross instead of red; keeps background light blue 0xed6666,	// light red; Missed Shot
-			0xdae8fC,	// light green; Hit Shot
-			0x8b8b8b	// light gray; Sunk Ship
-		];
 		// clear all previously drawn redCrosses and explosionStars
 		while (redCrossList.length > 0) {
 			redCrossList.pop().destroy();
@@ -361,6 +361,7 @@ class Gameboard extends Phaser.Scene {
 					cross.setOrigin(0, 0);
 					cross.scaleX = crossSize;
 					cross.scaleY = crossSize;
+					cross.setDepth(100);
 					redCrossList.push(cross);
 				}
 				else if (Data[row*this.gridSize+col] == 3){
@@ -370,6 +371,7 @@ class Gameboard extends Phaser.Scene {
 					// star.setDisplayOrigin(-CellSize/10*,0);
 					star.scaleX = explosionSize;
 					star.scaleY = explosionSize;
+					star.setDepth(100);
 					explosionstarList.push(star);
 				}
 				// draw colour of cell
@@ -377,7 +379,7 @@ class Gameboard extends Phaser.Scene {
 			}
 		}
 	}
-	
+
 	DrawDemoBoard(GridName) {
 		this.UpdateGameboardColors(this.GetDummyGameboard(), GridName);
 	}
