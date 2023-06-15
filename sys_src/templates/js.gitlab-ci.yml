@@ -24,9 +24,9 @@ build-js:
     when: on_success
     paths:
       - sys_src/frontend/NauticalNonsense/node_modules/
-  rules:
-    - changes:
-      - sys_src/frontend/**/*
+  # rules:
+  #   - changes:
+  #     - sys_src/frontend/**/*
 
 coverage-js:
   stage: unit-test
