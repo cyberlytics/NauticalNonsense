@@ -19,9 +19,7 @@ class ConnectionManager:
 
     async def send_personal_message(self, message: dict, partner_id: str):
         try:
-            print("websocket_manager, partner_id = " + partner_id)
             target_client = self.active_connections.get(partner_id)
-            print("websocket_manager, target_client = " + str(target_client))
             await target_client.send_json(message)
         except:
             pass
