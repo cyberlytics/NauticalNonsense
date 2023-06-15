@@ -33,7 +33,6 @@ class LeaderboardWithRank(BaseModel):
     leadersComputer: list[WinnerWithRank] = Field(..., description = "Best players against computer")
 
 class Stat(BaseModel):
-    #Siege durch Kapitulation entfernen?
     gamesCount: int = Field(..., description = "Total number of games played") #int has no limit in python3
     gamesCountHuman: int = Field(..., description = "Number of games played against other players")
     gamesCountComputer: int = Field(..., description = "Number of games played against computer")

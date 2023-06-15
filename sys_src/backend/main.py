@@ -142,6 +142,6 @@ def get_leaderboard_api():
 
 #Route for statistics
 @app.get("/stats", response_model = Stat)
-async def get_stat_api():
+def get_stat_api():
     stat = get_stat()
     return stat
