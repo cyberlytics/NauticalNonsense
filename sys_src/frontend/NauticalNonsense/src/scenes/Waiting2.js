@@ -18,7 +18,7 @@ class Waiting2 extends Phaser.Scene
 	/** @returns {void} */
 	editorCreate() 
 	{
-		
+		var sharedData = this.game.sharedData;
 		const self = this;
 		
 		//sounds
@@ -45,8 +45,11 @@ class Waiting2 extends Phaser.Scene
         {
 			self.playHorn();
         });
+		console.log("ready? ", sharedData.ready)
+		if (sharedData.ready || true) {
+			self.switchScene();
+		}
 		
-		self.switchScene();
 
 		this.events.emit("scene-awake");
 	}
@@ -78,7 +81,6 @@ class Waiting2 extends Phaser.Scene
   			this.scene.start("Gameboard");
   		}, [], this);
 	}
-
 	/* END-USER-CODE */
 	
 }

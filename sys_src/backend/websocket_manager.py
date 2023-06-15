@@ -32,3 +32,6 @@ class ConnectionManager:
 
     def all_websockets(self):
         return list(self.active_connections.keys())
+    
+    def get_uuid_from_websocket(self, websocket: WebSocket):
+        return self.active_connections.values() == websocket
