@@ -45,10 +45,10 @@ class Stat(BaseModel):
     averageMovesComputer: float = Field(..., description = "Average number of moves until end of game against computer") #vllt /2 ?
     shipPositions: list[int] = Field(..., description = "Total positions of ships")
     moves: list[int] = Field(..., description = "(Normalized) total moves") #Mongo: Absolut, Frontend: Relativ ?
-    firstMoves: list[int] = Field(..., description = "Most commonly chosen first moves")
+    #firstMoves: list[int] = Field(..., description = "Most commonly chosen first moves")
     #popularShipPositions: list[list[int]] = Field(..., description = "Most popular ship positions")
-    totalShipsHit: list[int] = Field(..., description = "Total count of loser's ships hit per shiptype by end of game")#Zahl der mind 1x getroffenen Schiffe #vllt auch Gesamtanzahl
-    averageShipsHit: list[float] = Field(..., description = "Average count of loser's ships hit per shiptype by end of game")
-    totalShiphits: list[int] = Field(..., description = "Total count of loser's ships' hits per shiptype by end of game")#Anteile der Schiffe, die getroffen sind
-    averageShiphits: list[float] = Field(..., description = "Average count of loser's ships' hits per shiptype by end of game")
+    totalShipsHit: list[int] = Field(..., description = "Total count of winner's ships hit per shiptype by end of game")#Zahl der mind 1x getroffenen Schiffe #vllt auch Gesamtanzahl
+    averageShipsHit: list[float] = Field(..., description = "Average count of winner's ships hit per shiptype by end of game")
+    totalShiphits: list[int] = Field(..., description = "Total count of winner's ships' hits per shiptype by end of game")#Anteile der Schiffe, die getroffen sind
+    averageShiphits: list[float] = Field(..., description = "Average count of winner's ships' hits per shiptype by end of game")
     timestamp: datetime.datetime = Field(..., description = "Current utc date and time")
