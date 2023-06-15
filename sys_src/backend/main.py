@@ -78,14 +78,17 @@ async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, cl
 
 async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
     uuid_client = manager.get_uuid_from_websocket(manager)
+    print("+++++++++")
+    print(uuid_client)
     # ship placement
-    if len(data) == 7:
+    if len(data['Shiplist']) == 7:
         # validate ship placement
 
         # add ship placement to map
         add_ship_placement(uuid_client, data)
-        return {"message": "ship_placement_ready"}
-
+        data['message'] = "ship_placement_ready"
+        return 
+    
     # fire at location
     if len(data) == 1:
         # validate data (e.g. out of map)
@@ -113,12 +116,14 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     try:
         while True:       
             data = await websocket.receive_json()
-
+            
             await handle_websocket_disconnect(manager, data, client_id)
             await handle_websocket_data(manager, data, client_id)
 
+            
             # validate the data
             response = {"message": data}
+            
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:
