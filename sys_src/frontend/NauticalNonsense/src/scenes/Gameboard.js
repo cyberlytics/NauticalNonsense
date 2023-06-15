@@ -13,21 +13,67 @@ class Gameboard extends Phaser.Scene {
 		/* END-USER-CTR-CODE */
 	}
 
-
-	shoot() {
-		// insert here code for sending Information via websocket
-		var obj = {
-			move: this.selectedCell
-		};
-		console.log("Shooted to %i", this.selectedCell)
+	/** @returns {void} */
+	Shoot(row,col,gridSize,sharedData) {
+		var shootPosition = row*gridSize+col;
+		return this.sendFireMessage(sharedData,shootPosition);
 	}
 
+	sendFireMessage(sharedData, message) {
+		var sent = 0;
+		while (sent < 5) {
+			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
+				var jsonMessage = JSON.stringify({"Fire" : message});
+				sharedData.socket.send(jsonMessage);
+				console.log(jsonMessage);
+				sent = 5;
+				return true;
+			} else {
+				console.error('WebSocket connection is not open');
+				sharedData.socket = new WebSocket(sharedData.websocket_url);
+				// Handle WebSocket events
+				sharedData.socket.onopen = function () {
+					console.log('WebSocket connection established');
+					// Perform any necessary actions when the connection is successfully established
+				};
+
+				sharedData.socket.onerror = function (error) {
+					console.error('WebSocket error:', error);
+					// Handle any errors that occur during the WebSocket connection
+				};
+
+				sharedData.socket.onclose = function () {
+					console.log('WebSocket connection closed');
+					// Perform any necessary actions when the connection is closed
+				};
+				sent++;
+			}
+			return false;
+		}
+	}
 	/** @returns {void} */
 	editorCreate() {
+		var sharedData = this.game.sharedData;
+		sharedData.socket.onmessage = function (event) {
+			console.log("Received message:", event.data);
+			//var message = JSON.parse(event.data);
+			var message = JSON.parse(event.data)['message'];
+			console.log("Parsed message:", message);
+			if (message === "ready") {
+				sharedData.ready = true;
+			}
+		};
+		
 
 		const self = this;
 		var isPlayerTurn = true;
 		this.selectedCell = -1;
+
+
+		var isCellSelected = false;
+		var selectedRow = -1;
+		var selectedCol = -1;
+
 
 		//boardParams
 		this.gridSize = 10;
@@ -39,7 +85,7 @@ class Gameboard extends Phaser.Scene {
 		const smallCornerRadius = 20;
 		const tinyCornerRadius = 10;
 		const boardMargin = 30;
-		
+
 		//sounds
 		this.click = this.sound.add("click");
 
@@ -48,14 +94,14 @@ class Gameboard extends Phaser.Scene {
 		this.background.setOrigin(0, 0);
 		this.background.scaleX = 1.2;
 		this.background.scaleY = 0.7;
-		
+
 		// fireControl
-		const fireControl = this.add.image(1280/2 - 340, 237, "gbFireControl");
+		const fireControl = this.add.image(1280 / 2 - 340, 237, "gbFireControl");
 		fireControl.scaleX = 1;
 		fireControl.scaleY = 1;
-		
+
 		// fireControlText
-		const fireControlText = this.add.text(1280/2 - 340, 43, "", {});
+		const fireControlText = this.add.text(1280 / 2 - 340, 43, "", {});
 		fireControlText.scaleX = 1;
 		fireControlText.scaleY = 1;
 		fireControlText.setOrigin(0.5, 0.5);
@@ -85,117 +131,136 @@ class Gameboard extends Phaser.Scene {
 					self.playClick();
 					self.DrawDemoBoard("enemy");
 
+					if (isCellSelected) {
+						enemyGrid[selectedRow][selectedCol].setAlpha(1);
+						if (selectedRow === row && selectedCol === col) {
+							selectedRow = -1;
+							selectedCol = -1;
+							isCellSelected = false;
+						}
+						else{
+							cell.setAlpha(0.5);
+							selectedRow = row;
+							selectedCol = col;
+							isCellSelected = true;
+						}
+					}else{
+						cell.setAlpha(0.5);
+						selectedRow = row;
+						selectedCol = col;
+						isCellSelected = true;
+					}
 				});
 				this.enemyGrid[row][col] = cell;
 			}
 		}
-		
+
 		// buttonBox
-		const buttonBox = this.add.image(1280/2 - 340, 720/2 + 230, "gbButtonBox");
+		const buttonBox = this.add.image(1280 / 2 - 340, 720 / 2 + 230, "gbButtonBox");
 		buttonBox.scaleX = 0.9;
 		buttonBox.scaleY = 0.9;
-		
+
 		// readyLamp
-		const readyLamp = this.add.image(1280/2 - 220, 720/2 + 166, "gbReadyLamp");
+		const readyLamp = this.add.image(1280 / 2 - 220, 720 / 2 + 166, "gbReadyLamp");
 		readyLamp.scaleX = 0.9;
 		readyLamp.scaleY = 0.9;
-		
+
 		// opponentLamp
-		const opponentLamp = this.add.image(1280/2 - 220.5, 720/2 + 250, "gbOpponentLamp");
+		const opponentLamp = this.add.image(1280 / 2 - 220.5, 720 / 2 + 250, "gbOpponentLamp");
 		opponentLamp.scaleX = 0.9;
 		opponentLamp.scaleY = 0.9;
-		
+
 		self.switchTurn(readyLamp, opponentLamp, isPlayerTurn);
-		
+
 		// readyText
-		const readyText = this.add.text(1280/2 - 220, 720/2 + 205, "", {});
+		const readyText = this.add.text(1280 / 2 - 220, 720 / 2 + 205, "", {});
 		readyText.scaleX = 1;
 		readyText.scaleY = 1;
 		readyText.setOrigin(0.5, 0.5);
 		readyText.text = "Your Turn";
 		readyText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "13px" });
-		
+
 		// opponentText
-		const opponentText = this.add.text(1280/2 - 220, 720/2 + 295, "", {});
+		const opponentText = this.add.text(1280 / 2 - 220, 720 / 2 + 295, "", {});
 		opponentText.scaleX = 1;
 		opponentText.scaleY = 1;
 		opponentText.setOrigin(0.5, 0.5);
 		opponentText.text = "Opponent's\nTurn";
 		opponentText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "13px" });
-		
+
 		// fireButton
-		const fireButton = this.add.image(1280/2 - 390, 720/2 + 190, "gbFireButton").setInteractive({ useHandCursor: true  });
+		const fireButton = this.add.image(1280 / 2 - 390, 720 / 2 + 190, "gbFireButton").setInteractive({ useHandCursor: true });
 		fireButton.scaleX = 0.9;
 		fireButton.scaleY = 0.9;
-		
-		fireButton.on('pointerover', function (event)
-        {
-            this.setTint(0xe50000);
-        });
 
-        fireButton.on('pointerout', function (event)
-        {
-            this.clearTint();
-        });
-		
-		fireButton.on('pointerdown', function (event)
-        {
-			self.playClick();
+		fireButton.on('pointerover', function (event) {
+			this.setTint(0xe50000);
+		});
+
+		fireButton.on('pointerout', function (event) {
 			this.clearTint();
-			self.shoot();
-        });
-		
+		});
+
+		fireButton.on('pointerdown', function (event) {
+			self.playClick();
+			if(self.Shoot(selectedRow,selectedCol,gridSize,sharedData)){
+				enemyGrid[selectedRow][selectedCol].setAlpha(1);
+				selectedCol = -1;
+				selectedRow = -1;
+				isCellSelected = false;
+			}
+			
+			this.clearTint();
+		});
+
 		// fireButtonText
-		const fireButtonText = this.add.text(1280/2 - 390, 720/2 + 190, "", {});
+		const fireButtonText = this.add.text(1280 / 2 - 390, 720 / 2 + 190, "", {});
 		fireButtonText.scaleX = 1;
 		fireButtonText.scaleY = 1;
 		fireButtonText.setOrigin(0.5, 0.5);
 		fireButtonText.text = "Fire";
 		fireButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
-		
+
 		// capitulateButton
-		const capitulateButton = this.add.image(1280/2 - 390, 720/2 + 290, "gbCapitulateButton").setInteractive({ useHandCursor: true  });
+		const capitulateButton = this.add.image(1280 / 2 - 390, 720 / 2 + 290, "gbCapitulateButton").setInteractive({ useHandCursor: true });
 		capitulateButton.scaleX = 0.9;
 		capitulateButton.scaleY = 0.9;
-		
-		capitulateButton.on('pointerover', function (event)
-        {
-            this.setTint(0xffd700);
-        });
 
-        capitulateButton.on('pointerout', function (event)
-        {
-            this.clearTint();
-        });
-		
-		capitulateButton.on('pointerdown', function (event)
-        {
+		capitulateButton.on('pointerover', function (event) {
+			this.setTint(0xffd700);
+		});
+
+		capitulateButton.on('pointerout', function (event) {
+			this.clearTint();
+		});
+
+		capitulateButton.on('pointerdown', function (event) {
 			self.playClick();
 			this.clearTint();
 			self.scene.start("Gameover");
         });
 		
 		// capitulateButtonText
-		const capitulateButtonText = this.add.text(1280/2 - 390, 720/2 + 290, "", {});
+		const capitulateButtonText = this.add.text(1280 / 2 - 390, 720 / 2 + 290, "", {});
 		capitulateButtonText.scaleX = 1;
 		capitulateButtonText.scaleY = 1;
 		capitulateButtonText.setOrigin(0.5, 0.5);
 		capitulateButtonText.text = "Capitulate";
 		capitulateButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
-		
+
 		// battlefieldBackground
-		const battlefieldBackground = this.add.image(1280/2 + 210, 720/2, "spBattlefieldBackground");
+		const battlefieldBackground = this.add.image(1280 / 2 + 210, 720 / 2, "spBattlefieldBackground");
 		battlefieldBackground.scaleX = 1;
 		battlefieldBackground.scaleY = 1;
-		
+
 		// battlefieldBackgroundText
-		const battlefieldBackgroundText = this.add.text(1280/2 + 210, 43, "", {});
+		const battlefieldBackgroundText = this.add.text(1280 / 2 + 210, 43, "", {});
 		battlefieldBackgroundText.scaleX = 1;
 		battlefieldBackgroundText.scaleY = 1;
 		battlefieldBackgroundText.setOrigin(0.5, 0.5);
 		battlefieldBackgroundText.text = "Battlefield";
 		battlefieldBackgroundText.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "20px" });
-		
+
 		//playerBoard
 		this.playerBoardPos = {
 			x: 340 + 210,
@@ -220,13 +285,29 @@ class Gameboard extends Phaser.Scene {
 					self.playClick();
 					self.DrawDemoBoard("player");
 				});
-				this.playerGrid[row][col] = cell;
+				playerGrid[row][col] = cell;
 			}
 		}
+
+		//ships
+		for (let index = 0; index < sharedData.sprites.length; index++) {
+			sharedData.sprites[index].setVisible(true);
+			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
+			this.add.existing(sharedData.sprites[index]);
+			this.highlightCells(sharedData.occupiedCells, playerGrid)
+			}
+			
+			
+			sharedData.socket.onmessage = function(event) {
+			var message = JSON.parse(event.data);
+			console.log("Message received:", message)
+			};
+
 	}
 
+
 	GetDummyGameboard() {
-		// returns list with random integers
+	// returns list with random integers
 		var list = [];
 		for (let i = 0; i<this.gridSize**2; i++) {
 			list[i] = Math.round(Math.random()*4);
@@ -293,11 +374,10 @@ class Gameboard extends Phaser.Scene {
 				}
 				// draw colour of cell
 				cell.setFillStyle(colors[Data[row*this.gridSize + col]]);	
-				
 			}
 		}
 	}
-
+	
 	DrawDemoBoard(GridName) {
 		this.UpdateGameboardColors(this.GetDummyGameboard(), GridName);
 	}
@@ -309,23 +389,35 @@ class Gameboard extends Phaser.Scene {
 	create() {
 		this.editorCreate();
 	}
-	
-	playClick() 
-	{
+
+	playClick() {
 		this.click.play();
 	}
-	
-	switchTurn(player, opponent, s)
-	{
-		if (s)
-		{
+
+	switchTurn(player, opponent, s) {
+		if (s) {
 			player.setTint(0x1ed013);
 			opponent.clearTint();
 		}
-		else
-		{
+		else {
 			opponent.setTint(0xe50000);
 			player.clearTint();
+		}
+	}
+
+	highlightCells(occupiedCells, playerGrid) {
+		// Iterate over the cells array and adjust the alpha value accordingly
+		for (let row = 0; row < playerGrid.length; row++) {
+			for (let col = 0; col < playerGrid[row].length; col++) {
+				const cell = playerGrid[row][col];
+
+				// Check if the cell is in the occupiedCells array
+				if (occupiedCells.some(({ row: occupiedRow, col: occupiedCol }) => occupiedRow === row && occupiedCol === col)) {
+					cell.setAlpha(0.5);  // Highlight occupied cell
+				} else {
+					cell.setAlpha(1);    // Set other cells to normal
+				}
+			}
 		}
 	}
 

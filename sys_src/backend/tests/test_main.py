@@ -4,7 +4,7 @@ import time
 from websocket_manager import ConnectionManager
 import pytest
 from unittest.mock import AsyncMock
-from main import handle_websocket_data, websocket_endpoint
+from main import handle_websocket_disconnect, websocket_endpoint
 from fastapi.responses import JSONResponse
 import asyncio
 from unittest.mock import patch, AsyncMock
@@ -155,8 +155,8 @@ async def test_websocket_init():
             client.post(f"/play", json=mock_data_player2)
             with client.websocket_connect(f"/ws/{client_id2}") as websocket2:
                 time.sleep(1)
-                assert websocket1.receive_json() == {"message received in the backend": "ready"}
-                assert websocket2.receive_json() == {"message received in the backend": "ready"}
+                assert websocket1.receive_json() == {"message": "ready"}
+                assert websocket2.receive_json() == {"message": "ready"}
                 websocket2.close()
             
             websocket1.close()
@@ -165,8 +165,8 @@ async def test_websocket_init():
         with client.websocket_connect(f"/ws/{client_id1}") as websocket1:
             with client.websocket_connect(f"/ws/{response.json()['player2']}") as websocket2:
                 time.sleep(1)
-                assert websocket1.receive_json() == {"message received in the backend": "ready"}
-                assert websocket2.receive_json() == {"message received in the backend": "ready"}
+                assert websocket1.receive_json() == {"message": "ready"}
+                assert websocket2.receive_json() == {"message": "ready"}
                 websocket2.close()
 
             websocket1.close()
@@ -195,8 +195,8 @@ async def test_websocket_disconnect():
     await manager.connect(mock_websocket2, second_client_id)
 
     # Run the handle_websocket_data function
-    await handle_websocket_data(manager, {"Disconnect": ""}, first_client_id)
-    await handle_websocket_data(manager, {"Client has left": first_client_id}, second_client_id)
+    await handle_websocket_disconnect(manager, {"Disconnect": ""}, first_client_id)
+    await handle_websocket_disconnect(manager, {"Client has left": first_client_id}, second_client_id)
 
     # Ensure the clients have been disconnected
     assert second_client_id not in manager.all_websockets()
