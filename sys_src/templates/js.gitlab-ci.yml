@@ -30,7 +30,7 @@ build-js:
 
 coverage-js:
   stage: unit-test
-  image: node:latest
+  image: cypress/browsers:node16.16.0-chrome107-ff107-edge
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
   dependencies:
     - build-js
