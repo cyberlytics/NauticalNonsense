@@ -230,27 +230,27 @@ class Statistics extends Phaser.Scene {
 				//carrier
 				const carrierHits = stats.averageShiphits[0];
 				const carrierY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding;
-				this.makeShip(shipboxStyle, shipX, carrierY, 'Carrier', 'carrier', 'carrierRed', carrierHits, tooltipStyle);
+				this.makeShip(shipboxStyle, shipX, carrierY, 'Carrier', 'carrierStats', 'carrierStatsRed', carrierHits, tooltipStyle);
 
 				//battleship
 				const battleshipHits = stats.averageShiphits[1];
 				const battleshipY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 1 * (shipboxStyle.height + shipboxStyle.margin);
-				this.makeShip(shipboxStyle, shipX, battleshipY, 'Battleship', 'battleship', 'battleshipRed', battleshipHits, tooltipStyle);
+				this.makeShip(shipboxStyle, shipX, battleshipY, 'Battleship', 'battleshipStats', 'battleshipStatsRed', battleshipHits, tooltipStyle);
 
 				//cruiser
 				const cruiserHits = stats.averageShiphits[2];
 				const cruiserY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 2 * (shipboxStyle.height + shipboxStyle.margin);
-				this.makeShip(shipboxStyle, shipX, cruiserY, 'Cruiser', 'cruiser', 'cruiserRed', cruiserHits, tooltipStyle);
+				this.makeShip(shipboxStyle, shipX, cruiserY, 'Cruiser', 'cruiserStats', 'cruiserStatsRed', cruiserHits, tooltipStyle);
 
 				//destroyer
 				const destroyerHits = stats.averageShiphits[3];
 				const destroyerY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 3 * (shipboxStyle.height + shipboxStyle.margin);
-				this.makeShip(shipboxStyle, shipX, destroyerY, 'Destroyer', 'destroyer', 'destroyerRed', destroyerHits, tooltipStyle);
+				this.makeShip(shipboxStyle, shipX, destroyerY, 'Destroyer', 'destroyerStats', 'destroyerStatsRed', destroyerHits, tooltipStyle);
 
 				//submarine
 				const submarineHits = stats.averageShiphits[4];
 				const submarineY = shiphitsStyle.y + txtShiphits.height + 2 * shiphitsStyle.padding + 4 * (shipboxStyle.height + shipboxStyle.margin);
-				this.makeShip(shipboxStyle, shipX, submarineY, 'Submarine', 'submarine', 'submarineRed', submarineHits, tooltipStyle);
+				this.makeShip(shipboxStyle, shipX, submarineY, 'Submarine', 'submarineStats', 'submarineStatsRed', submarineHits, tooltipStyle);
 
 
 				//other (capitulations and wins against computer)
@@ -293,16 +293,16 @@ class Statistics extends Phaser.Scene {
 	preload() {
 		this.load.image("backButton", "assets/options/backButton.png");
 		this.load.image("homeButton", "assets/leaderboard/homeButton.png");
-		this.load.image("carrier", "assets/ships/carrier/carrier_stats.png");
-		this.load.image("battleship", "assets/ships/battleship/battleship_stats.png");
-		this.load.image("cruiser", "assets/ships/cruiser/cruiser_stats.png");
-		this.load.image("destroyer", "assets/ships/destroyer/destroyer_stats.png");
-		this.load.image("submarine", "assets/ships/submarine/submarine_stats.png");
-		this.load.image("carrierRed", "assets/ships/carrier/carrier_stats_red.png");
-		this.load.image("battleshipRed", "assets/ships/battleship/battleship_stats_red.png");
-		this.load.image("cruiserRed", "assets/ships/cruiser/cruiser_stats_red.png");
-		this.load.image("destroyerRed", "assets/ships/destroyer/destroyer_stats_red.png");
-		this.load.image("submarineRed", "assets/ships/submarine/submarine_stats_red.png");
+		this.load.image("carrierStats", "assets/ships/carrier/carrier_stats.png");
+		this.load.image("battleshipStats", "assets/ships/battleship/battleship_stats.png");
+		this.load.image("cruiserStats", "assets/ships/cruiser/cruiser_stats.png");
+		this.load.image("destroyerStats", "assets/ships/destroyer/destroyer_stats.png");
+		this.load.image("submarineStats", "assets/ships/submarine/submarine_stats.png");
+		this.load.image("carrierStatsRed", "assets/ships/carrier/carrier_stats_red.png");
+		this.load.image("battleshipStatsRed", "assets/ships/battleship/battleship_stats_red.png");
+		this.load.image("cruiserStatsRed", "assets/ships/cruiser/cruiser_stats_red.png");
+		this.load.image("destroyerStatsRed", "assets/ships/destroyer/destroyer_stats_red.png");
+		this.load.image("submarineStatsRed", "assets/ships/submarine/submarine_stats_red.png");
 	}
 
 	makeBoard(boardStyle, title, data, tooltipStyle) {
