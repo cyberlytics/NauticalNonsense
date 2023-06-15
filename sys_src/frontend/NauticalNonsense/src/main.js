@@ -37,6 +37,7 @@ window.addEventListener('load', function () {
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
 	game.scene.add("Leaderboard", Leaderboard);
+	game.scene.add("Statistics", Statistics);
 	game.scene.add("Gameover", Gameover);
 });
 
