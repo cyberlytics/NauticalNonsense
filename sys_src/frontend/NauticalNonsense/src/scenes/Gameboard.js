@@ -67,6 +67,8 @@ class Gameboard extends Phaser.Scene {
 
 		const self = this;
 		var isPlayerTurn = true;
+		this.selectedCell = -1;
+
 
 		var isCellSelected = false;
 		var selectedRow = -1;
@@ -74,7 +76,7 @@ class Gameboard extends Phaser.Scene {
 
 
 		//boardParams
-		const gridSize = 10;
+		this.gridSize = 10;
 		const cellColor = 0xdae8fC;
 		const enemyCellColor = 0xd5e8d4;
 		const PositionFinished = 0x5bb450;
@@ -107,26 +109,30 @@ class Gameboard extends Phaser.Scene {
 		fireControlText.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		// draw enemy board
-		const enemyBoardPos = {
+		this.enemyBoardPos = {
 			x: 125,
 			y: 80,
 			width: 350,
 			height: 350,
 			cornerRadius: smallCornerRadius
 		}
-		const enemyGrid = [];
-		const enemyCellSize = enemyBoardPos.width / (gridSize);
+		this.enemyGrid = [];
+		this.enemyRedCrossList = [];
+		this.enemyExplosionStarList = [];
+		const enemyCellSize = this.enemyBoardPos.width / (this.gridSize);
 
-		for (let row = 0; row < gridSize; row++) {
-			enemyGrid[row] = [];
-			for (let col = 0; col < gridSize; col++) {
-				const cell = this.add.rectangle(enemyBoardPos.x + col * enemyCellSize, enemyBoardPos.y + row * enemyCellSize, enemyCellSize - 1, enemyCellSize - 1, enemyCellColor);
+		for (let row = 0; row < this.gridSize; row++) {
+			this.enemyGrid[row] = [];
+			for (let col = 0; col < this.gridSize; col++) {
+				const cell = this.add.rectangle(this.enemyBoardPos.x + col * enemyCellSize, this.enemyBoardPos.y + row * enemyCellSize, enemyCellSize - 1, enemyCellSize - 1, enemyCellColor);
 				cell.setOrigin(0, 0);
 				cell.setInteractive();
 				cell.on('pointerdown', () => {
 					self.playClick();
+					self.DrawDemoBoard("enemy");
+
 					if (isCellSelected) {
-						enemyGrid[selectedRow][selectedCol].setAlpha(1);
+						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
 						if (selectedRow === row && selectedCol === col) {
 							selectedRow = -1;
 							selectedCol = -1;
@@ -145,7 +151,7 @@ class Gameboard extends Phaser.Scene {
 						isCellSelected = true;
 					}
 				});
-				enemyGrid[row][col] = cell;
+				this.enemyGrid[row][col] = cell;
 			}
 		}
 
@@ -198,7 +204,7 @@ class Gameboard extends Phaser.Scene {
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
 			if(self.Shoot(selectedRow,selectedCol,gridSize,sharedData)){
-				enemyGrid[selectedRow][selectedCol].setAlpha(1);
+				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
 				selectedCol = -1;
 				selectedRow = -1;
 				isCellSelected = false;
@@ -256,26 +262,30 @@ class Gameboard extends Phaser.Scene {
 		battlefieldBackgroundText.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		//playerBoard
-		const playerBoardPos = {
+		this.playerBoardPos = {
 			x: 340 + 210,
 			y: 75,
 			width: 600,
 			height: 600,
 			cornerRadius: 30
-		}
-		const playerGrid = [];
-		const playerCellSize = playerBoardPos.width / (gridSize);
+		};
+		this.playerGrid = [];
+		this.playerRedCrossList = [];
+		this.playerExplosionStarList = [];
 
-		for (let row = 0; row < gridSize; row++) {
-			playerGrid[row] = [];
-			for (let col = 0; col < gridSize; col++) {
-				const cell = this.add.rectangle(playerBoardPos.x + col * playerCellSize, playerBoardPos.y + row * playerCellSize, playerCellSize - 1, playerCellSize - 1, cellColor);
+		const playerCellSize = this.playerBoardPos.width / (this.gridSize);
+
+		for (let row = 0; row < this.gridSize; row++) {
+			this.playerGrid[row] = [];
+			for (let col = 0; col < this.gridSize; col++) {
+				const cell = this.add.rectangle(this.playerBoardPos.x + col * playerCellSize, this.playerBoardPos.y + row * playerCellSize, playerCellSize - 1, playerCellSize - 1, cellColor);
 				cell.setOrigin(0, 0);
 				cell.setInteractive();
 				cell.on('pointerdown', (pointer) => {
 					self.playClick();
+					self.DrawDemoBoard("player");
 				});
-				playerGrid[row][col] = cell;
+				this.playerGrid[row][col] = cell;
 			}
 		}
 
@@ -284,14 +294,94 @@ class Gameboard extends Phaser.Scene {
 			sharedData.sprites[index].setVisible(true);
 			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
 			this.add.existing(sharedData.sprites[index]);
-			this.highlightCells(sharedData.occupiedCells, playerGrid)
-		}
-
-
-		sharedData.socket.onmessage = function(event) {
+			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
+			}
+			
+			
+			sharedData.socket.onmessage = function(event) {
 			var message = JSON.parse(event.data);
 			console.log("Message received:", message)
-		};
+			};
+
+	}
+
+
+	GetDummyGameboard() {
+	// returns list with random integers
+		var list = [];
+		for (let i = 0; i<this.gridSize**2; i++) {
+			list[i] = Math.round(Math.random()*4);
+		}
+		console.log(list);
+		return list;
+	}
+
+	UpdateGameboardColors(Data, GridName) {
+		var Grid = this.enemyGrid;
+		var BoardPos = this.enemyBoardPos;
+		var redCrossList = this.enemyRedCrossList;
+		var explosionstarList = this.enemyExplosionStarList;
+		var crossSize = 350/600;
+		var explosionSize = 350/600;
+		var colors = [
+			0xd5e8d4,	// light blue; Water
+			0xdae8fC, // light blue; ship is on Water 0x8b8b8b,	// light gray; Ship
+			0xdae8fC, // used cross instead of red; keeps background light blue 0xed6666,	// light red; Missed Shot
+			0xdae8fC,	// light green; Hit Shot
+			0x8b8b8b	// light gray; Sunk Ship
+		];
+		if (GridName=="player") {
+			colors[0] = 0xdae8fC // use light blue if playerboard is drawn
+			Grid = this.playerGrid;
+			BoardPos = this.playerBoardPos;
+			redCrossList = this.playerRedCrossList;
+			explosionstarList = this.playerExplosionStarList;
+			crossSize = 1;
+			explosionSize = 1;
+		}
+		// clear all previously drawn redCrosses and explosionStars
+		while (redCrossList.length > 0) {
+			redCrossList.pop().destroy();
+		}
+
+		while (explosionstarList.length > 0) {
+			explosionstarList.pop().destroy();
+		}
+
+		const CellSize = BoardPos.width / (this.gridSize);
+
+		// Iterate over the cells array and adjust the filled value
+		for (let row = 0; row < Grid.length; row++) {
+			for (let col = 0; col < Grid[row].length; col++) {
+				const cell = Grid[row][col];
+				// set each Cell to its specified state
+				if (Data[row*this.gridSize+col] == 2){
+					// draw red Cross for missed Ship
+					var cross = this.add.image(BoardPos.x + col * CellSize, BoardPos.y + row * CellSize, "gbRedCross");
+					cross.setOrigin(0, 0);
+					cross.scaleX = crossSize;
+					cross.scaleY = crossSize;
+					cross.setDepth(100);
+					redCrossList.push(cross);
+				}
+				else if (Data[row*this.gridSize+col] == 3){
+					// draw explosion star for hit Ship
+					var star = this.add.image(BoardPos.x + col * CellSize, BoardPos.y + row * CellSize, "gbExplosionStar");
+					star.setOrigin(0, 0);
+					// star.setDisplayOrigin(-CellSize/10*,0);
+					star.scaleX = explosionSize;
+					star.scaleY = explosionSize;
+					star.setDepth(100);
+					explosionstarList.push(star);
+				}
+				// draw colour of cell
+				cell.setFillStyle(colors[Data[row*this.gridSize + col]]);	
+			}
+		}
+	}
+
+	DrawDemoBoard(GridName) {
+		this.UpdateGameboardColors(this.GetDummyGameboard(), GridName);
 	}
 
 	/* START-USER-CODE */
