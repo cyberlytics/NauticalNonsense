@@ -36,7 +36,7 @@ coverage-js:
     - build-js
   script:
     - cd sys_src/frontend/NauticalNonsense
-    - mkdir public/
+    - mkdir -p public/src
     - npm test
   artifacts:
     when: always
@@ -46,6 +46,6 @@ coverage-js:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-  rules:
-    - changes:
-      - sys_src/frontend/**/*
+  # rules:
+  #   - changes:
+  #     - sys_src/frontend/**/*

@@ -4,16 +4,16 @@ include:
       - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   - local: sys_src/templates/python.gitlab-ci.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "push"
+      - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   - local: sys_src/templates/js.gitlab-ci.yml
     rules:
-      - if: $CI_PIPELINE_SOURCE == "push"
+      - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   - local: sys_src/templates/docker.gitlab-ci.yml
     rules:
-      - if: $CI_COMMIT_TAG
+      - if: $CI_COMMIT_TAG && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   - local: sys_src/templates/deploy.gitlab-ci.yml
     rules:
-      - if: $CI_COMMIT_TAG
+      - if: $CI_COMMIT_TAG && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 stages:
   - validate
