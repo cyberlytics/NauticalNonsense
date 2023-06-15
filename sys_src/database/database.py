@@ -99,10 +99,10 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     stat.moves = [sum(p) for p in zip(stat.moves, moves1)]
     stat.moves = [sum(p) for p in zip(stat.moves, moves2)]
     
-    #for move in end_state.firstMoves: #in end_state.firstMoves die zwei ersten geklickten Felder
-    #    stat.firstMoves[move] += 1
+    firstMoves = get_first_moves(end_state.game_id)
+    for move in firstMoves:
+        stat.firstMoves[move] += 1
         
-    
     if end_state.winner == end_state.player1Name:
         ships_winner = end_state.ships1
     else:
@@ -123,3 +123,30 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     
     stats.insert_one(stat.dict())
     return stat
+
+
+def get_first_moves(game_id: str) -> list[int]:
+    firstMoves = []
+
+    start_state = State.parse_obj(gamestates.find_one({"game_id": game_id, "step": 0}, sort=[("timestamp",pymongo.DESCENDING)]))
+    board1Start = start_state.board1
+    board2Start = start_state.board2
+    
+    cursor = gamestates.find({"game_id": game_id, "step": { "$gte": 1 }}, sort=[("timestamp",pymongo.ASCENDING)], limit=18)
+    states = [State.parse_obj(c) for c in cursor]
+    
+    for state in states:
+        diff = [b-bStart for bStart, b in zip(board1Start, state.board1)]
+        move = [index for index, d in enumerate(diff) if d != 0]
+        if(move):
+            firstMoves.append(move[0])
+            break
+            
+    for state in states:
+        diff = [b-bStart for bStart, b in zip(board2Start, state.board2)]
+        move = [index for index, d in enumerate(diff) if d != 0]
+        if(move):
+            firstMoves.append(move[0])
+            break
+            
+    return firstMoves
