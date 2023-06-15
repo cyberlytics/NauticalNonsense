@@ -16,7 +16,7 @@ coverage-python:
   stage: unit-test
   before_script:
     - pip install -r sys_src/backend/requirements.txt
-    - pip install pytest pytest-cov
+    - pip install pytest pytest-cov pytest-asyncio
   script:
     - cd sys_src/backend
     - pytest --cov=. --cov-report xml --cov-report term-missing --junitxml=report.xml

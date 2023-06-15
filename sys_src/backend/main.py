@@ -1,25 +1,25 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from play_game import prepare_room, get_partner_id
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank
+from database.database import get_leaderboard, add_rank, add_ship_placement
 from database.models import LeaderboardWithRank
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=["http://localhost:8080","http://127.0.0.1:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 manager = ConnectionManager()
-polling_count = 0
+
 
 @app.get("/")
 def startpage():
@@ -27,35 +27,28 @@ def startpage():
     return client_id
 
 
-@app.get("/polling")
-def polling():
-    global polling_count
-    polling_count += 1
-    return {"message": f"Es wurde {polling_count} Mal gepollt"}
-
-
-@app.post("/against_random")
-def against_random(client_id):
+@app.post("/play")
+def play(user_input: dict):
+    if 'client_id' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
+    if 'mode' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
+    if 'friend' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
+    
     # init to wait/play against random
     # if frontend gets two player_ids, then it should use websockets
-    ready = prepare_room(client_id, "random")
+    ready = prepare_room(user_input['client_id'], user_input['mode'], user_input['friend'])
     return ready
-
-@app.post("/against_friend")
-def against_friend(client_id, name: str):
-    # init to wait/play against friend
-    # rename get_new_room to prepare_room, doesnt have to return something
-    prepare_room(client_id, "friend")
-    return JSONResponse({"websocket_route": f"ws/{client_id}"})
-    
-
-@app.post("/against_computer")
-def against_computer(client_id):
-    # init to play against computer
-    # rename get_new_room to prepare_room, doesnt have to return something
-    prepare_room(client_id, "computer")
-    return JSONResponse({"websocket_route": f"ws/{client_id}"})
-
 
 @app.get("/mongo_entries")
 def mongo_entries():
@@ -73,6 +66,39 @@ def continue_game(player_id: int):
     pass
 
 
+async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, client_id: str):
+    # Disconnect command
+    if 'Disconnect' in data:
+        await manager.disconnect(client_id)
+
+    # Disconnect if partner has disconnected
+    if 'Client has left' in data:
+        await manager.disconnect(client_id)
+        
+
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+    uuid_client = manager.get_uuid_from_websocket(manager)
+    print("+++++++++")
+    print(uuid_client)
+    # ship placement
+    if len(data['Shiplist']) == 7:
+        # validate ship placement
+
+        # add ship placement to map
+        add_ship_placement(uuid_client, data)
+        data['message'] = "ship_placement_ready"
+        return 
+    
+    # fire at location
+    if len(data) == 1:
+        # validate data (e.g. out of map)
+
+        # get map data
+        # if hit
+        # if water
+
+        pass
+
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
 async def websocket_endpoint(websocket: WebSocket, client_id: str):
@@ -81,14 +107,27 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     # partner is viable, because ws only build if 2 guys are waiting
     partner_id = await get_partner_id(client_id)
     
+    # if partner_id != None -> Message partner that game is ready
+    if partner_id != None and partner_id != "":
+        init_message = {"message": "ready"}
+        await manager.send_personal_message(init_message, client_id)
+        await manager.send_personal_message(init_message, partner_id)
+
     try:
         while True:       
             data = await websocket.receive_json()
+            
+            await handle_websocket_disconnect(manager, data, client_id)
+            await handle_websocket_data(manager, data, client_id)
+
+            
             # validate the data
-            response = {"message received in the backend": data}
+            response = {"message": data}
+            
             await manager.send_personal_message(response, partner_id)
+
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        await manager.disconnect(client_id)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
 
 

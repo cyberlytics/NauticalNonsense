@@ -1,14 +1,20 @@
 from database.database import get_map, get_partner
+from database.models import State
+
+from datetime import datetime
+
+from utils import is_incremental
+
 import uuid
 
-def prepare_room(client_id: uuid, game_type: str, name: str = None) -> int:
+def prepare_room(client_id: str, game_mode: str, friend: str = None) -> dict:
     '''
     Check in Database if a map exists, which the client can use.
     If not, construct a new map will be constructed.
     name is for name of friend
     '''
-    ret = get_map(client_id, game_type)
-    return ret
+    ready = get_map(client_id, game_mode, friend)
+    return ready
 
 async def get_partner_id(client_id: str):
     '''
@@ -18,9 +24,54 @@ async def get_partner_id(client_id: str):
     partner_id = await get_partner(client_id)
     return partner_id
 
-def new_game_init():
-    # place ships
-    pass
+def new_game_init(
+    game_id: str,
+    player_1_id: str,
+    player_2_id: str,
+    player_1_ships: list[list[int]],
+    player_2_ships: list[list[int]],
+    game_mode: str,
+    size: int = 100,
+    num_ships: int = 6,
+    expected_ships: dict[int, int] = {
+        5: 1,
+        4: 2,
+        3: 3,
+        2: 4
+    }
+    ) -> State:
+    
+    game_field_player_1 = _create_game_field(
+        player_1_ships,
+        size=size,
+        num_ships=num_ships,
+        expected_ships=expected_ships
+    )
+
+    game_field_player_2 = _create_game_field(
+        player_2_ships,
+        size=size,
+        num_ships=num_ships,
+        expected_ships=expected_ships
+    )
+
+    game_state = State(
+        game_id=game_id,
+        player1=player_1_id,
+        player2=player_2_id,
+        next_player=player_1_id,
+        gameMode=game_mode,
+        isFinished=False,
+        winner="",
+        step=0,
+        board1=game_field_player_1,
+        board2=game_field_player_2,
+        ships1=player_1_ships,
+        ships2=player_2_ships,
+        timestamp=datetime.utcnow()
+    )
+
+    return game_state
 
 def validate_move(client_json):
     # check if the game_field key in client_json only changed in one position.
@@ -30,7 +81,72 @@ def validate_move(client_json):
     pass
 
 
-def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
+def _create_game_field(
+    ships: list[list[int]], 
+    size: int = 100, 
+    num_ships: int = 6,
+    expected_ships: dict[int, int] = {
+        5: 1,
+        4: 2,
+        3: 3,
+        2: 4
+    }
+    ) -> list[int]:
+    """
+    Create a game field and check if the ship placement is valid.
+
+    Args:
+        ships (list[list[int]]): The ships on the game field
+        size (int, optional): The size of the game field. Defaults to 100.
+    
+    Returns:
+        list[int]: The game field
+    
+    Raises:
+        ValueError: If the ship coordinates overlap or are out of range
+    """
+
+    if not ships:
+        raise ValueError("No ships given")
+    
+    if len(ships) != num_ships:
+        raise ValueError("Wrong amount of ships given")
+    
+
+    ship_counts = {key: 0 for key in expected_ships.keys()}
+
+    game_field = [0] * size
+
+    for ship in ships:
+
+        ship = sorted(ship)
+        size = len(ship)
+
+        if size in ship_counts.keys():
+            ship_counts[size] += 1
+
+        if not all([isinstance(coord, int) for coord in ship]):
+            raise ValueError("Ship coordinates are not integers")
+        
+        if not is_incremental(ship):
+            raise ValueError("Ship coordinates are not one apart")
+
+        for coord in ship:
+            if coord < len(game_field) and coord >= 0:
+                if game_field[coord] == 0:
+                    game_field[coord] = 1
+                else:
+                    raise ValueError("Ship coordinates overlap")
+            else:
+                raise ValueError("Ship coordinates out of range")
+            
+    if ship_counts != expected_ships:
+        raise ValueError("Wrong amount of ships given")
+    
+    return game_field
+
+
+def _check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     """
     Check if a ship has been sunk.
 
@@ -50,17 +166,17 @@ def check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     return game_field
 
 
-def check_win(ships: list[list[int]]) -> bool:
+def _check_win(ships: list[list[int]]) -> bool:
     """
     Check if the game has been won.
 
     Args:
-        game_field (list[int]): The game field
+        ships (list[list[int]]): The ships on the game field
     
     Returns:
         bool: Whether the game has been won
     """
-    return any([all([coord >= 100 for coord in ship]) for ship in ships])
+    return all([all([coord >= 100 for coord in ship]) for ship in ships])
 
 
 def make_move(
@@ -104,11 +220,11 @@ def make_move(
         for ship in ships:
             if move in ship:
                 ship[ship.index(move)] += 100
-                game_field = check_sink_ship(ship, game_field)
+                game_field = _check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
-        won = check_win(ships)
+        won = _check_win(ships)
     else:
         raise ValueError("Move has been played before")
     
-    return won, hit, game_field
+    return won, hit, game_field, ships
