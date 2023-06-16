@@ -24,11 +24,14 @@ class Shipplacement extends Phaser.Scene {
 			console.log("Received message:", event.data);
 			var message = JSON.parse(event.data)['message'];
 			console.log("Parsed message:", message);
-			if (message[0] === "ship_placement_ready") {
-				sharedData.ship_placement_ready = true;
-				self.switchReady(opponentStatusRed,opponentStatusGreen,sharedData.ship_placement_ready)
-			} else if(message[1] === sharedData.client_id){
+			if (message.message[1] === sharedData.client_id) {
+				console.log("its your turn!")
 				sharedData.its_your_turn = true;
+			}
+			if (message.message[0] === "ship_placement_ready") {
+				console.log("ship_placement_ready!")
+				sharedData.ship_placement_ready = true;
+				self.switchReady(opponentStatusRed,opponentStatusGreen,true)
 			}
 		};
 
@@ -165,7 +168,6 @@ class Shipplacement extends Phaser.Scene {
 		const opponentStatusRed = this.add.image(1280 / 2 - 544.5, 169.5, "spOpponentStatusRed");
 		opponentStatusRed.scaleX = 0.7;
 		opponentStatusRed.scaleY = 0.7;
-		self.switchReady(opponentStatusRed, opponentStatusGreen, sharedData.ready);
 
 		// buttonBox
 		const buttonBox = this.add.image(1280 / 2 - 485, 720 / 2 + 30, "spButtonBox");
@@ -178,7 +180,11 @@ class Shipplacement extends Phaser.Scene {
 		confirmButton.scaleY = 0.7;
 
 		confirmButton.on('pointerover', function (event) {
-			if (sharedData.ready) {
+			var allshipsplaced = 0;
+			for (let i = 0; i < ships.length; i++) {
+				allshipsplaced = allshipsplaced + ships[i].placed
+			}
+			if (allshipsplaced === 7) {
 				this.setTint(0x1ed013);
 			}
 			else {
@@ -241,9 +247,7 @@ class Shipplacement extends Phaser.Scene {
 			for (let i = 0; i < ships.length; i++) {
 				const sprite = shipSprites[i];
 				sprite.emit('pointerdown');
-			}
-			
-			//self.switchReady(opponentStatusRed, opponentStatusGreen, isEnemyReady);
+			}	
         });
 		
 		// randomButtonText

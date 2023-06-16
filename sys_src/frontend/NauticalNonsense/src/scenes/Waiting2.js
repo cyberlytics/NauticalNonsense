@@ -26,10 +26,12 @@ class Waiting2 extends Phaser.Scene {
 			console.log("Received message:", event.data);
 			var message = JSON.parse(event.data)['message'];
 			console.log("Parsed message:", message);
-			if (message[1] === sharedData.client_id) {
+			if (message.message[1] === sharedData.client_id) {
+				console.log("its your turn!")
 				sharedData.its_your_turn = true;
 			}
-			if (message[0] === "ship_placement_ready") {
+			if (message.message[0] === "ship_placement_ready") {
+				console.log("ship_placement_ready!")
 				sharedData.ship_placement_ready = true;
 				self.switchScene()
 			}
