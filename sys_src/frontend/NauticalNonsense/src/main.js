@@ -22,7 +22,8 @@ window.addEventListener('load', function () {
 		highlightedCells:[],
 		socket: null, // Initially set to null
 		ready: false,
-		ship_placement_ready : false
+		ship_placement_ready : false,
+		its_your_turn : false
 	};
 
 	game.scene.add("Preload", Preload);
@@ -37,6 +38,7 @@ window.addEventListener('load', function () {
 	game.scene.add("Boot", Boot, true);
 	game.scene.add("Gameboard", Gameboard);
 	game.scene.add("Leaderboard", Leaderboard);
+	game.scene.add("Statistics", Statistics);
 	game.scene.add("Gameover", Gameover);
 });
 

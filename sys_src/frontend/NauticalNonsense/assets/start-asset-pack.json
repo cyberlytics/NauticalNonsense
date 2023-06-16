@@ -53,7 +53,7 @@
                 "key": "startButton"
             },
             {
-                "url": "assets/start/leaderboardButton.png",
+                "url": "assets/leaderboard/leaderboardButton.png",
                 "type": "image",
                 "key": "leaderboardButton"
             }

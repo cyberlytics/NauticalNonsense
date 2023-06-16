@@ -20,7 +20,22 @@ class Waiting extends Phaser.Scene
 	{
 		
 		const self = this;
-		
+		var sharedData = this.game.sharedData;
+
+		if (sharedData.ready) {
+			self.switchScene()
+		}
+
+		sharedData.socket.onmessage = function (event) {
+			console.log("Received message:", event.data);
+			//var message = JSON.parse(event.data);
+			var message = JSON.parse(event.data)['message'];
+			console.log("Parsed message:", message);
+			if (message === "ready") {
+				sharedData.ready = true;
+				self.switchScene()
+			}
+		};
 		//sounds
 		this.horn = this.sound.add("horn", {volume: 0.3});
 		
@@ -46,8 +61,6 @@ class Waiting extends Phaser.Scene
 			self.playHorn();
         });
 		
-		self.switchScene();
-
 		this.events.emit("scene-awake");
 	}
 
@@ -73,10 +86,7 @@ class Waiting extends Phaser.Scene
 	
 	switchScene()
 	{
-  		this.time.delayedCall(1000, function() 
-		{
-  			this.scene.start("Shipplacement");
-  		}, [], this);
+  	this.scene.start("Shipplacement");
 	}
 
 	/* END-USER-CODE */

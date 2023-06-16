@@ -73,9 +73,11 @@ class Start extends Phaser.Scene {
 		// Usage example
 		var sharedData = this.game.sharedData;
 		const apiUrl = sharedData.backend_url;
-		sharedData.client_id = await this.http_GET(apiUrl);
-		sharedData.websocket_url += sharedData.client_id;
-
+		if (sharedData.client_id === "") {
+			sharedData.client_id = await this.http_GET(apiUrl);
+			sharedData.websocket_url += sharedData.client_id;
+		}
+		
 		const backgroundColor = 0x3c3845
 		var isTypingName = false;
 		var isTypingId = false;
@@ -352,8 +354,6 @@ class Start extends Phaser.Scene {
 						// Perform any necessary actions when the connection is closed
 					};
 				});
-
-
 
 				self.scene.start("Waiting");
 			}
