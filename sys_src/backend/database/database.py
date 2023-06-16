@@ -60,11 +60,13 @@ def create_map(client_id: uuid, mode: str) -> uuid:
     game_id = uuid.uuid4()
     map_data = {
         "game_id": str(game_id),
-        "gameMode": mode,
         "player1": str(client_id),
+        "player1Name": "",
         "player2": "",
+        "player2Name": "",
         "next_player": "",
-        "isFinished": False,
+        "gameMode": mode,
+        "gameStatus": "",
         "winner": "",
         "step": 0,
         "board1": [],
@@ -111,6 +113,64 @@ def add_ship_placement(client_id, list_of_ships):
     else:
         print("No matching game for this client")
         return None
+
+def get_ships(client_id, game_id):
+    result = games.find({'game_id': game_id}).sort('step', -1).limit(1)
+
+    if result.count() > 0:
+        game_state = result.next()
+
+        if game_state['player1'] == client_id:
+            return game_state['ships1'], game_state['board1']
+        elif game_state['player2'] == client_id:
+            return game_state['ships2'], game_state['board2']
+    
+    return None
+
+def get_board(client_id, game_id):
+    result = games.find({'game_id': game_id}).sort('step', -1).limit(1)
+
+    if result.count() > 0:
+        game_state = result.next()
+
+        if game_state['player1'] == client_id:
+            return game_state['board1']
+        elif game_state['player2'] == client_id:
+            return game_state['board2']
+    
+    return None
+
+def update_game_with_playermove(client_id: str, game_id: str, game_field: list[int], ships: list[list[int]], won: bool = None) -> None:
+    result = games.find({'game_id': game_id}).sort('step', -1).limit(1)
+
+    if result.count() > 0:
+        game_state = result.next()
+
+        # Define the field names
+        board_field = 'board1' if game_state['player1'] == client_id else 'board2'
+        ships_field = 'ships1' if game_state['player1'] == client_id else 'ships2'
+
+        update_fields = {
+            board_field: game_field,
+            ships_field: ships
+        }
+
+        # If the game is won, set the isFinished field to True and update the winner
+        if won:
+            update_fields.update({
+                'isFinished': True,
+                'winner': client_id
+            })
+
+        # Update the game state
+        games.update_one(
+            {'_id': game_state['_id']},
+            {'$set': update_fields, '$inc': {'step': 1}}
+        )
+    else:
+        print(f"No game found with game_id: {game_id}")
+
+
 
 # deletes all entrys
 #games.delete_many({})

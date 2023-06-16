@@ -80,7 +80,8 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     # get_uuid_from_websocket geht noch nicht
     uuid_client = manager.get_uuid_from_websocket(manager)
     # ship placement
-    if len(data['Shiplist']) == 7:
+    # todo wenn beide ihr Schiffe versendet haben dann noch eine flag an beide senden
+    if data.get('Shiplist', False) and len(data['Shiplist']) == 7:
         # validate ship placement
 
         # add ship placement to map
@@ -88,11 +89,11 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         data['message'] = ["ship_placement_ready", player_which_starts]
         return None
 
-    if len(data['fire']) == 1:
-        # make_move()
-        # save make_move() result in db
-        # return make_move() value
-        pass 
+    if len(data['Fire']) == 1:
+        move = data['Fire']
+        game_id = data['GameID']
+        data['message']['won'],  data['message']['hit'], data['message']['board'], data['message']['ships'] = make_move(move, client_id, game_id)
+        return None
     
 
 # Use Kafka for a persistant WebSocket-List
