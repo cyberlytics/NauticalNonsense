@@ -15,6 +15,9 @@ class Gameboard extends Phaser.Scene {
 
 	/** @returns {void} */
 	Shoot(row,col,gridSize,sharedData) {
+		console.log(row)
+		console.log(col)
+		console.log(gridSize)
 		var shootPosition = row*gridSize+col;
 		return this.sendFireMessage(sharedData,shootPosition);
 	}
@@ -118,7 +121,7 @@ class Gameboard extends Phaser.Scene {
 				cell.setInteractive();
 				cell.on('pointerdown', () => {
 					self.playClick();
-					self.DrawDemoBoard("enemy");
+					//self.DrawDemoBoard("enemy");
 
 					if (isCellSelected) {
 						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
@@ -192,7 +195,7 @@ class Gameboard extends Phaser.Scene {
 
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
-			if(self.Shoot(selectedRow,selectedCol,gridSize,sharedData)){
+			if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
 				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
 				selectedCol = -1;
 				selectedRow = -1;
