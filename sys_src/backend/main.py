@@ -5,8 +5,8 @@ import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank, add_ship_placement
-from database.models import LeaderboardWithRank
+from database.database import get_leaderboard, add_rank, add_ship_placement, get_stat
+from database.models import LeaderboardWithRank, Stat
 
 app = FastAPI()
 
@@ -138,3 +138,9 @@ def get_leaderboard_api():
     leaders_computer = get_leaderboard(againstComputer=True)
     leaders_computer_rank = add_rank(leaders_computer)
     return LeaderboardWithRank(leadersHuman=leaders_human_rank, leadersComputer=leaders_computer_rank)
+
+#Route for statistics
+@app.get("/stats", response_model = Stat)
+def get_stat_api():
+    stat = get_stat()
+    return stat
