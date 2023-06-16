@@ -230,6 +230,18 @@ def get_first_moves(game_id: str) -> list[int]:
 
 
 #current names
-def insert_name(name: str) -> str:
-    currentNames.insert_one(name)
-    return name
+def insert_name(name: str) -> bool:
+    if not isOccupied(name):
+        currentNames.insert_one({"name": name})
+        return True #name not occupied and now inserted
+    else:
+        return False #name already exists
+
+def remove_name(name: str):
+    currentNames.delete_many({"name": name})
+    
+def isOccupied(name: str) -> bool:
+    if currentNames.count_documents({"name": name}) == 0:
+        return False
+    else:
+        return True
