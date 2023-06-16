@@ -60,13 +60,13 @@ def create_map(client_id: uuid, mode: str) -> uuid:
     game_id = uuid.uuid4()
     map_data = {
         "game_id": str(game_id),
-        "gameMode": mode,
-        "gameStatus": "",
         "player1": str(client_id),
         "player1Name": "",
         "player2": "",
         "player2Name": "",
         "next_player": "",
+        "gameMode": mode,
+        "gameStatus": "",
         "winner": "",
         "step": 0,
         "board1": [],

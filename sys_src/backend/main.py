@@ -81,7 +81,7 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     uuid_client = manager.get_uuid_from_websocket(manager)
     # ship placement
     # todo wenn beide ihr Schiffe versendet haben dann noch eine flag an beide senden
-    if len(data['Shiplist']) == 7:
+    if data.get('Shiplist', False) and len(data['Shiplist']) == 7:
         # validate ship placement
 
         # add ship placement to map
