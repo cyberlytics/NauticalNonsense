@@ -5,6 +5,7 @@ import math
 from database.models import State, Winner, WinnerWithRank, Stat
 import uuid
 import datetime
+import random
 
 mongo_url = "mongodb+srv://nn_user:nn_bsyjntss@nauticalnonsens.lflmzfg.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(mongo_url, server_api=ServerApi('1'))
@@ -28,7 +29,7 @@ def save_state(state: State) -> State:
     gamestates.insert_one(state.dict())
     return state
 
-
+# todo unbennen in anderen Namen, man bekommt ja effektiv den Spielernamen zurück, nicht die map data
 def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
     '''
     return map_id for the connection in websockets.
@@ -89,14 +90,27 @@ async def get_partner(client_id: str):
 
 
 def add_ship_placement(client_id, list_of_ships):
-    map_data = games.find_one({"$or": [{"player1": client_id}, {"player2": client_id}]})
+    map_data = games.find_one({
+        "$or": [{"player1": client_id}, {"player2": client_id}],
+        "ships1": {"$eq": []},
+        "ships2": {"$eq": []}
+    })
     if map_data:
+        # Wenn next_player noch nicht gesetzt ist, zufällig auswählen, welcher Spieler das Spiel beginnt.
+        first_player = map_data["next_player"]
+        if not first_player:
+            first_player = random.choice([map_data["player1"], map_data["player2"]])
+
         if map_data["player1"] == client_id:
-            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships1": list_of_ships}})
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships1": list_of_ships, "next_player": first_player}})
         elif map_data["player2"] == client_id:
-            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships2": list_of_ships}})
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships2": list_of_ships, "next_player": first_player}})
+        
+        # return the starting player
+        return first_player
     else:
         print("No matching game for this client")
+        return None
 
 # deletes all entrys
 #games.delete_many({})
