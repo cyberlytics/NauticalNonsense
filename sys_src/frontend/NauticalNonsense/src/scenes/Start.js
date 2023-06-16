@@ -355,8 +355,6 @@ class Start extends Phaser.Scene {
 					};
 				});
 
-
-
 				self.scene.start("Waiting");
 			}
 

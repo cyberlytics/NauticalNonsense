@@ -22,7 +22,8 @@ window.addEventListener('load', function () {
 		highlightedCells:[],
 		socket: null, // Initially set to null
 		ready: false,
-		ship_placement_ready : false
+		ship_placement_ready : false,
+		its_your_turn : false
 	};
 
 	game.scene.add("Preload", Preload);

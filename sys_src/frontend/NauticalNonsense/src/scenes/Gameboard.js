@@ -54,19 +54,8 @@ class Gameboard extends Phaser.Scene {
 	/** @returns {void} */
 	editorCreate() {
 		var sharedData = this.game.sharedData;
-		sharedData.socket.onmessage = function (event) {
-			console.log("Received message:", event.data);
-			//var message = JSON.parse(event.data);
-			var message = JSON.parse(event.data)['message'];
-			console.log("Parsed message:", message);
-			if (message === "ready") {
-				sharedData.ready = true;
-			}
-		};
-		
 
 		const self = this;
-		var isPlayerTurn = true;
 		this.selectedCell = -1;
 
 
@@ -170,7 +159,7 @@ class Gameboard extends Phaser.Scene {
 		opponentLamp.scaleX = 0.9;
 		opponentLamp.scaleY = 0.9;
 
-		self.switchTurn(readyLamp, opponentLamp, isPlayerTurn);
+		self.switchTurn(readyLamp, opponentLamp, sharedData.its_your_turn);
 
 		// readyText
 		const readyText = this.add.text(1280 / 2 - 220, 720 / 2 + 205, "", {});
