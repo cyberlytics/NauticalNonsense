@@ -13,6 +13,7 @@ gamestates = db.gamestates
 stats = db.stats
 leaderboard = db.leaderboard
 games = db.games
+currentNames = db.currentNames
 
 shipsCount = [2,2,1,1,1] #number of ships per type
 shipsTiles = [2,4,3,4,5] #number of tiles per shiptype
@@ -226,3 +227,9 @@ def get_first_moves(game_id: str) -> list[int]:
             break
             
     return firstMoves
+
+
+#current names
+def insert_name(name: str) -> str:
+    currentNames.insert_one(name)
+    return name
