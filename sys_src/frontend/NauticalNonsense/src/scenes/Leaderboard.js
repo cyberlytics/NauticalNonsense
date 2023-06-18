@@ -80,7 +80,7 @@ class Leaderboard extends Phaser.Scene {
 			this.playClick();
 			this.scene.start('Options');
 		});
-
+		
 		fetch('http://localhost:8000/leaderboard').then((response) => {
 			return response.json();
 		}).then((data) => {
@@ -138,7 +138,7 @@ class Leaderboard extends Phaser.Scene {
 
 					orientation: 0,
 					background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor),
-					text: this.add.text(0, 0, 'Human vs. Human'),
+					text: this.add.text(0, 0, 'Human vs. Human', {fontFamily: 'GodOfWar'}),
 					align: 'center',
 				}),
 
@@ -217,7 +217,7 @@ class Leaderboard extends Phaser.Scene {
 
 					orientation: 0,
 					background: this.rexUI.add.roundRectangle(0, 0, 20, 20, 0, backgroundColor),
-					text: this.add.text(0, 0, 'Human vs. Computer'),
+					text: this.add.text(0, 0, 'Human vs. Computer', {fontFamily: 'GodOfWar'}),
 					align: 'center',
 				}),
 
@@ -257,7 +257,19 @@ class Leaderboard extends Phaser.Scene {
 
 		}).catch((error) => {
 			console.error(error);
-			// TODO: Fehlermeldung anzeigen, dass Leaderboard nicht verfügbar ist
+			
+			const errorBackground = this.add.image(1280/2, 720/2, "buttonBox");
+			errorBackground.scaleX = 1;
+			errorBackground.scaleY = 1;
+			
+			const errorMessage = this.add.text(1270/2, 720/2, "Failed to connect to Leaderboard.");
+			errorMessage.scaleX = 1;
+			errorMessage.scaleY = 1;
+			errorMessage.setOrigin(0.5, 0.5);
+			errorMessage.text = "Failed to connect \nto Leaderboard.\n \n \nYou were probably \nthe best";
+			errorMessage.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "27px" });
+
+
 		});
 
 		// Wake scene
