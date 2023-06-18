@@ -187,23 +187,8 @@ class Start extends Phaser.Scene {
 		matchSelectionText.text = "Random";
 		matchSelectionText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 
-		//idInput
-		const idInput = this.add.image(656, 595, "idInput");
-		idInput.scaleX = 0.5;
-		idInput.scaleY = 0.5;
-		idInput.setVisible(false);
-
-		//idInputText
-		const idInputText = this.add.text(613, 595, "", {});
-		idInputText.scaleX = 1;
-		idInputText.scaleY = 1;
-		idInputText.setOrigin(0.5, 0.5);
-		idInputText.text = "ID";
-		idInputText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
-		idInputText.setVisible(false);
-
 		//idInputBox
-		const idInputBox = this.add.image(689, 595, "idInputBox").setInteractive();
+		const idInputBox = this.add.image(689 - 33, 595, "friendInputBox").setInteractive();
 		idInputBox.scaleX = 0.5;
 		idInputBox.scaleY = 0.5;
 		idInputBox.setVisible(false);
@@ -229,7 +214,7 @@ class Start extends Phaser.Scene {
 					nameInputBoxText.text = nameInputBoxText.text.slice(0, -1);
 				}
 				else if (event.key.length === 1) {
-					if (nameInputBoxText.text.length < 19) {
+					if (nameInputBoxText.text.length < 10) {
 						nameInputBoxText.text += event.key;
 					}
 				}
@@ -244,7 +229,7 @@ class Start extends Phaser.Scene {
 					idInputBoxText.text = idInputBoxText.text.slice(0, -1);
 				}
 				else if (event.key.length === 1) {
-					if (idInputBoxText.text.length < 6) {
+					if (idInputBoxText.text.length < 10) {
 						idInputBoxText.text += event.key;
 					}
 				}
@@ -252,7 +237,7 @@ class Start extends Phaser.Scene {
 		});
 
 		//idInputBoxText
-		const idInputBoxText = this.add.text(660, 585, '', {});
+		const idInputBoxText = this.add.text(660 - 72, 585, '', {});
 		idInputBoxText.setOrigin(0, 0);
 		idInputBoxText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "15px" });
 		idInputBoxText.setVisible(false);
@@ -277,12 +262,12 @@ class Start extends Phaser.Scene {
 
 			if (matchSelectionText.text === matchCompareText.text) {
 				showId = true;
-				this.matchFriend(matchInput, matchInputFriend, showId, matchButton, idInput, idInputText, idInputBox, idInputBoxText);
+				this.matchFriend(matchInput, matchInputFriend, showId, matchButton, idInputBox, idInputBoxText);
 			}
 
 			else {
 				showId = false;
-				this.matchFriend(matchInput, matchInputFriend, showId, matchButton, idInput, idInputText, idInputBox, idInputBoxText);
+				this.matchFriend(matchInput, matchInputFriend, showId, matchButton, idInputBox, idInputBoxText);
 			}
 
 
@@ -292,6 +277,14 @@ class Start extends Phaser.Scene {
 		const startButton = this.add.image(840, 570, "startButton").setInteractive({ useHandCursor: true });
 		startButton.scaleX = 0.5;
 		startButton.scaleY = 0.5;
+		
+		//startButtonText
+		const startButtonText = this.add.text(840, 570, "", {});
+		startButtonText.scaleX = 1;
+		startButtonText.scaleY = 1;
+		startButtonText.setOrigin(0.5, 0.5);
+		startButtonText.text = "Start";
+		startButtonText.setStyle({ "align": "center", "color": "#009900", "fontFamily": "GodOfWar", "fontSize": "25px" });
 
 		startButton.on('pointerover', function (event) {
 			if ((nameInputBoxText.text.length !== 0) && (showId === false)) {
@@ -304,12 +297,14 @@ class Start extends Phaser.Scene {
 
 			else {
 				this.setTint(0xe50000);
+				startButtonText.setStyle({ "color": "#990000"});
 			}
 
 		});
 
 		startButton.on('pointerout', function (event) {
 			this.clearTint();
+			startButtonText.setStyle({ "color": "#009900"});
 		});
 
 		startButton.on('pointerdown', function (event) {
@@ -369,15 +364,6 @@ class Start extends Phaser.Scene {
 			}
 		});
 
-
-		//startButtonText
-		const startButtonText = this.add.text(840, 570, "", {});
-		startButtonText.scaleX = 1;
-		startButtonText.scaleY = 1;
-		startButtonText.setOrigin(0.5, 0.5);
-		startButtonText.text = "Start";
-		startButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "25px" });
-
 		this.events.emit("scene-awake");
 	}
 
@@ -417,12 +403,10 @@ class Start extends Phaser.Scene {
 		this.theme.stop();
 	}
 
-	matchFriend(i, f, s, button, idin, idint, idinb, idinbt) {
+	matchFriend(i, f, s, button, idinb, idinbt) {
 		i.setVisible(!s);
 		f.setVisible(s);
 
-		idin.setVisible(s);
-		idint.setVisible(s);
 		idinb.setVisible(s);
 		idinbt.setVisible(s);
 
