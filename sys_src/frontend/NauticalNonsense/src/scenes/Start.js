@@ -31,7 +31,7 @@ class Start extends Phaser.Scene {
 	}
 	//Commit Test 
 
-	http_POST(url, uuid, friend, mode, playername, callback) {
+	http_POST(sharedData,url, uuid, friend, mode, playername, callback) {
 		var http_post_data = {
 			client_id: uuid,
 			mode: mode,
@@ -55,6 +55,7 @@ class Start extends Phaser.Scene {
 			.then(responseData => {
 				// Process the response data
 				console.log(responseData);
+				sharedData.game_id = responseData.game_id;
 				callback(); // Invoke the provided callback function
 			})
 			.catch(error => {
@@ -313,13 +314,13 @@ class Start extends Phaser.Scene {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
-				var ready = self.http_POST(apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername, function () {
+				var ready = self.http_POST(sharedData,apiUrl + "/play", sharedData.client_id, null, "random", sharedData.playername, function () {
 					sharedData.socket = new WebSocket(sharedData.websocket_url);
 
 					// Handle WebSocket events
 					sharedData.socket.onopen = function () {
 						console.log('WebSocket connection established');
-						// Perform any necessary actions when the connection is successfully established
+						self.scene.start("Waiting");
 					};
 
 					sharedData.socket.onmessage = function (event) {
@@ -337,7 +338,6 @@ class Start extends Phaser.Scene {
 							console.log("Game ID:", gameID);
 							sharedData.game_id = gameID;
 						}
-
 					};
 					sharedData.socket.onerror = function (error) {
 						console.error('WebSocket error:', error);
@@ -348,11 +348,10 @@ class Start extends Phaser.Scene {
 						console.log('WebSocket connection closed');
 						// Perform any necessary actions when the connection is closed
 					};
+					
 				});
 
-
-
-				self.scene.start("Waiting");
+				
 			}
 
 			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0)) {

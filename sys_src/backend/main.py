@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from play_game import prepare_room, get_partner_id
+from play_game import prepare_room, get_partner_id, make_move
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
@@ -77,27 +77,24 @@ async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, cl
         
 
 async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+    # get_uuid_from_websocket geht noch nicht
     uuid_client = manager.get_uuid_from_websocket(manager)
-    print("+++++++++")
-    print(uuid_client)
     # ship placement
-    if len(data['Shiplist']) == 7:
+    # todo wenn beide ihr Schiffe versendet haben dann noch eine flag an beide senden
+    if data.get('Shiplist', False) and len(data['Shiplist']) == 7:
         # validate ship placement
 
         # add ship placement to map
-        add_ship_placement(uuid_client, data)
-        data['message'] = "ship_placement_ready"
-        return 
+        player_which_starts = add_ship_placement(client_id, data)
+        data['message'] = ["ship_placement_ready", player_which_starts]
+        return None
+
+    if len(data['Fire']) == 1:
+        move = data['Fire']
+        game_id = data['GameID']
+        data['message']['won'],  data['message']['hit'], data['message']['board'], data['message']['ships'] = make_move(move, client_id, game_id)
+        return None
     
-    # fire at location
-    if len(data) == 1:
-        # validate data (e.g. out of map)
-
-        # get map data
-        # if hit
-        # if water
-
-        pass
 
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
@@ -112,18 +109,21 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         init_message = {"message": "ready"}
         await manager.send_personal_message(init_message, client_id)
         await manager.send_personal_message(init_message, partner_id)
+        print("ready flag wurde gesendet")
 
     try:
         while True:       
             data = await websocket.receive_json()
-            
+
+            if partner_id != None or partner_id != "":
+                partner_id = await get_partner_id(client_id)
+
             await handle_websocket_disconnect(manager, data, client_id)
             await handle_websocket_data(manager, data, client_id)
 
-            
             # validate the data
             response = {"message": data}
-            
+
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:

@@ -15,6 +15,9 @@ class Gameboard extends Phaser.Scene {
 
 	/** @returns {void} */
 	Shoot(row,col,gridSize,sharedData) {
+		console.log(row)
+		console.log(col)
+		console.log(gridSize)
 		var shootPosition = row*gridSize+col;
 		return this.sendFireMessage(sharedData,shootPosition);
 	}
@@ -23,7 +26,7 @@ class Gameboard extends Phaser.Scene {
 		var sent = 0;
 		while (sent < 5) {
 			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
-				var jsonMessage = JSON.stringify({"Fire" : message});
+				var jsonMessage = JSON.stringify({"Fire" : message,"GameID":sharedData.game_id});
 				sharedData.socket.send(jsonMessage);
 				console.log(jsonMessage);
 				sent = 5;
@@ -54,19 +57,8 @@ class Gameboard extends Phaser.Scene {
 	/** @returns {void} */
 	editorCreate() {
 		var sharedData = this.game.sharedData;
-		sharedData.socket.onmessage = function (event) {
-			console.log("Received message:", event.data);
-			//var message = JSON.parse(event.data);
-			var message = JSON.parse(event.data)['message'];
-			console.log("Parsed message:", message);
-			if (message === "ready") {
-				sharedData.ready = true;
-			}
-		};
-		
 
 		const self = this;
-		var isPlayerTurn = true;
 		this.selectedCell = -1;
 
 
@@ -129,7 +121,7 @@ class Gameboard extends Phaser.Scene {
 				cell.setInteractive();
 				cell.on('pointerdown', () => {
 					self.playClick();
-					self.DrawDemoBoard("enemy");
+					//self.DrawDemoBoard("enemy");
 
 					if (isCellSelected) {
 						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
@@ -170,7 +162,7 @@ class Gameboard extends Phaser.Scene {
 		opponentLamp.scaleX = 0.9;
 		opponentLamp.scaleY = 0.9;
 
-		self.switchTurn(readyLamp, opponentLamp, isPlayerTurn);
+		self.switchTurn(readyLamp, opponentLamp, sharedData.its_your_turn);
 
 		// readyText
 		const readyText = this.add.text(1280 / 2 - 220, 720 / 2 + 205, "", {});
@@ -203,7 +195,7 @@ class Gameboard extends Phaser.Scene {
 
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
-			if(self.Shoot(selectedRow,selectedCol,gridSize,sharedData)){
+			if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
 				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
 				selectedCol = -1;
 				selectedRow = -1;

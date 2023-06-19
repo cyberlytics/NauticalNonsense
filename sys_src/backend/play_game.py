@@ -1,4 +1,4 @@
-from database.database import get_map, get_partner
+from database.database import get_map, get_partner, get_ships, get_board, update_game_with_playermove
 from database.models import State
 
 from datetime import datetime
@@ -181,8 +181,8 @@ def _check_win(ships: list[list[int]]) -> bool:
 
 def make_move(
     move: int, 
-    game_field: list[int], 
-    ships: list[list[int]]
+    client_id: str,
+    game_id: str
     ) -> tuple[bool, bool, list[int]]:
     """
     Make a move on the game field.
@@ -206,6 +206,9 @@ def make_move(
     if move < 0 or move >= len(game_field):
         raise AssertionError("Move out of range")
 
+    ships = get_ships(client_id, game_id)
+    game_field = get_board(client_id, game_id)
+
     hit = False
     won = False
     
@@ -227,4 +230,7 @@ def make_move(
     else:
         raise ValueError("Move has been played before")
     
+    # save results in db
+    update_game_with_playermove()
+
     return won, hit, game_field, ships
