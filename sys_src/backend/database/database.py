@@ -13,6 +13,7 @@ gamestates = db.gamestates
 stats = db.stats
 leaderboard = db.leaderboard
 games = db.games
+currentNames = db.currentNames
 
 shipsCount = [2,2,1,1,1] #number of ships per type
 shipsTiles = [2,4,3,4,5] #number of tiles per shiptype
@@ -66,6 +67,8 @@ def create_map(client_id: uuid, mode: str) -> uuid:
         "isFinished": False,
         "winner": "",
         "step": 0,
+        "moves1": 0,
+        "moves2": 0,
         "board1": [],
         "board2": [],
         "ships1": [],
@@ -103,21 +106,24 @@ def add_ship_placement(client_id, list_of_ships):
 
 
 #Leaderboard
-def get_leaderboard(againstComputer:bool, limit: int = 10) -> list[Winner]:
+def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: int = 10) -> list[Winner]:
     leaders = []
-    winners = leaderboard.find({"againstComputer": againstComputer}, sort=[("moves",pymongo.ASCENDING), ("name",pymongo.ASCENDING)], limit=limit)
+    winners = leaderboard.find({"againstComputer": againstComputer, "capitulation": capitulation}, sort=[("moves",pymongo.ASCENDING), ("name",pymongo.ASCENDING)], limit=limit)
     for winner in winners:
         leaders.append(Winner.parse_obj(winner))
     return leaders
 
-def insert_winner(current_state: State) -> Winner:
+def insert_winner(current_state: State, capitulation: bool) -> Winner:
     name = current_state.winner
-    moves = math.ceil(current_state.step/2)
+    if name == current_state.player1Name:
+        moves = current_state.moves1
+    else:
+        moves = current_State.moves2
     if current_state.gameMode == "pc":
         againstComputer = True
     else:
         againstComputer = False    
-    winner = Winner(name=name, moves=moves, againstComputer=againstComputer)
+    winner = Winner(name=name, moves=moves, againstComputer=againstComputer, capitulation=capitulation)
     leaderboard.insert_one(winner.dict())
     return winner
 
@@ -226,3 +232,21 @@ def get_first_moves(game_id: str) -> list[int]:
             break
             
     return firstMoves
+
+
+#current names
+def insert_name(name: str) -> bool:
+    if not isOccupied(name):
+        currentNames.insert_one({"name": name})
+        return True #name not occupied and now inserted
+    else:
+        return False #name already exists
+
+def remove_name(name: str):
+    currentNames.delete_many({"name": name})
+    
+def isOccupied(name: str) -> bool:
+    if currentNames.count_documents({"name": name}) == 0:
+        return False
+    else:
+        return True
