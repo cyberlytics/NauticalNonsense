@@ -12,6 +12,11 @@
                 "key": "homeButton"
             },
             {
+                "url": "assets/leaderboard/buttonBox.png",
+                "type": "image",
+                "key": "buttonBox"
+            },
+            {
                 "url": "assets/leaderboard/backButton.png",
                 "type": "image",
                 "key": "backButton"
