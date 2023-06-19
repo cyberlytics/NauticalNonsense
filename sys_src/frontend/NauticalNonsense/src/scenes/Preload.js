@@ -26,8 +26,9 @@ class Preload extends Phaser.Scene {
 		this.load.image("matchButton", "assets/start/matchSelectionbutton.png");
 		this.load.image("background", "assets/0001.png");
 		this.load.image("matchInputFriend", "assets/start/matchSelectionFriend.png");
-		this.load.image("idInput", "assets/start/IdInput.png");
-		this.load.image("idInputBox", "assets/start/IdInputBox.png");
+		//this.load.image("idInput", "assets/start/IdInput.png");
+		//this.load.image("idInputBox", "assets/start/IdInputBox.png");
+		this.load.image("friendInputBox", "assets/start/friendInputBox.png");
 		this.load.image("rulesBackground", "assets/rules/rulesBackground.png");
 		this.load.image("rulesRight", "assets/rules/buttonRight.png");
 		this.load.image("rulesLeft", "assets/rules/buttonLeft.png");
@@ -53,6 +54,8 @@ class Preload extends Phaser.Scene {
 		this.load.image("gbFireControl", "assets/gameboard/fireControl.png");
 		this.load.image("gbOpponentLamp", "assets/gameboard/opponentLamp.png");
 		this.load.image("gbReadyLamp", "assets/gameboard/readyLamp.png");
+		this.load.image("gbRedCross", "assets/gameboard/redCross.png");
+		this.load.image("gbExplosionStar", "assets/gameboard/explosionStar.png");
 		this.load.image("goBackground", "assets/gameover/background.png");
 		this.load.image("goExitWin", "assets/gameover/exitWin.png");
 		this.load.image("goExitLose", "assets/gameover/exitLose.png");

@@ -5,14 +5,14 @@ import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank
-from database.models import LeaderboardWithRank
+from database.database import get_leaderboard, add_rank, add_ship_placement, get_stat
+from database.models import LeaderboardWithRank, Stat
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=["http://localhost:8080","http://127.0.0.1:5500"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,17 +66,38 @@ def continue_game(player_id: int):
     pass
 
 
-async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, client_id: str):
     # Disconnect command
-    print("manger in handle_websocket_data ist:" + str(id(manager)))
-
     if 'Disconnect' in data:
         await manager.disconnect(client_id)
 
     # Disconnect if partner has disconnected
     if 'Client has left' in data:
         await manager.disconnect(client_id)
+        
 
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+    uuid_client = manager.get_uuid_from_websocket(manager)
+    print("+++++++++")
+    print(uuid_client)
+    # ship placement
+    if len(data['Shiplist']) == 7:
+        # validate ship placement
+
+        # add ship placement to map
+        add_ship_placement(uuid_client, data)
+        data['message'] = "ship_placement_ready"
+        return 
+    
+    # fire at location
+    if len(data) == 1:
+        # validate data (e.g. out of map)
+
+        # get map data
+        # if hit
+        # if water
+
+        pass
 
 # Use Kafka for a persistant WebSocket-List
 @app.websocket("/ws/{client_id}")
@@ -88,18 +109,21 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
     
     # if partner_id != None -> Message partner that game is ready
     if partner_id != None and partner_id != "":
-        init_message = {"message received in the backend": "ready"}
+        init_message = {"message": "ready"}
         await manager.send_personal_message(init_message, client_id)
         await manager.send_personal_message(init_message, partner_id)
 
     try:
         while True:       
             data = await websocket.receive_json()
-
+            
+            await handle_websocket_disconnect(manager, data, client_id)
             await handle_websocket_data(manager, data, client_id)
+
             
             # validate the data
-            response = {"message received in the backend": data}
+            response = {"message": data}
+            
             await manager.send_personal_message(response, partner_id)
 
     except WebSocketDisconnect:
@@ -115,3 +139,9 @@ def get_leaderboard_api():
     leaders_computer = get_leaderboard(againstComputer=True)
     leaders_computer_rank = add_rank(leaders_computer)
     return LeaderboardWithRank(leadersHuman=leaders_human_rank, leadersComputer=leaders_computer_rank)
+
+#Route for statistics
+@app.get("/stats", response_model = Stat)
+def get_stat_api():
+    stat = get_stat()
+    return stat
