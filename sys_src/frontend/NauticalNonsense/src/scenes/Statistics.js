@@ -103,7 +103,6 @@ class Statistics extends Phaser.Scene {
 
 
 		// get stats via backend API
-		//const stats = dummy;
 		fetch(mainUrl + "/stats")
 			.then((response) => {
 				return response.json();
@@ -275,6 +274,28 @@ class Statistics extends Phaser.Scene {
 			})
 			.catch((err) => {
 				console.error(err);
+
+				background.setDepth(10);
+				returnButton.setDepth(10);
+				homeButton.setDepth(10);
+
+				const errorStyle = {
+					width: 900,
+					height: 200,
+					radius: 20,
+					backgroundColor: darkgrey,
+					padding: 25,
+					textStyle: normaltext
+				}
+				const error = this.add.graphics();
+				error.fillStyle(errorStyle.backgroundColor, 1);
+				error.fillRoundedRect(1280 / 2 - errorStyle.width / 2, 720 / 2 - errorStyle.height / 2, errorStyle.width, errorStyle.height, errorStyle.radius);
+				error.setDepth(10);
+
+				const errormessage = "Unfortunately an error occurred while loading gamestatistics.\n\nPlease try again later."
+				const txtError = this.add.text(1280 / 2, 720/2 - errorStyle.height/2 + errorStyle.padding, errormessage, errorStyle.textStyle);
+				txtError.setOrigin(0.5, 0);
+				txtError.setDepth(10);
 			});
 
 
