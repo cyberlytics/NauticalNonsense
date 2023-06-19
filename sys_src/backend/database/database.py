@@ -104,21 +104,21 @@ def add_ship_placement(client_id, list_of_ships):
 
 
 #Leaderboard
-def get_leaderboard(againstComputer:bool, limit: int = 10) -> list[Winner]:
+def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: int = 10) -> list[Winner]:
     leaders = []
-    winners = leaderboard.find({"againstComputer": againstComputer}, sort=[("moves",pymongo.ASCENDING), ("name",pymongo.ASCENDING)], limit=limit)
+    winners = leaderboard.find({"againstComputer": againstComputer, "capitulation": capitulation}, sort=[("moves",pymongo.ASCENDING), ("name",pymongo.ASCENDING)], limit=limit)
     for winner in winners:
         leaders.append(Winner.parse_obj(winner))
     return leaders
 
-def insert_winner(current_state: State) -> Winner:
+def insert_winner(current_state: State, capitulation: bool) -> Winner:
     name = current_state.winner
     moves = math.ceil(current_state.step/2)
     if current_state.gameMode == "pc":
         againstComputer = True
     else:
         againstComputer = False    
-    winner = Winner(name=name, moves=moves, againstComputer=againstComputer)
+    winner = Winner(name=name, moves=moves, againstComputer=againstComputer, capitulation=capitulation)
     leaderboard.insert_one(winner.dict())
     return winner
 

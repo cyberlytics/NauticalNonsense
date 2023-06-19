@@ -22,6 +22,7 @@ class Winner(BaseModel):
     name: str = Field(..., description = "Name of player")
     moves: int = Field(..., description = "Moves needed to win game")
     againstComputer: bool = Field(..., description = "True if player plays against computer")
+    capitulation: bool = Field(..., description = "True if player won by capitulation")
 
 class WinnerWithRank(BaseModel):
     name: str = Field(..., description = "Name of player")
