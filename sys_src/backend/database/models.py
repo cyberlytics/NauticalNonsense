@@ -12,6 +12,8 @@ class State(BaseModel):
     gameStatus: str = Field(..., description = "status of game: wait/place/play/finished")
     winner: str = Field(..., description = "Name of player, who won")
     step: int = Field(..., description = "Count of total moves of game")
+    moves1: int = Field(..., description = "Count of moves of player1")
+    moves2: int = Field(..., description = "Count of moves of player2")
     board1: list[int] = Field(..., description = "Playing board owned by player1")
     board2: list[int] = Field(..., description = "Playing board owned by player2")
     ships1: list[list[int]] = Field(..., description = "Ships owned by player1")

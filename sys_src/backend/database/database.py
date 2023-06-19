@@ -67,6 +67,8 @@ def create_map(client_id: uuid, mode: str) -> uuid:
         "isFinished": False,
         "winner": "",
         "step": 0,
+        "moves1": 0,
+        "moves2": 0,
         "board1": [],
         "board2": [],
         "ships1": [],
@@ -113,7 +115,10 @@ def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: in
 
 def insert_winner(current_state: State, capitulation: bool) -> Winner:
     name = current_state.winner
-    moves = math.ceil(current_state.step/2)
+    if name == current_state.player1Name:
+        moves = current_state.moves1
+    else:
+        moves = current_State.moves2
     if current_state.gameMode == "pc":
         againstComputer = True
     else:
