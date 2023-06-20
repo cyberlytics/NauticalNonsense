@@ -85,12 +85,13 @@ def validate_move(client_json):
 def _create_game_field(
     ships: list[list[int]], 
     size: int = 100, 
-    num_ships: int = 6,
+    num_ships: int = 7,
     expected_ships: dict[int, int] = {
         5: 1,
-        4: 2,
-        3: 3,
-        2: 4
+        4: 1,
+        3: 1,
+        2: 2,
+        1: 2
     }
     ) -> list[int]:
     """
