@@ -1,11 +1,11 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from play_game import prepare_room, get_partner_id, make_move
+from play_game import prepare_room, get_partner_id, make_move, _create_game_field
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank, add_ship_placement, get_stat
+from database.database import get_leaderboard, add_rank, add_placement, get_stat
 from database.models import LeaderboardWithRank, Stat
 
 app = FastAPI()
@@ -83,13 +83,16 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     # todo wenn beide ihr Schiffe versendet haben dann noch eine flag an beide senden
     if data.get('Shiplist', False) and len(data['Shiplist']) == 7:
         # validate ship placement
+        game_id = data['GameID']
+        board = _create_game_field(data['Shiplist'])
 
-        # add ship placement to map
-        player_which_starts = add_ship_placement(client_id, data)
+        # add ships and board placement to map
+        player_which_starts = add_placement(client_id, data["Shiplist"], board, game_id)
         data['message'] = ["ship_placement_ready", player_which_starts]
         return None
 
-    if len(data['Fire']) == 1:
+    if data.get('Fire', False):
+        print(data)
         move = data['Fire']
         game_id = data['GameID']
         data['message']['won'],  data['message']['hit'], data['message']['board'], data['message']['ships'] = make_move(move, client_id, game_id)

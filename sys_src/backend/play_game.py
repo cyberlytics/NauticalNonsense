@@ -81,6 +81,7 @@ def validate_move(client_json):
     pass
 
 
+# hier von private auf public ändern
 def _create_game_field(
     ships: list[list[int]], 
     size: int = 100, 
@@ -200,14 +201,16 @@ def make_move(
         ValueError: If the move has been played before
         AssertionError: If the move is not an integer or out of range
     """
+    ships = get_ships(client_id, game_id)
+    game_field = get_board(client_id, game_id)
+
     if not isinstance(move, int):
         raise AssertionError("Move is not an integer")
     
     if move < 0 or move >= len(game_field):
+        print("-----------------")
+        print(game_field)
         raise AssertionError("Move out of range")
-
-    ships = get_ships(client_id, game_id)
-    game_field = get_board(client_id, game_id)
 
     hit = False
     won = False

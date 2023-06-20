@@ -91,9 +91,10 @@ async def get_partner(client_id: str):
         return None
 
 
-def add_ship_placement(client_id, list_of_ships):
+def add_placement(client_id: str, list_of_ships: list, board: list, game_id: str):
     map_data = games.find_one({
         "$or": [{"player1": client_id}, {"player2": client_id}],
+        "game_id": game_id,
         "ships1": {"$eq": []},
         "ships2": {"$eq": []}
     })
@@ -104,9 +105,9 @@ def add_ship_placement(client_id, list_of_ships):
             first_player = random.choice([map_data["player1"], map_data["player2"]])
 
         if map_data["player1"] == client_id:
-            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships1": list_of_ships, "next_player": first_player}})
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships1": list_of_ships, "board1": board, "next_player": first_player}})
         elif map_data["player2"] == client_id:
-            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships2": list_of_ships, "next_player": first_player}})
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"ships2": list_of_ships, "board2": board, "next_player": first_player}})
         
         # return the starting player
         return first_player
@@ -114,10 +115,13 @@ def add_ship_placement(client_id, list_of_ships):
         print("No matching game for this client")
         return None
 
-def get_ships(client_id, game_id):
-    result = games.find({'game_id': game_id}).sort('step', -1).limit(1)
 
-    if result.count() > 0:
+def get_ships(client_id, game_id):
+    filter = {'game_id': game_id}
+    count = games.count_documents(filter)
+    result = games.find(filter).sort('step', -1).limit(1)
+
+    if count > 0:
         game_state = result.next()
 
         if game_state['player1'] == client_id:
@@ -128,9 +132,11 @@ def get_ships(client_id, game_id):
     return None
 
 def get_board(client_id, game_id):
-    result = games.find({'game_id': game_id}).sort('step', -1).limit(1)
+    filter = {'game_id': game_id}
+    count = games.count_documents(filter)
+    result = games.find(filter).sort('step', -1).limit(1)
 
-    if result.count() > 0:
+    if count > 0:
         game_state = result.next()
 
         if game_state['player1'] == client_id:
@@ -141,9 +147,11 @@ def get_board(client_id, game_id):
     return None
 
 def update_game_with_playermove(client_id: str, game_id: str, game_field: list[int], ships: list[list[int]], won: bool = None) -> None:
-    result = games.find({'game_id': game_id}).sort('step', -1).limit(1)
+    filter = {'game_id': game_id}
+    count = games.count_documents(filter)
+    result = games.find(filter).sort('step', -1).limit(1)
 
-    if result.count() > 0:
+    if count > 0:
         game_state = result.next()
 
         # Define the field names
