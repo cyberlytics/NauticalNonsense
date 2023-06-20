@@ -93,17 +93,17 @@ async def get_partner(client_id: str):
 
 def add_placement(client_id: str, list_of_ships: list, board: list, game_id: str):
     map_data = games.find_one({
-        "$or": [{"player1": client_id}, {"player2": client_id}],
-        "game_id": game_id,
-        "ships1": {"$eq": []},
-        "ships2": {"$eq": []}
+        "$or": [
+            {"player1": client_id, "ships1": []}, 
+            {"player2": client_id, "ships2": []}
+        ],
+        "game_id": game_id
     })
     if map_data:
         # Wenn next_player noch nicht gesetzt ist, zufällig auswählen, welcher Spieler das Spiel beginnt.
         first_player = map_data["next_player"]
         if not first_player:
             first_player = random.choice([map_data["player1"], map_data["player2"]])
-
         if map_data["player1"] == client_id:
             games.update_one({"_id": map_data["_id"]}, {"$set": {"ships1": list_of_ships, "board1": board, "next_player": first_player}})
         elif map_data["player2"] == client_id:
