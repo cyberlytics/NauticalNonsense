@@ -58,6 +58,28 @@ class Gameboard extends Phaser.Scene {
 	editorCreate() {
 		var sharedData = this.game.sharedData;
 
+
+		sharedData.socket.onmessage = function (event) {
+			console.log("Received message:", event.data);
+			var message = JSON.parse(event.data)['message'];
+			console.log("Parsed message:", message);
+			if (message.Board === "Fireboard") {
+				this.UpdateGameboardColors(message.Gameboard,"enemy");
+			}
+			else if(message.Board === "Playerboard"){
+				this.UpdateGameboardColors(message.Gameboard,"player");
+			}
+			if(message.IsItMyTurn === true){
+				sharedData.its_your_turn = true;
+				this.switchTurn(readyLamp, opponentLamp, true);
+			}
+			else{
+				sharedData.its_your_turn = false;
+				this.switchTurn(readyLamp,opponentLamp,false)
+			}
+		};
+
+
 		const self = this;
 		this.selectedCell = -1;
 
@@ -186,7 +208,11 @@ class Gameboard extends Phaser.Scene {
 		fireButton.scaleY = 0.9;
 
 		fireButton.on('pointerover', function (event) {
-			this.setTint(0xe50000);
+			if (sharedData.its_your_turn) {
+				this.setTint(0xe50000);
+			} else {
+				this.setTint(0x1ed013);
+			}
 		});
 
 		fireButton.on('pointerout', function (event) {
@@ -195,13 +221,14 @@ class Gameboard extends Phaser.Scene {
 
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
-			if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
-				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
-				selectedCol = -1;
-				selectedRow = -1;
-				isCellSelected = false;
+			if(sharedData.its_your_turn){
+				if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
+					self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
+					selectedCol = -1;
+					selectedRow = -1;
+					isCellSelected = false;
+				}
 			}
-			
 			this.clearTint();
 		});
 
@@ -290,10 +317,10 @@ class Gameboard extends Phaser.Scene {
 			}
 			
 			
-			sharedData.socket.onmessage = function(event) {
-			var message = JSON.parse(event.data);
-			console.log("Message received:", message)
-			};
+			// sharedData.socket.onmessage = function(event) {
+			// var message = JSON.parse(event.data);
+			// console.log("Message received:", message)
+			//};
 
 	}
 
