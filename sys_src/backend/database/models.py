@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 import datetime
 
 class State(BaseModel):
@@ -26,10 +26,22 @@ class Winner(BaseModel):
     againstComputer: bool = Field(..., description = "True if player plays against computer")
     capitulation: bool = Field(..., description = "True if player won by capitulation")
 
+    @validator('moves')
+    def moves_greater_zero(cls, moves):
+        if moves <= 0:
+            raise ValueError('moves must be greater than 0')
+        return moves
+
 class WinnerWithRank(BaseModel):
     name: str = Field(..., description = "Name of player")
     moves: int = Field(..., description = "Moves needed to win game")
     rank: int = Field(..., description = "Rank of player")
+
+    @validator('moves', 'rank')
+    def moves_rank_greater_zero(cls, value):
+        if value <= 0:
+            raise ValueError('moves and rank must be greater than 0')
+        return value
 
 class LeaderboardWithRank(BaseModel):
     leadersHuman: list[WinnerWithRank] = Field(..., description = "Best players against other players")
@@ -55,3 +67,22 @@ class Stat(BaseModel):
     totalShiphits: list[int] = Field(..., description = "Total count of winner's ships' hits per shiptype by end of game")#Anteile der Schiffe, die getroffen sind
     averageShiphits: list[float] = Field(..., description = "Average count of winner's ships' hits per shiptype by end of game")
     timestamp: datetime.datetime = Field(..., description = "Current utc date and time")
+
+    @validator('gamesCount', 'gamesCountHuman', 'gamesCountComputer', 'winCountComputer', 'totalMoves', 'totalMovesHuman', 'totalMovesComputer',
+               'averageMoves', 'averageMovesHuman', 'averageMovesComputer', 'capitulations')
+    def count_positive(cls, count):
+        if count < 0:
+            raise ValueError('count of games, moves, capitulations must be positive')
+        return count
+    
+    @validator('shipPositions', 'moves', 'firstMoves', 'totalShipsHit', 'totalShiphits', 'averageShipsHit', 'averageShiphits', each_item=True)
+    def count_list_positive(cls, count):
+        if count < 0:
+            raise ValueError('count of moves, shippositions, shiphits moves must be positive')
+        return count
+    
+    @validator('averageShiphits', 'averageShipsHit', each_item=True)
+    def average_between_zero_one(cls, avg):
+        if avg < 0 or avg > 1:
+            raise ValueError('average shiphits must be between 0 and 1')
+        return avg
