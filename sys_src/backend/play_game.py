@@ -3,7 +3,7 @@ from database.models import State
 
 from datetime import datetime
 
-from utils import is_incremental
+#from utils import is_incremental
 
 import uuid
 
@@ -130,8 +130,9 @@ def _create_game_field(
         if not all([isinstance(coord, int) for coord in ship]):
             raise ValueError("Ship coordinates are not integers")
         
-        if not is_incremental(ship):
-            raise ValueError("Ship coordinates are not one apart")
+        # TODO first correct this function bevore use
+        #if not is_incremental(ship):
+            #raise ValueError("Ship coordinates are not one apart")
 
         for coord in ship:
             if coord < len(game_field) and coord >= 0:
