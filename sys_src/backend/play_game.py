@@ -216,7 +216,7 @@ def make_move(
         raise AssertionError("Move out of range")
 
     hit = False
-    won = False
+    lose = False
 
     if game_field[move] == 0:
         game_field[move] = 2
