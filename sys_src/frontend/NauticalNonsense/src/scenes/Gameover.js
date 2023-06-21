@@ -18,9 +18,10 @@ class Gameover extends Phaser.Scene
 	/** @returns {void} */
 	editorCreate() 
 	{
-		
+		var sharedData = this.game.sharedData;
+		var gameover = sharedData.gameover;
+
 		const self = this;
-		var won = false;
 		
 		//sounds
 		this.click = this.sound.add("click");
@@ -135,7 +136,7 @@ class Gameover extends Phaser.Scene
 		posValue.setOrigin(0, 0.5);
 		posValue.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
-		this.setStats(shotsValue, hitsValue, missesValue, movesValue, posValue);
+		this.setStats(gameover.shots, gameover.hits, gameover.misses, gameover.totalMoves, gameover.rank);
 		
 		// exitWin
 		const exitWin = this.add.image(1280/2, 720/2 + 210, "goExitWin").setInteractive({ useHandCursor: true  });
@@ -156,6 +157,7 @@ class Gameover extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
+			deleteGameover(gameover);
 			self.scene.start("Start");
         });
 		
@@ -186,6 +188,7 @@ class Gameover extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
+			deleteGameover(gameover);
 			self.scene.start("Start");
         });
 		
@@ -197,7 +200,7 @@ class Gameover extends Phaser.Scene
 		exitLoseText.text = "Exit";
 		exitLoseText.setStyle({ "align": "center", "color": "#990000", "fontFamily": "GodOfWar", "fontSize": "30px" });
 		
-		this.setWin(winText, loseText, exitWin, exitLose, exitWinText, exitLoseText, won);
+		this.setWin(winText, loseText, exitWin, exitLose, exitWinText, exitLoseText, gameover.won);
 
 		this.events.emit("scene-awake");
 	}
@@ -219,11 +222,11 @@ class Gameover extends Phaser.Scene
 	
 	setStats(shots, hits, misses, moves, pos)
 	{
-		shots.text = "34";
-		hits.text = "18";
-		misses.text = "16";
-		moves.text = "56";
-		pos.text = "#1"; 
+		shotsValue.text = shots.toString();
+		hitsValue.text = hits.toString();
+		missesValue.text = misses.toString();
+		movesValue.text = moves.toString();
+		posValue.text = pos.toString(); 
 	}
 	
 	setWin(winTitle, loseTitle, win, lose, winTxt, loseTxt, s)
@@ -247,6 +250,15 @@ class Gameover extends Phaser.Scene
 			winTxt.setVisible(false);
 			loseTxt.setVisible(true);
 		}
+	}
+
+	deleteGameover(gameover) {
+		gameover.won = false;
+		gameover.shots = 0;
+		gameover.hits = 0;
+		gameover.misses = 0;
+		gameover.totalMoves = 0;
+		gameover.rank = 0;
 	}
 
 	/* END-USER-CODE */

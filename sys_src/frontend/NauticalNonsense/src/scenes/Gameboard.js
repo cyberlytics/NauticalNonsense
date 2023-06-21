@@ -93,6 +93,15 @@ class Gameboard extends Phaser.Scene {
 	editorCreate() {
 		var sharedData = this.game.sharedData;
 
+		sharedData.socket.onmessage = function (event) {
+			var message = JSON.parse(event.data)['message'];
+			sharedData.won = messsage.won;
+			if (message.won) {
+				sharedData.gameover = message.gameover;
+				self.scene.start("GameOver");
+			}
+		};
+
 		const self = this;
 		this.selectedCell = -1;
 
