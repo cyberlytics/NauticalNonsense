@@ -33,7 +33,9 @@ build-js:
     # # show all installed versions of Cypress binary
     # - $(npm bin)/cypress cache list
     # - $(npm bin)/cypress verify
-    - $(npm bin)
+    - npx cypress cache path
+    - npx cypress cache list
+    - npx cypress verify
 
   # rules:
   #   - changes:
