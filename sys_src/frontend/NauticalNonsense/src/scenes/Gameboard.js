@@ -54,6 +54,41 @@ class Gameboard extends Phaser.Scene {
 			return false;
 		}
 	}
+
+	sendCapitulateMessage(sharedData) {
+		var sent = 0;
+		while (sent < 5) {
+			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
+				var jsonMessage = JSON.stringify({ "Capitulate": true, "GameID": sharedData.game_id });
+				sharedData.socket.send(jsonMessage);
+				console.log(jsonMessage);
+				sent = 5;
+				return true;
+			}
+			else {
+				console.error("WebSocket connection is not open");
+				sharedData.socket = new WebSocket(sharedData.websocket_url);
+				// Handle WebSocket events
+				sharedData.socket.onopen = function () {
+					console.log("WebSocket connection established");
+					// Perform any necessary actions when the connection is successfully established
+				};
+
+				sharedData.socket.onerror = function (error) {
+					console.error("WebSocket error:", error);
+					// Handle any errors that occur during the WebSocket connection
+				};
+
+				sharedData.socket.onclose = function () {
+					console.log("WebSocket connection closed");
+					// Perform any necessary actions when the connection is closed
+				};
+				sent++;
+			}
+			return false;
+		}
+	}
+
 	/** @returns {void} */
 	editorCreate() {
 		var sharedData = this.game.sharedData;
@@ -229,7 +264,8 @@ class Gameboard extends Phaser.Scene {
 		capitulateButton.on('pointerdown', function (event) {
 			self.playClick();
 			this.clearTint();
-			self.scene.start("Gameover");
+			//evtl Popup
+			this.sendCapitulateMessage(sharedData);
         });
 		
 		// capitulateButtonText
