@@ -229,13 +229,15 @@ def make_move(
                 game_field = _check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
+        print("Die Shipliste vor check win ist:")
+        print(str(ships))
         won = _check_win(ships[0])
     else:
         # TODO das raus machen? Program soll doch nicht abstürzen wenn gleicher move bereits gemacht wurde?!
         raise ValueError("Move has been played before")
     
     # save results in db
-    update_game_with_playermove(partner_id, game_id, game_field, ships, won)
+    update_game_with_playermove(partner_id, game_id, game_field, won)
 
     # delete all ship positions from the board, because client shouldnt know the position of opponent ships
     board = [0 if i == 1 else i for i in game_field]

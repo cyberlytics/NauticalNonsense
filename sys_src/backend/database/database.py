@@ -146,7 +146,7 @@ def get_board(client_id, game_id):
     
     return None
 
-def update_game_with_playermove(client_id: str, game_id: str, game_field: list[int], ships: list[list[int]], won: bool = None) -> None:
+def update_game_with_playermove(client_id: str, game_id: str, game_field: list[int], won: bool = None) -> None:
     filter = {'game_id': game_id}
     count = games.count_documents(filter)
     result = games.find(filter).sort('step', -1).limit(1)
@@ -156,11 +156,9 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
 
         # Define the field names
         board_field = 'board1' if game_state['player1'] == client_id else 'board2'
-        ships_field = 'ships1' if game_state['player1'] == client_id else 'ships2'
 
         update_fields = {
-            board_field: game_field,
-            ships_field: ships
+            board_field: game_field
         }
 
         # If the game is won, set the isFinished field to True and update the winner
