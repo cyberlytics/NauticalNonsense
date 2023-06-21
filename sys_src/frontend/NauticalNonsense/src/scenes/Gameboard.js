@@ -71,11 +71,11 @@ class Gameboard extends Phaser.Scene {
 			}
 			if(message.IsItMyTurn === true){
 				sharedData.its_your_turn = true;
-				this.switchTurn(readyLamp, opponentLamp, true);
+				self.switchTurn(readyLamp, opponentLamp, true);
 			}
 			else{
 				sharedData.its_your_turn = false;
-				this.switchTurn(readyLamp,opponentLamp,false)
+				self.switchTurn(readyLamp,opponentLamp,false)
 			}
 		};
 
@@ -144,25 +144,26 @@ class Gameboard extends Phaser.Scene {
 				cell.on('pointerdown', () => {
 					self.playClick();
 					//self.DrawDemoBoard("enemy");
-
-					if (isCellSelected) {
-						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
-						if (selectedRow === row && selectedCol === col) {
-							selectedRow = -1;
-							selectedCol = -1;
-							isCellSelected = false;
-						}
-						else{
+					if (sharedData.its_your_turn) {
+						if (isCellSelected) {
+							self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
+							if (selectedRow === row && selectedCol === col) {
+								selectedRow = -1;
+								selectedCol = -1;
+								isCellSelected = false;
+							}
+							else{
+								cell.setAlpha(0.5);
+								selectedRow = row;
+								selectedCol = col;
+								isCellSelected = true;
+							}
+						}else{
 							cell.setAlpha(0.5);
 							selectedRow = row;
 							selectedCol = col;
 							isCellSelected = true;
-						}
-					}else{
-						cell.setAlpha(0.5);
-						selectedRow = row;
-						selectedCol = col;
-						isCellSelected = true;
+						}	
 					}
 				});
 				this.enemyGrid[row][col] = cell;
@@ -209,9 +210,10 @@ class Gameboard extends Phaser.Scene {
 
 		fireButton.on('pointerover', function (event) {
 			if (sharedData.its_your_turn) {
-				this.setTint(0xe50000);
-			} else {
 				this.setTint(0x1ed013);
+			} else {
+				
+				this.setTint(0xe50000);
 			}
 		});
 
