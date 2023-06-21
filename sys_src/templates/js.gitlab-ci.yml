@@ -23,7 +23,7 @@ lint-js:
 
 build-js:
   stage: build
-  image: node:latest
+  image: cypress/base:16.6.0
   script:
     - cd sys_src/frontend/NauticalNonsense
     # - npm install
