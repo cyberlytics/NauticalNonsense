@@ -54,8 +54,16 @@ class Start extends Phaser.Scene {
 			})
 			.then(responseData => {
 				// Process the response data
+
+				if (typeof responseData.game_id === 'undefined') {
+					sharedData.game_id = responseData.ready.game_id;
+				} else {
+					sharedData.game_id = responseData.game_id;
+				}
+				console.log(sharedData.game_id);
 				console.log(responseData);
-				sharedData.game_id = responseData.game_id;
+				
+
 				callback(); // Invoke the provided callback function
 			})
 			.catch(error => {

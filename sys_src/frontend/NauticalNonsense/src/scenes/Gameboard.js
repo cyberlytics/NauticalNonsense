@@ -26,7 +26,7 @@ class Gameboard extends Phaser.Scene {
 		var sent = 0;
 		while (sent < 5) {
 			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
-				var jsonMessage = JSON.stringify({"Fire" : message,"GameID":sharedData.game_id});
+				var jsonMessage = JSON.stringify({"Fire" : message,"GameID": sharedData.game_id});
 				sharedData.socket.send(jsonMessage);
 				console.log(jsonMessage);
 				sent = 5;
@@ -57,6 +57,33 @@ class Gameboard extends Phaser.Scene {
 	/** @returns {void} */
 	editorCreate() {
 		var sharedData = this.game.sharedData;
+
+
+		sharedData.socket.onmessage = function (event) {
+			console.log("Received message:", event.data);
+			var message = JSON.parse(event.data)['message'];
+			console.log("Parsed message:", message);
+			sharedData.won = message.won;
+			if(message.won) {
+				self.scene.start("Gameover");
+			}
+
+			if (sharedData.its_your_turn) {
+				self.UpdateGameboardColors(message.board,"enemy");
+				if (!message.hit) {
+					sharedData.its_your_turn = false;
+					self.switchTurn(readyLamp,opponentLamp,false)
+				}
+			}else{
+				self.UpdateGameboardColors(message.board,"player");
+				if (!message.hit) {
+					sharedData.its_your_turn = true;
+					self.switchTurn(readyLamp, opponentLamp, true);
+
+				}
+			}
+		};
+
 
 		const self = this;
 		this.selectedCell = -1;
@@ -122,25 +149,26 @@ class Gameboard extends Phaser.Scene {
 				cell.on('pointerdown', () => {
 					self.playClick();
 					//self.DrawDemoBoard("enemy");
-
-					if (isCellSelected) {
-						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
-						if (selectedRow === row && selectedCol === col) {
-							selectedRow = -1;
-							selectedCol = -1;
-							isCellSelected = false;
-						}
-						else{
+					if (sharedData.its_your_turn) {
+						if (isCellSelected) {
+							self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
+							if (selectedRow === row && selectedCol === col) {
+								selectedRow = -1;
+								selectedCol = -1;
+								isCellSelected = false;
+							}
+							else{
+								cell.setAlpha(0.5);
+								selectedRow = row;
+								selectedCol = col;
+								isCellSelected = true;
+							}
+						}else{
 							cell.setAlpha(0.5);
 							selectedRow = row;
 							selectedCol = col;
 							isCellSelected = true;
-						}
-					}else{
-						cell.setAlpha(0.5);
-						selectedRow = row;
-						selectedCol = col;
-						isCellSelected = true;
+						}	
 					}
 				});
 				this.enemyGrid[row][col] = cell;
@@ -186,7 +214,12 @@ class Gameboard extends Phaser.Scene {
 		fireButton.scaleY = 0.9;
 
 		fireButton.on('pointerover', function (event) {
-			this.setTint(0xe50000);
+			if (sharedData.its_your_turn) {
+				this.setTint(0x1ed013);
+			} else {
+				
+				this.setTint(0xe50000);
+			}
 		});
 
 		fireButton.on('pointerout', function (event) {
@@ -195,13 +228,14 @@ class Gameboard extends Phaser.Scene {
 
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
-			if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
-				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
-				selectedCol = -1;
-				selectedRow = -1;
-				isCellSelected = false;
+			if(sharedData.its_your_turn){
+				if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
+					self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
+					selectedCol = -1;
+					selectedRow = -1;
+					isCellSelected = false;
+				}
 			}
-			
 			this.clearTint();
 		});
 
@@ -290,10 +324,10 @@ class Gameboard extends Phaser.Scene {
 			}
 			
 			
-			sharedData.socket.onmessage = function(event) {
-			var message = JSON.parse(event.data);
-			console.log("Message received:", message)
-			};
+			// sharedData.socket.onmessage = function(event) {
+			// var message = JSON.parse(event.data);
+			// console.log("Message received:", message)
+			//};
 
 	}
 
@@ -390,11 +424,11 @@ class Gameboard extends Phaser.Scene {
 
 	switchTurn(player, opponent, s) {
 		if (s) {
-			player.setTint(0x1ed013);
+			player.setTint(0x00ff00);
 			opponent.clearTint();
 		}
 		else {
-			opponent.setTint(0xe50000);
+			opponent.setTint(0xff0000);
 			player.clearTint();
 		}
 	}
