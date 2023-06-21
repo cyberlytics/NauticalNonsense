@@ -1,5 +1,5 @@
 variables:
-  CYPRESS_CACHE_FOLDER: 'sys_src/frontend/NauticalNonsense/cache/Cypress/'
+  CYPRESS_CACHE_FOLDER: 'cache/Cypress/'
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
