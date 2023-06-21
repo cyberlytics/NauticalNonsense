@@ -48,7 +48,7 @@ class Leaderboard extends Phaser.Scene {
 
 
 		// homeButton
-		this.homeButton = this.add.image(1280 - 50 - 20, 70, "homeButton").setInteractive({ useHandCursor: true });
+		this.homeButton = this.add.image(70, 580, "homeButton").setInteractive({ useHandCursor: true });
 		this.homeButton.scaleX = 0.7;
 		this.homeButton.scaleY = 0.7;
 
@@ -66,7 +66,7 @@ class Leaderboard extends Phaser.Scene {
 		});
 
 		// backButton
-		this.backButton = this.add.image(1280 - 50 - 20, 70 + 70, "backButton").setInteractive({ useHandCursor: true });
+		this.backButton = this.add.image(70, 650, "backButton").setInteractive({ useHandCursor: true });
 		this.backButton.scaleX = 0.7;
 		this.backButton.scaleY = 0.7;
 
@@ -130,7 +130,7 @@ class Leaderboard extends Phaser.Scene {
 			});
 
 			var leaderboardHumans = this.rexUI.add.scrollablePanel({
-				x: 1270 / 4,
+				x: 1270 / 4 + 80,
 				y: 720 / 2,
 				width: 500,
 				height: 550,
@@ -186,21 +186,21 @@ class Leaderboard extends Phaser.Scene {
 			})
 				.layout()
 
-			const rankText = this.add.text(155, 115, "", {});
+			const rankText = this.add.text(155+ 80, 115, "", {});
 			rankText.scaleX = 1;
 			rankText.scaleY = 1;
 			rankText.setOrigin(0.5, 0.5);
 			rankText.text = "Rank";
 			rankText.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "30px" });
 
-			const nameText = this.add.text(155+147, 115, "", {});
+			const nameText = this.add.text(155+147+ 80, 115, "", {});
 			nameText.scaleX = 1;
 			nameText.scaleY = 1;
 			nameText.setOrigin(0.5, 0.5);
 			nameText.text = "Name";
 			nameText.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "30px" });
 
-			const shotsText = this.add.text(155+2*147, 115, "", {});
+			const shotsText = this.add.text(155+2*147+ 80, 115, "", {});
 			shotsText.scaleX = 1;
 			shotsText.scaleY = 1;
 			shotsText.setOrigin(0.5, 0.5);
@@ -209,7 +209,7 @@ class Leaderboard extends Phaser.Scene {
 
 			// Leaderboard vs Computers
 			var leaderboardComputer = this.rexUI.add.scrollablePanel({
-				x: (1270*3 / 4) - 75,
+				x: (1270*3 / 4) - 75+ 80,
 				y: 720 / 2,
 				width: 500,
 				height: 550,
@@ -265,21 +265,21 @@ class Leaderboard extends Phaser.Scene {
 			})
 				.layout()
 
-			const rankText1 = this.add.text(715, 115, "", {});
+			const rankText1 = this.add.text(715+ 80, 115, "", {});
 			rankText1.scaleX = 1;
 			rankText1.scaleY = 1;
 			rankText1.setOrigin(0.5, 0.5);
 			rankText1.text = "Rank";
 			rankText1.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "30px" });
 
-			const nameText1 = this.add.text(715+147, 115, "", {});
+			const nameText1 = this.add.text(715+147+ 80, 115, "", {});
 			nameText1.scaleX = 1;
 			nameText1.scaleY = 1;
 			nameText1.setOrigin(0.5, 0.5);
 			nameText1.text = "Name";
 			nameText1.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "30px" });
 
-			const shotsText1 = this.add.text(715+2*147, 115, "", {});
+			const shotsText1 = this.add.text(715+2*147+ 80, 115, "", {});
 			shotsText1.scaleX = 1;
 			shotsText1.scaleY = 1;
 			shotsText1.setOrigin(0.5, 0.5);
