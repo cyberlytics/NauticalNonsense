@@ -53,8 +53,8 @@ coverage-js:
     - cd sys_src/frontend/NauticalNonsense
     - mkdir -p public/src
     - chromium --disable-gpu
-    - npm run start-server &
-    - npx cypress run --e2e --headless --browser chrome
+    - npm start &
+    - npx cypress --browser firefox
     # - npm test
   artifacts:
     when: always
