@@ -63,7 +63,10 @@ class Gameboard extends Phaser.Scene {
 			console.log("Received message:", event.data);
 			var message = JSON.parse(event.data)['message'];
 			console.log("Parsed message:", message);
-			if(message.won) self.scene.start("Gameover");
+			sharedData.won = message.won;
+			if(message.won) {
+				self.scene.start("Gameover");
+			}
 
 			if (sharedData.its_your_turn) {
 				self.UpdateGameboardColors(message.board,"enemy");
@@ -421,11 +424,11 @@ class Gameboard extends Phaser.Scene {
 
 	switchTurn(player, opponent, s) {
 		if (s) {
-			player.setTint(0x1ed013);
+			player.setTint(0x00ff00);
 			opponent.clearTint();
 		}
 		else {
-			opponent.setTint(0xe50000);
+			opponent.setTint(0xff0000);
 			player.clearTint();
 		}
 	}
