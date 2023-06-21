@@ -53,7 +53,7 @@ coverage-js:
     - cd sys_src/frontend/NauticalNonsense
     - mkdir -p public/src
     - npm start &
-    - npx cypress run --browser firefox
+    - npx cypress run --browser electron
     # - npm test
   artifacts:
     when: always
