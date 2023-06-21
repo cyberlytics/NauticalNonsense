@@ -54,6 +54,7 @@ coverage-js:
     - mkdir -p public/src
     - npm start &
     - npx cypress run --browser electron
+    
     # - npm test
   artifacts:
     when: always
