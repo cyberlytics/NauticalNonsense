@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "npm run test:e2e && npm run test:coverage || npm run test:coverage",
-    "test:e2e": "npm run build && npm run start-server && cypress run --e2e --headless --browser electron && npm run stop-server",
+    "test:e2e": "npm run build && cypress run --e2e --headless --browser electron && npm run stop-server",
     "test:coverage": "npx nyc report --reporter=text-summary",
     "editor": "phasereditor2d-launcher -project . -port 1959",
     "editor-remote": "phasereditor2d-launcher -project . -disable-open-browser -public -port 1959",
