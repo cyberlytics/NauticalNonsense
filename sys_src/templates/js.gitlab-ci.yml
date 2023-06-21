@@ -22,13 +22,13 @@ build-js:
   cache:
     paths:
       - sys_src/frontend/NauticalNonsense/node_modules/
-      - $CI_PROJECT_DIR/cache/Cypress
+      - $CI_PROJECT_DIR/cache/Cypress/
   artifacts:
     expire_in: 1 days
     when: on_success
     paths:
       - sys_src/frontend/NauticalNonsense/node_modules/
-      - $CI_PROJECT_DIR/cache/Cypress
+      - $CI_PROJECT_DIR/cache/Cypress/
   # rules:
   #   - changes:
   #     - sys_src/frontend/**/*
