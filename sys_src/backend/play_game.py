@@ -184,7 +184,7 @@ def _check_win(ships: list[list[int]]) -> bool:
 
 def make_move(
     move: int, 
-    client_id: str,
+    partner_id: str,
     game_id: str
     ) -> tuple[bool, bool, list[int]]:
     """
@@ -203,20 +203,18 @@ def make_move(
         ValueError: If the move has been played before
         AssertionError: If the move is not an integer or out of range
     """
-    ships = get_ships(client_id, game_id)
-    game_field = get_board(client_id, game_id)
+    ships = get_ships(partner_id, game_id)
+    game_field = get_board(partner_id, game_id)
 
     if not isinstance(move, int):
         raise AssertionError("Move is not an integer")
     
     if move < 0 or move >= len(game_field):
-        print("-----------------")
-        print(game_field)
         raise AssertionError("Move out of range")
 
     hit = False
     won = False
-    
+
     if game_field[move] == 0:
         game_field[move] = 2
     elif game_field[move] == 1:
@@ -231,14 +229,15 @@ def make_move(
                 game_field = _check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
-        print("Shiplist vor check_win")
-        print(ships)
-        won = _check_win(ships)
+        won = _check_win(ships[0])
     else:
         # TODO das raus machen? Program soll doch nicht abstürzen wenn gleicher move bereits gemacht wurde?!
         raise ValueError("Move has been played before")
     
     # save results in db
-    update_game_with_playermove(client_id, game_id, game_field, ships, won)
+    update_game_with_playermove(partner_id, game_id, game_field, ships, won)
 
-    return won, hit, game_field, ships
+    # delete all ship positions from the board, because client shouldnt know the position of opponent ships
+    board = [0 if i == 1 else i for i in game_field]
+
+    return won, hit, board

@@ -76,7 +76,7 @@ async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, cl
         await manager.disconnect(client_id)
         
 
-async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str):
+async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str, partner_id: str):
     # get_uuid_from_websocket geht noch nicht
     uuid_client = manager.get_uuid_from_websocket(manager)
     # ship placement
@@ -92,10 +92,9 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         return None
 
     if data.get('Fire', False):
-        print(data)
         move = data['Fire']
         game_id = data['GameID']
-        data['won'], data['hit'], data['board'], data['ships'] = make_move(move, client_id, game_id)
+        data['won'], data['hit'], data['board'] = make_move(move, partner_id, game_id)
         return None
     
 
@@ -112,7 +111,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
         init_message = {"message": "ready"}
         await manager.send_personal_message(init_message, client_id)
         await manager.send_personal_message(init_message, partner_id)
-        print("ready flag wurde gesendet")
 
     try:
         while True:       
@@ -122,12 +120,14 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 partner_id = await get_partner_id(client_id)
 
             await handle_websocket_disconnect(manager, data, client_id)
-            await handle_websocket_data(manager, data, client_id)
+            await handle_websocket_data(manager, data, client_id, partner_id)
 
-            # validate the data
             response = {"message": data}
-
             await manager.send_personal_message(response, partner_id)
+
+            if data.get('board', False):
+                await manager.send_personal_message(response, client_id)
+
 
     except WebSocketDisconnect:
         await manager.disconnect(client_id)
