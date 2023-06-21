@@ -50,7 +50,9 @@ coverage-js:
   script:
     - cd sys_src/frontend/NauticalNonsense
     - mkdir -p public/src
-    - npm test
+    - npm run start-server &
+    - cypress run --e2e --headless --browser chrome
+    # - npm test
   artifacts:
     when: always
     reports:
