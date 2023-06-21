@@ -1,0 +1,2 @@
+[run]
+omit = tests/*, kafka-showcase.py, utils.py, __init__.py, database/examples.py, database/models.py

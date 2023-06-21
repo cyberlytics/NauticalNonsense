@@ -116,6 +116,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+.ruff_cache
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
@@ -429,3 +430,11 @@ TSWLatexianTemp*
 
 # glossaries
 *.glstex
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+
+#
+sys_src/frontend/NauticalNonsense/cypress/**
+!sys_src/frontend/NauticalNonsense/cypress/e2e/

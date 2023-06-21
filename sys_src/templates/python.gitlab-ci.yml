@@ -1,0 +1,32 @@
+lint-python:
+  image: python:3.11-slim
+  stage: validate
+  before_script:
+    - pip install ruff black
+  script:
+    - black sys_src/backend --check --verbose --diff --color
+    - ruff sys_src/backend
+  rules:
+    - changes:
+      - sys_src/backend/**/*
+  allow_failure: true
+
+coverage-python:
+  image: python:3.11-slim
+  stage: unit-test
+  before_script:
+    - pip install -r sys_src/backend/requirements.txt
+    - pip install pytest pytest-cov pytest-asyncio
+  script:
+    - cd sys_src/backend
+    - pytest --cov=. --cov-report xml --cov-report term-missing --junitxml=report.xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: sys_src/backend/coverage.xml
+      junit: sys_src/backend/report.xml
+  rules:
+    - changes:
+      - sys_src/backend/**/*

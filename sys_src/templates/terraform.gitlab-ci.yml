@@ -1,0 +1,130 @@
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Terraform.gitlab-ci.yml
+
+include:
+  - template: Terraform/Base.gitlab-ci.yml  # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Terraform/Base.gitlab-ci.yml
+  # - template: Jobs/SAST-IaC.gitlab-ci.yml   # https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/SAST-IaC.gitlab-ci.yml
+
+image:
+  name: "$CI_TEMPLATE_REGISTRY_HOST/gitlab-org/terraform-images/releases/1.4:v1.0.0"
+
+variables:
+  TF_ROOT: sys_src/infrastructure
+
+.get_ca_certificate:
+  before_script:
+    - apk add openssl sudo
+    - CERT_NAME=OTH-GIT
+    - URL=git.oth-aw.de
+    - openssl s_client -connect $URL:443  -showcerts < /dev/null 2>/dev/null > $CERT_NAME.crt
+    - openssl x509 -inform PEM -in $CERT_NAME.crt -out $CERT_NAME.crt
+    - sudo mv $CERT_NAME.crt /usr/local/share/ca-certificates
+    - sudo update-ca-certificates
+
+fmt:
+  extends: .terraform:fmt
+  needs: []
+
+validate:
+  extends: 
+    - .terraform:validate
+    - .get_ca_certificate
+  needs: []
+
+build:
+  extends: 
+    - .terraform:build
+    - .get_ca_certificate
+
+deploy:
+  extends: 
+    - .terraform:deploy
+    - .get_ca_certificate
+  dependencies:
+    - build
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH 
+      when: manual
+  environment:
+    name: $TF_STATE_NAME
+  artifacts:
+    paths:
+      - ${TF_ROOT}/kubeconfig_bdcc-team-blau
+
+prepare-test:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: prepare-test
+  dependencies:
+    - deploy
+  script:
+    - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
+    - cd sys_src/infrastructure/test
+    - export KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - kubectl apply -f deployment.yaml
+    - kubectl get pods
+    - kubectl apply -f service.yaml
+    - kubectl apply -f ingress.yaml
+    - sleep 15
+    - output=$(kubectl describe ingress)
+    - echo $output
+    # - ip=$(echo $output | grep -oP '(?<=Address:\s)[^,]*')
+    - address=$(echo "$output" | grep -oP 'Address:\s*\K[^[:space:]]+')
+    - echo "DYNAMIC_ENVIRONMENT_URL=http://$address" >> url.env
+  artifacts:
+    paths:
+      - sys_src/infrastructure/test/url.env
+
+smoke-test:
+  image: alpine:latest
+  stage: integration-test
+  dependencies:
+    - prepare-test
+  before_script:
+    - apk add curl grep
+  script:
+    - cd sys_src/infrastructure/test
+    - eval $(cat url.env)
+    - title=$(curl -s $DYNAMIC_ENVIRONMENT_URL | grep -oP '(?s)<title\b[^>]*>.*?</title>')
+    - echo $title
+    - >
+      if [[ "$title" == "<title>Hello Kubernetes!</title>" ]]; then
+        echo "Test passed"
+      else
+        echo "Test failed"
+        exit 1
+      fi
+
+delete-deployments:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: post-test
+  dependencies:
+    - deploy
+  script:
+    - mv ${TF_ROOT}/kubeconfig_bdcc-team-blau ${TF_ROOT}/test/kubeconfig_bdcc-team-blau
+    - cd sys_src/infrastructure/test
+    - export KUBECONFIG=./kubeconfig_bdcc-team-blau
+    - kubectl delete -f deployment.yaml
+    - kubectl delete -f service.yaml
+    - kubectl delete -f ingress.yaml
+
+deploy-dasboard:
+  image: 
+    name: bitnami/kubectl
+    entrypoint: [""] # override the entrypoint so we can use kubectl
+  stage: deploy-dashboard
+  dependencies:
+    - deploy
+  script:
+    - export KUBECONFIG=${TF_ROOT}/kubeconfig_bdcc-team-blau
+    - kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
+destroy:
+  extends: 
+    - .terraform:destroy
+    - .get_ca_certificate

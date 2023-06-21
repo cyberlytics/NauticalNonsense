@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+public/
+.nyc_output/
+coverage/
+instrumented/
+cypress/screenshots/
+cypress/videos
+cypress/downloads

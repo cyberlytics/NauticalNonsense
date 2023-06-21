@@ -1,0 +1,99 @@
+{
+    "id": "04331fb6-ed91-4d74-b6e9-4bfe0fcfb457",
+    "sceneType": "SCENE",
+    "settings": {
+        "preloadMethodName": "editorPreload",
+        "preloadPackFiles": [
+            "starter-template-basic-typescript/assets/asset-pack.json"
+        ],
+        "createMethodName": "editorCreate",
+        "sceneKey": "Preload"
+    },
+    "displayList": [
+        {
+            "type": "Image",
+            "id": "e413cbbf-ce25-4dad-a117-b7cf0791f655",
+            "label": "battleship",
+            "components": [],
+            "texture": {
+                "key": "battleship_logo"
+            },
+            "x": 640,
+            "y": 360,
+            "scaleX": 0.7,
+            "scaleY": 0.71,
+            "list": []
+        },
+        {
+            "type": "Image",
+            "id": "1590cc29-c24f-46a1-aefc-c04f7d050570",
+            "label": "water",
+            "components": [],
+            "texture": {
+                "key": "water_logo"
+            },
+            "x": 640,
+            "y": 440,
+            "scaleX": 0.6,
+            "scaleY": 0.5,
+            "list": []
+        },
+        {
+            "type": "Rectangle",
+            "id": "845d4ca6-7417-44fc-97e3-a3bb2fbbdd03",
+            "label": "progressBar",
+            "components": [],
+            "x": 750,
+            "y": 490,
+            "isFilled": true,
+            "fillColor": "#e0e0e0",
+            "width": 256,
+            "height": 20,
+            "list": [
+                {
+                    "prefabId": "ca949479-ab4d-45d5-b856-2cbecbd8d127",
+                    "id": "250eaa8f-b143-4e41-9ddf-052dfd99672c",
+                    "label": "preloadUpdater",
+                    "components": [],
+                    "nestedPrefabs": [],
+                    "list": []
+                }
+            ]
+        },
+        {
+            "type": "Rectangle",
+            "id": "10e175a4-81b6-449e-9561-6d8ba54d3812",
+            "label": "progressBarBg",
+            "components": [],
+            "x": 750,
+            "y": 490,
+            "fillColor": "#e0e0e0",
+            "isStroked": true,
+            "width": 256,
+            "height": 20,
+            "list": []
+        },
+        {
+            "type": "Text",
+            "id": "c4092661-6339-47cf-9fea-8abff3a46e0c",
+            "label": "loadingText",
+            "components": [],
+            "x": 550,
+            "y": 490,
+            "originX": 0.5,
+            "originY": 0.5,
+            "text": "Loading...",
+            "fontFamily": "arial",
+            "fontSize": "20px",
+            "color": "#e0e0e0",
+            "list": []
+        }
+    ],
+    "plainObjects": [],
+    "meta": {
+        "app": "Phaser Editor 2D - Scene Editor",
+        "url": "https://phasereditor2d.com",
+        "contentType": "phasereditor2d.core.scene.SceneContentType",
+        "version": 3
+    }
+}
