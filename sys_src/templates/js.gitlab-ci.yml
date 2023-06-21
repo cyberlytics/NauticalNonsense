@@ -1,5 +1,13 @@
 variables:
-  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+  CYPRESS_CACHE_FOLDER: 'sys_src/frontend/NauticalNonsense/cache/Cypress/'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - sys_src/frontend/NauticalNonsense/cache/Cypress
+    - sys_src/frontend/NauticalNonsense/node_modules
+
 
 lint-js:
   stage: validate
@@ -18,17 +26,14 @@ build-js:
   image: node:latest
   script:
     - cd sys_src/frontend/NauticalNonsense
-    - npm install
-  cache:
-    paths:
-      - sys_src/frontend/NauticalNonsense/node_modules/
-      - $CI_PROJECT_DIR/cache/Cypress/
-  artifacts:
-    expire_in: 1 days
-    when: on_success
-    paths:
-      - sys_src/frontend/NauticalNonsense/node_modules/
-      - $CI_PROJECT_DIR/cache/Cypress/
+    # - npm install
+    - npm ci
+    # show where the Cypress test runner binaries are cached
+    - $(npm bin)/cypress cache path
+    # show all installed versions of Cypress binary
+    - $(npm bin)/cypress cache list
+    - $(npm bin)/cypress verify
+
   # rules:
   #   - changes:
   #     - sys_src/frontend/**/*
