@@ -45,6 +45,8 @@ coverage-js:
   stage: unit-test
   image: cypress/browsers:node16.16.0-chrome107-ff107-edge
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  variables:
+    ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu'
   dependencies:
     - build-js
   script:
