@@ -94,7 +94,7 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     if data.get('Fire', False):
         move = data['Fire']
         game_id = data['GameID']
-        data['won'], data['hit'], data['board'] = make_move(move, partner_id, game_id)
+        data['lose'], data['hit'], data['board'] = make_move(move, partner_id, game_id)
         return None
     
 

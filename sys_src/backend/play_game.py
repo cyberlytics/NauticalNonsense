@@ -1,4 +1,4 @@
-from database.database import get_map, get_partner, get_ships, get_board, update_game_with_playermove
+from database.database import get_map, get_partner, get_ships, get_board, update_game_with_playermove, update_ship_list
 from database.models import State
 
 from datetime import datetime
@@ -169,7 +169,7 @@ def _check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     return game_field
 
 
-def _check_win(ships: list[list[int]]) -> bool:
+def _check_win(partner_id, ships: list[list[int]]) -> str:
     """
     Check if the game has been won.
 
@@ -177,9 +177,12 @@ def _check_win(ships: list[list[int]]) -> bool:
         ships (list[list[int]]): The ships on the game field
     
     Returns:
-        bool: Whether the game has been won
+        str: return the id of the partner
     """
-    return all([all([coord >= 100 for coord in ship]) for ship in ships])
+    if all([all([coord >= 100 for coord in ship]) for ship in ships]):
+        return partner_id
+    else:
+        return False
 
 
 def make_move(
@@ -196,7 +199,7 @@ def make_move(
         ships (list[list[int]]): The ships on the game field
     
     Returns:
-        bool: Whether the game has been won
+        str: Whether the game has been won
         list[int]: The updated game field
     
     Raises:
@@ -223,23 +226,25 @@ def make_move(
         hit = True
 
         # We only have to check for sinking if a ship was hit
-        for ship in ships:
+        for ship in ships[0]:
             if move in ship:
-                ship[ship.index(move)] += 100
+                ship[ship.index(move)] += 100     
+                # save the shiplist to the database
+                update_ship_list(partner_id, game_id, ships[0])
                 game_field = _check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
         print("Die Shipliste vor check win ist:")
         print(str(ships))
-        won = _check_win(ships[0])
+        lose = _check_win(partner_id, ships[0])
     else:
         # TODO das raus machen? Program soll doch nicht abstürzen wenn gleicher move bereits gemacht wurde?!
         raise ValueError("Move has been played before")
     
     # save results in db
-    update_game_with_playermove(partner_id, game_id, game_field, won)
+    update_game_with_playermove(partner_id, game_id, game_field, lose)
 
     # delete all ship positions from the board, because client shouldnt know the position of opponent ships
     board = [0 if i == 1 else i for i in game_field]
 
-    return won, hit, board
+    return lose, hit, board
