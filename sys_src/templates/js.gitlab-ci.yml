@@ -29,10 +29,11 @@ build-js:
     # - npm install
     - npm ci
     # show where the Cypress test runner binaries are cached
-    - $(npm bin)/cypress cache path
-    # show all installed versions of Cypress binary
-    - $(npm bin)/cypress cache list
-    - $(npm bin)/cypress verify
+    # - $(npm bin)/cypress cache path
+    # # show all installed versions of Cypress binary
+    # - $(npm bin)/cypress cache list
+    # - $(npm bin)/cypress verify
+    - $(npm bin)
 
   # rules:
   #   - changes:
