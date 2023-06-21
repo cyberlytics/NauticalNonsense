@@ -35,7 +35,7 @@
   "homepage": "https://github.com/PhaserEditor2D/starter-template-basic-javascript#readme",
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.7",
-    "cypress": "^12.13.0",
+    "cypress": "^12.15.0",
     "phasereditor2d-launcher": "^3.32.0"
   },
   "dependencies": {
