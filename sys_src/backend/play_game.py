@@ -248,3 +248,24 @@ def make_move(
     board = [0 if i == 1 else i for i in game_field]
 
     return lose, hit, board
+
+
+def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: dict) -> None:
+    gameover['won'] = win
+    gameover['totalMoves'] = end_state.step
+    if partner_id == end_state.player1:
+        gameover['shots'] = end_state.moves2
+        gameover['hits'] = count_hits(end_state.ships1)
+    else:
+        gameover['shots'] = end_state.moves1
+        gameover['hits'] = count_hits(end_state.ships2)
+    gameover['misses'] = gameover['shots'] - gameover['hits']
+    gameover['rank'] = 0
+
+def count_hits(ships: list[list[int]]) -> int:
+    hits = 0
+    for ship in ships:
+        for pos in ship:
+            if pos >= 100:
+                hits += 1
+    return hits

@@ -23,8 +23,16 @@ window.addEventListener('load', function () {
 		socket: null, // Initially set to null
 		ready: false,
 		ship_placement_ready : false,
-		its_your_turn : false,
-		won : false
+		its_your_turn: false,
+		finished: false,
+		gameover: {
+			won: false,
+			shots: 0,
+			hits: 0,
+			misses: 0,
+			totalMoves: 0,
+			rank: 0
+		}
 	};
 
 	game.scene.add("Preload", Preload);

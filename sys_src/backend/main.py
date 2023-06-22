@@ -1,12 +1,13 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from play_game import prepare_room, get_partner_id, make_move, _create_game_field
+from play_game import prepare_room, get_partner_id, make_move, _create_game_field, set_gameover_fields
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank, add_placement, get_stat
+from database.database import get_current_state, get_leaderboard, add_rank, add_placement, get_stat, update_game_capitulation
 from database.models import LeaderboardWithRank, Stat
+import datetime
 
 app = FastAPI()
 
@@ -94,7 +95,24 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     if data.get('Fire', False):
         move = data['Fire']
         game_id = data['GameID']
+<<<<<<< sys_src/backend/main.py
+        data['message']['won'],  data['message']['hit'], data['message']['board'], data['message']['ships'] = make_move(move, client_id, game_id)
+        if data['message']['won'] == True:
+            end_state = get_current_state(game_id)
+            data['finished'] = True
+            data['gameover'] = {}
+            set_gameover_fields(client_id, end_state, True, data['gameover'])
+        return None
+
+    if data.get('Capitulate', False):
+        game_id = data['GameID']
+        end_state = update_game_capitulation(client_id, game_id)
+        data['finished'] = True
+        data['gameover'] = {}
+        set_gameover_fields(client_id, end_state, True, data['gameover'])
+=======
         data['lose'], data['hit'], data['board'] = make_move(move, partner_id, game_id)
+>>>>>>> sys_src/backend/main.py
         return None
     
 
@@ -125,10 +143,19 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             response = {"message": data}
             await manager.send_personal_message(response, partner_id)
 
+<<<<<<< sys_src/backend/main.py
+            if data.get('finished', False):
+                end_state = get_current_state(data['GameID'])
+                set_gameover_fields(partner_id, end_state, False, data['gameover'])
+                response = {"message": data}
+                await manager.send_personal_message(response, client_id)
+
+=======
             if data.get('board', False):
                 await manager.send_personal_message(response, client_id)
 
 
+>>>>>>> sys_src/backend/main.py
     except WebSocketDisconnect:
         await manager.disconnect(client_id)
         await manager.send_personal_message({"Client has left": client_id}, partner_id)
