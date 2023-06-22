@@ -5,7 +5,7 @@ import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_current_state, get_leaderboard, add_rank, add_placement, get_stat, update_game_capitulation
+from database.database import get_current_state, get_leaderboard, add_rank, add_placement, get_stat, get_ships, get_board, update_game_with_playermove, update_ship_list, update_game_capitulation
 from database.models import LeaderboardWithRank, Stat
 import datetime
 
@@ -95,11 +95,20 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     if data.get('Fire', False):
         move = data['Fire']
         game_id = data['GameID']
+        ships = get_ships(partner_id, game_id)
+        game_field = get_board(partner_id, game_id)
+        lose, hit, game_field, ships = make_move(move, game_field, ships)
+        # save the shiplist to the database
+        update_ship_list(partner_id, game_id, ships)
 
-        data['lose'], data['hit'], data['board'] = make_move(move, partner_id, game_id)
+        update_game_with_playermove(partner_id, game_id, game_field, lose)
 
+        # delete all ship positions from the board, because client shouldnt know the position of opponent ships
+        game_field = [0 if i == 1 else i for i in game_field]
+
+        data['hit'], data['board'] = hit, game_field
         if lose:
-
+            data['lose'] = partner_id
             end_state = get_current_state(game_id)
             data['finished'] = True
             data['gameover'] = {}

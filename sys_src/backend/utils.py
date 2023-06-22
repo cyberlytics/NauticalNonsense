@@ -9,9 +9,17 @@ def is_valid_uuid(val: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def is_incremental(ship: list) -> bool:
+
+    start = ship[0]
+    end = ship[-1] + 1
+
+    if ship == list(range(start, end)):
+        return True
     
-# TODO this function only checks for horizontal ships, not vertical
-'''
-def is_incremental(my_l):
-   return my_l == list(range(my_l[0], my_l[0] + len(my_l)))
-'''
+    if ship == list(range(start, end, 10)):
+        return True
+    
+    return False

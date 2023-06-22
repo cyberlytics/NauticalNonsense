@@ -127,9 +127,9 @@ def get_ships(client_id, game_id):
         game_state = result.next()
 
         if game_state['player1'] == client_id:
-            return game_state['ships1'], game_state['board1']
+            return game_state['ships1']
         elif game_state['player2'] == client_id:
-            return game_state['ships2'], game_state['board2']
+            return game_state['ships2']
     
     return None
 
