@@ -292,7 +292,7 @@ class Start extends Phaser.Scene {
 				this.setTint(0x1ed013);
 			}
 
-			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0)) {
+			else if ((nameInputBoxText.text.length !== 0) && (showId === true)) {
 				this.setTint(0x1ed013);
 			}
 
@@ -310,7 +310,7 @@ class Start extends Phaser.Scene {
 
 		startButton.on('pointerdown', function (event) {
 			sharedData.playername = nameInputBoxText.text;
-			if ((nameInputBoxText.text.length !== 0) && (showId === false)) {
+			if ((nameInputBoxText.text.length !== 0)) {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
@@ -354,7 +354,7 @@ class Start extends Phaser.Scene {
 				
 			}
 
-			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0)) {
+			else if ((nameInputBoxText.text.length !== 0) && (showId === true)) {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
