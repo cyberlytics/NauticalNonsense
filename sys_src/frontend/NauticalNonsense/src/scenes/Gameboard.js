@@ -96,8 +96,8 @@ class Gameboard extends Phaser.Scene {
 		sharedData.socket.onmessage = function (event) {
 			var message = JSON.parse(event.data);
 			message = message['message'];
-			sharedData.won = message.won;
-			if (message.won) {
+			sharedData.finished = message.finished;
+			if (message.finished) {
 				sharedData.gameover = message.gameover;
 				self.scene.start('Gameover');
 			}

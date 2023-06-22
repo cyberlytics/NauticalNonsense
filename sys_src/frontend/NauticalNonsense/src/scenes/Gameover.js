@@ -158,7 +158,6 @@ class Gameover extends Phaser.Scene
 			self.playClick();
 			this.clearTint();
 			self.deleteGameover(gameover);
-			console.log(sharedData.gameover);
 			self.scene.start("Start");
         });
 		
@@ -190,7 +189,6 @@ class Gameover extends Phaser.Scene
 			self.playClick();
 			this.clearTint();
 			self.deleteGameover(gameover);
-			console.log(sharedData.gameover);
 			self.scene.start("Start");
         });
 		

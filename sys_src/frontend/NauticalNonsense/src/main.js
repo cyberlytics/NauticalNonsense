@@ -24,7 +24,7 @@ window.addEventListener('load', function () {
 		ready: false,
 		ship_placement_ready : false,
 		its_your_turn: false,
-		won: false,
+		finished: false,
 		gameover: {
 			won: false,
 			shots: 0,
