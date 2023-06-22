@@ -97,16 +97,16 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         game_id = data['GameID']
         ships = get_ships(partner_id, game_id)
         game_field = get_board(partner_id, game_id)
-        lose, hit, board, ships = make_move(move, ships[0], game_field)
+        lose, hit, game_field, ships = make_move(move, ships[0], game_field)
         # save the shiplist to the database
         update_ship_list(partner_id, game_id, [ships])
 
         update_game_with_playermove(partner_id, game_id, game_field, lose)
 
         # delete all ship positions from the board, because client shouldnt know the position of opponent ships
-        board = [0 if i == 1 else i for i in game_field]
+        game_field = [0 if i == 1 else i for i in game_field]
 
-        data['hit'], data['board'] = hit, board
+        data['hit'], data['board'] = hit, game_field
         if lose:
             data['lose'] = partner_id
             end_state = get_current_state(game_id)
