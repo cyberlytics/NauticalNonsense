@@ -173,6 +173,17 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
     else:
         print(f"No game found with game_id: {game_id}")
 
+def update_game_capitulation(client_id: str, game_id: str) -> State:
+    current_state = get_current_state(game_id)
+    new_state = current_state.copy()
+    new_state.gameStatus = "finished"
+    new_state.timestamp = datetime.datetime.utcnow()
+    if client_id == new_state.player1:
+        new_state.winner = new_state.player2Name
+    else:
+        new_state.winner = new_state.player1Name
+    save_state(new_state)
+    return new_state
 
 
 # deletes all entrys

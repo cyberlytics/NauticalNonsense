@@ -34,6 +34,8 @@ class Leaderboard extends Phaser.Scene {
 
 	/** @returns {void} */
 	editorCreate() {
+		//mainUrl
+		const mainUrl = this.game.sharedData.backend_url;
 
 		// sound
 		this.click = this.sound.add("click");
@@ -81,7 +83,7 @@ class Leaderboard extends Phaser.Scene {
 			this.scene.start('Options');
 		});
 		
-		fetch('http://localhost:8000/leaderboard').then((response) => {
+		fetch(mainUrl + '/leaderboard').then((response) => {
 			return response.json();
 		}).then((data) => {
 			const resultHuman = [];

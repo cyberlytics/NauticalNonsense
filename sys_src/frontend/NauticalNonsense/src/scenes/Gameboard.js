@@ -94,11 +94,12 @@ class Gameboard extends Phaser.Scene {
 		var sharedData = this.game.sharedData;
 
 		sharedData.socket.onmessage = function (event) {
-			var message = JSON.parse(event.data)['message'];
-			sharedData.won = messsage.won;
+			var message = JSON.parse(event.data);
+			message = message['message'];
+			sharedData.won = message.won;
 			if (message.won) {
 				sharedData.gameover = message.gameover;
-				self.scene.start("GameOver");
+				self.scene.start('Gameover');
 			}
 		};
 
@@ -274,7 +275,8 @@ class Gameboard extends Phaser.Scene {
 			self.playClick();
 			this.clearTint();
 			//evtl Popup
-			this.sendCapitulateMessage(sharedData);
+			//self.scene.start("Gameover");
+			self.sendCapitulateMessage(sharedData);
         });
 		
 		// capitulateButtonText
@@ -460,6 +462,10 @@ class Gameboard extends Phaser.Scene {
 		}
 	}
 
+
+	switchScene() {
+		this.scene.start("Options");
+	}
 	/* END-USER-CODE */
 }
 

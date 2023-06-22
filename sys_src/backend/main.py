@@ -1,12 +1,13 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from play_game import prepare_room, get_partner_id, make_move
+from play_game import prepare_room, get_partner_id, make_move, set_gameover_fields
 from websocket_manager import ConnectionManager
 import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_leaderboard, add_rank, add_ship_placement, get_stat
+from database.database import get_current_state, get_leaderboard, add_rank, add_ship_placement, get_stat, update_game_capitulation
 from database.models import LeaderboardWithRank, Stat
+import datetime
 
 app = FastAPI()
 
@@ -94,6 +95,14 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         game_id = data['GameID']
         data['message']['won'],  data['message']['hit'], data['message']['board'], data['message']['ships'] = make_move(move, client_id, game_id)
         return None
+
+    if data.get('Capitulate', False):
+        game_id = data['GameID']
+        end_state = update_game_capitulation(client_id, game_id)
+        data['won'] = True
+        data['gameover'] = {}
+        set_gameover_fields(client_id, end_state, True, data['gameover'])
+        return None
     
 
 # Use Kafka for a persistant WebSocket-List
@@ -125,6 +134,12 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             response = {"message": data}
 
             await manager.send_personal_message(response, partner_id)
+
+            if data.get('Capitulate', False):
+                end_state = get_current_state(data['GameID'])
+                set_gameover_fields(partner_id, end_state, False, data['gameover'])
+                response = {"message": data}
+                await manager.send_personal_message(response, client_id
 
     except WebSocketDisconnect:
         await manager.disconnect(client_id)

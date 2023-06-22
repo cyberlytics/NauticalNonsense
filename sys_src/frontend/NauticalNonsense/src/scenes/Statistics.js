@@ -19,7 +19,7 @@ class Statistics extends Phaser.Scene {
 		const statistics = this;
 
 		//define important variables
-		const mainUrl = "http://localhost:8000"; //mainUrl noch anpassen
+		const mainUrl = this.game.sharedData.backend_url;
 		const darkgrey = 0x3c3845;
 		const white = 0xffffff;
 		const boardsize = 100;
