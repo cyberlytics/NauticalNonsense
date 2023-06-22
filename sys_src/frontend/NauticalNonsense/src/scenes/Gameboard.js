@@ -211,7 +211,7 @@ class Gameboard extends Phaser.Scene {
 		fireButtonText.scaleY = 1;
 		fireButtonText.setOrigin(0.5, 0.5);
 		fireButtonText.text = "Fire";
-		fireButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		fireButtonText.setStyle({ "align": "center", "color": "#990000", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		// capitulateButton
 		const capitulateButton = this.add.image(1280 / 2 - 390, 720 / 2 + 290, "gbCapitulateButton").setInteractive({ useHandCursor: true });
@@ -238,7 +238,7 @@ class Gameboard extends Phaser.Scene {
 		capitulateButtonText.scaleY = 1;
 		capitulateButtonText.setOrigin(0.5, 0.5);
 		capitulateButtonText.text = "Capitulate";
-		capitulateButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		capitulateButtonText.setStyle({ "align": "center", "color": "#CC6600", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		// battlefieldBackground
 		const battlefieldBackground = this.add.image(1280 / 2 + 210, 720 / 2, "spBattlefieldBackground");

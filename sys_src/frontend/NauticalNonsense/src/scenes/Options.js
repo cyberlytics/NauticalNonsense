@@ -142,7 +142,7 @@ class Options extends Phaser.Scene
 		leaderboardText.scaleY = 1;
 		leaderboardText.setOrigin(0.5, 0.5);
 		leaderboardText.text = "Leaderboard";
-		leaderboardText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		leaderboardText.setStyle({ "align": "center", "color": "#004C99", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
 		// statisticsButton
 		const statisticsButton = this.add.image(1280/2, 350, "optionsButtons").setInteractive({ useHandCursor: true  });
@@ -172,7 +172,7 @@ class Options extends Phaser.Scene
 		statisticsText.scaleY = 1;
 		statisticsText.setOrigin(0.5, 0.5);
 		statisticsText.text = "Statistics";
-		statisticsText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		statisticsText.setStyle({ "align": "center", "color": "#004C99", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
 		// rulesButton
 		const rulesButton = this.add.image(1280/2, 450, "optionsButtons").setInteractive({ useHandCursor: true  });
@@ -202,7 +202,7 @@ class Options extends Phaser.Scene
 		rulesText.scaleY = 1;
 		rulesText.setOrigin(0.5, 0.5);
 		rulesText.text = "How To Play";
-		rulesText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		rulesText.setStyle({ "align": "center", "color": "#004C99", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
 		// creditsButton
 		const creditsButton = this.add.image(1280/2, 550, "optionsButtons").setInteractive({ useHandCursor: true  });
@@ -232,7 +232,7 @@ class Options extends Phaser.Scene
 		creditsText.scaleY = 1;
 		creditsText.setOrigin(0.5, 0.5);
 		creditsText.text = "Credits";
-		creditsText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		creditsText.setStyle({ "align": "center", "color": "#004C99", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		this.events.emit("scene-awake");
 	}

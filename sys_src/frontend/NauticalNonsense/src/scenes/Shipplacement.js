@@ -224,7 +224,7 @@ class Shipplacement extends Phaser.Scene {
 		confirmButtonText.scaleY = 1;
 		confirmButtonText.setOrigin(0.5, 0.5);
 		confirmButtonText.text = "Confirm";
-		confirmButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		confirmButtonText.setStyle({ "align": "center", "color": "#009900", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		// randomButton
 		const randomButton = this.add.image(1280 / 2 - 485, 720 / 2 + 54, "spRandomButton").setInteractive({ useHandCursor: true });
@@ -256,7 +256,7 @@ class Shipplacement extends Phaser.Scene {
 		randomButtonText.scaleY = 1;
 		randomButtonText.setOrigin(0.5, 0.5);
 		randomButtonText.text = "Random";
-		randomButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		randomButtonText.setStyle({ "align": "center", "color": "#CC6600", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		// resetButton
 		const resetButton = this.add.image(1280 / 2 - 485, 720 / 2 + 115, "spResetButton").setInteractive({ useHandCursor: true });
@@ -283,7 +283,7 @@ class Shipplacement extends Phaser.Scene {
 		resetButtonText.scaleY = 1;
 		resetButtonText.setOrigin(0.5, 0.5);
 		resetButtonText.text = "Reset";
-		resetButtonText.setStyle({ "align": "center", "color": "#000000", "fontFamily": "GodOfWar", "fontSize": "20px" });
+		resetButtonText.setStyle({ "align": "center", "color": "#990000", "fontFamily": "GodOfWar", "fontSize": "20px" });
 
 		// battlefieldBackground
 		const battlefieldBackground = this.add.image(1280 / 2, 720 / 2, "spBattlefieldBackground");
