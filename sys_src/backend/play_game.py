@@ -246,7 +246,7 @@ def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: 
         gameover['shots'] = end_state.moves1
         gameover['hits'] = count_hits(end_state.ships2)
     gameover['misses'] = gameover['shots'] - gameover['hits']
-    gameover['rank'] = 9
+    gameover['rank'] = 0
 
 def count_hits(ships: list[list[int]]) -> int:
     hits = 0

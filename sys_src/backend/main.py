@@ -139,7 +139,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 end_state = get_current_state(data['GameID'])
                 set_gameover_fields(partner_id, end_state, False, data['gameover'])
                 response = {"message": data}
-                await manager.send_personal_message(response, client_id
+                await manager.send_personal_message(response, client_id)
 
     except WebSocketDisconnect:
         await manager.disconnect(client_id)

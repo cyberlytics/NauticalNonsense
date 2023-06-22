@@ -10,7 +10,6 @@ import random
 mongo_url = "mongodb+srv://nn_user:nn_bsyjntss@nauticalnonsens.lflmzfg.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(mongo_url, server_api=ServerApi('1'))
 db = client.NauticalNonsens
-gamestates = db.gamestates
 stats = db.stats
 leaderboard = db.leaderboard
 games = db.games
@@ -19,15 +18,15 @@ currentNames = db.currentNames
 shipsCount = [2,2,1,1,1] #number of ships per type
 shipsTiles = [2,4,3,4,5] #number of tiles per shiptype
 
-#Gamestates
+#games
 def get_current_state(game_id: str) -> State:
-    current_state = gamestates.find_one({"game_id": game_id}, sort=[("timestamp",pymongo.DESCENDING)])
+    current_state = games.find_one({"game_id": game_id}, sort=[("timestamp",pymongo.DESCENDING)])
     if not current_state:
         return None
     return State.parse_obj(current_state)
 
 def save_state(state: State) -> State:
-    gamestates.insert_one(state.dict())
+    games.insert_one(state.dict())
     return state
 
 # todo unbennen in anderen Namen, man bekommt ja effektiv den Spielernamen zurück, nicht die map data
@@ -295,11 +294,11 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
 def get_first_moves(game_id: str) -> list[int]:
     firstMoves = []
 
-    start_state = State.parse_obj(gamestates.find_one({"game_id": game_id, "step": 0}, sort=[("timestamp",pymongo.DESCENDING)]))
+    start_state = State.parse_obj(games.find_one({"game_id": game_id, "step": 0}, sort=[("timestamp",pymongo.DESCENDING)]))
     board1Start = start_state.board1
     board2Start = start_state.board2
     
-    cursor = gamestates.find({"game_id": game_id, "step": { "$gte": 1 }}, sort=[("timestamp",pymongo.ASCENDING)], limit=18)
+    cursor = games.find({"game_id": game_id, "step": { "$gte": 1 }}, sort=[("timestamp",pymongo.ASCENDING)], limit=18)
     states = [State.parse_obj(c) for c in cursor]
     
     for state in states:

@@ -275,7 +275,6 @@ class Gameboard extends Phaser.Scene {
 			self.playClick();
 			this.clearTint();
 			//evtl Popup
-			//self.scene.start("Gameover");
 			self.sendCapitulateMessage(sharedData);
         });
 		
@@ -332,15 +331,15 @@ class Gameboard extends Phaser.Scene {
 		for (let index = 0; index < sharedData.sprites.length; index++) {
 			sharedData.sprites[index].setVisible(true);
 			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
-			this.add.existing(sharedData.sprites[index]);
+			//this.add.existing(sharedData.sprites[index]);
 			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
 			}
 			
 			
-			sharedData.socket.onmessage = function(event) {
-			var message = JSON.parse(event.data);
-			console.log("Message received:", message)
-			};
+			//sharedData.socket.onmessage = function(event) {
+			//var message = JSON.parse(event.data);
+			//console.log("Message received:", message)
+			//};
 
 	}
 
@@ -460,11 +459,6 @@ class Gameboard extends Phaser.Scene {
 				}
 			}
 		}
-	}
-
-
-	switchScene() {
-		this.scene.start("Options");
 	}
 	/* END-USER-CODE */
 }

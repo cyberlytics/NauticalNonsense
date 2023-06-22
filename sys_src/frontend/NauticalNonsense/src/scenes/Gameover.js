@@ -136,7 +136,7 @@ class Gameover extends Phaser.Scene
 		posValue.setOrigin(0, 0.5);
 		posValue.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
-		this.setStats(gameover.shots, gameover.hits, gameover.misses, gameover.totalMoves, gameover.rank);
+		this.setStats(shotsValue, hitsValue, missesValue, movesValue, posValue, gameover.shots, gameover.hits, gameover.misses, gameover.totalMoves, gameover.rank);
 		
 		// exitWin
 		const exitWin = this.add.image(1280/2, 720/2 + 210, "goExitWin").setInteractive({ useHandCursor: true  });
@@ -157,7 +157,8 @@ class Gameover extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
-			deleteGameover(gameover);
+			self.deleteGameover(gameover);
+			console.log(sharedData.gameover);
 			self.scene.start("Start");
         });
 		
@@ -188,7 +189,8 @@ class Gameover extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
-			deleteGameover(gameover);
+			self.deleteGameover(gameover);
+			console.log(sharedData.gameover);
 			self.scene.start("Start");
         });
 		
@@ -220,13 +222,13 @@ class Gameover extends Phaser.Scene
 		this.click.play();
 	}
 	
-	setStats(shots, hits, misses, moves, pos)
+	setStats(shots, hits, misses, moves, pos, shotsCount, hitsCount, missesCount, movesCount, posCount)
 	{
-		shotsValue.text = shots.toString();
-		hitsValue.text = hits.toString();
-		missesValue.text = misses.toString();
-		movesValue.text = moves.toString();
-		posValue.text = pos.toString(); 
+		shots.text = shotsCount.toString();
+		hits.text = hitsCount.toString();
+		misses.text = missesCount.toString();
+		moves.text = movesCount.toString();
+		pos.text = posCount.toString();
 	}
 	
 	setWin(winTitle, loseTitle, win, lose, winTxt, loseTxt, s)
