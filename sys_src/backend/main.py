@@ -97,9 +97,9 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         game_id = data['GameID']
         ships = get_ships(partner_id, game_id)
         game_field = get_board(partner_id, game_id)
-        lose, hit, game_field, ships = make_move(move, ships[0], game_field)
+        lose, hit, game_field, ships = make_move(move, game_field, ships)
         # save the shiplist to the database
-        update_ship_list(partner_id, game_id, [ships])
+        update_ship_list(partner_id, game_id, ships)
 
         update_game_with_playermove(partner_id, game_id, game_field, lose)
 
