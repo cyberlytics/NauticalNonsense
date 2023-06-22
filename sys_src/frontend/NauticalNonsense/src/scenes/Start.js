@@ -63,10 +63,6 @@ class Start extends Phaser.Scene {
 			});
 	}
 
-
-
-
-
 	/** @returns {void} */
 	async editorCreate() {
 		const self = this;
@@ -372,18 +368,6 @@ class Start extends Phaser.Scene {
 
 	create() {
 		this.editorCreate();
-	}
-
-	preload() {
-		this.load.pack("asset-pack", "assets/asset-pack.json");
-		this.load.pack("asset-pack", "assets/options-asset-pack.json");
-		this.load.audio("clicksound", ["assets/select.mp3"]);
-		this.load.image("0001", "assets/0001.png");
-		this.load.image("optionsBackground", "assets/options/background.png");
-		this.load.image("optionsBack", "assets/options/backButton.png");
-		this.load.image("optionsButtons", "assets/options/button.png");
-		this.load.image("optionsMute", "assets/options/muteButton.png");
-		this.load.image("optionsUnmute", "assets/options/unmuteButton.png");
 	}
 
 	playClick() {

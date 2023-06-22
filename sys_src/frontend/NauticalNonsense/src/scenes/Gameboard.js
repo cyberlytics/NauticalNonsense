@@ -108,6 +108,7 @@ class Gameboard extends Phaser.Scene {
 			height: 350,
 			cornerRadius: smallCornerRadius
 		}
+		
 		this.enemyGrid = [];
 		this.enemyRedCrossList = [];
 		this.enemyExplosionStarList = [];
@@ -146,6 +147,11 @@ class Gameboard extends Phaser.Scene {
 				this.enemyGrid[row][col] = cell;
 			}
 		}
+		
+		// crosshair
+		const crosshair = this.add.image(125 + 176, 80 + 176, "gbCrosshair");
+		crosshair.scaleX = 1.025;
+		crosshair.scaleY = 1.025;
 
 		// buttonBox
 		const buttonBox = this.add.image(1280 / 2 - 340, 720 / 2 + 230, "gbButtonBox");
@@ -261,6 +267,7 @@ class Gameboard extends Phaser.Scene {
 			height: 600,
 			cornerRadius: 30
 		};
+		
 		this.playerGrid = [];
 		this.playerRedCrossList = [];
 		this.playerExplosionStarList = [];
@@ -289,14 +296,12 @@ class Gameboard extends Phaser.Scene {
 			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
 			}
 			
-			
 			sharedData.socket.onmessage = function(event) {
 			var message = JSON.parse(event.data);
 			console.log("Message received:", message)
 			};
 
 	}
-
 
 	GetDummyGameboard() {
 	// returns list with random integers
@@ -380,20 +385,25 @@ class Gameboard extends Phaser.Scene {
 
 	// Write more your code here
 
-	create() {
+	create() 
+	{
 		this.editorCreate();
 	}
 
-	playClick() {
+	playClick() 
+	{
 		this.click.play();
 	}
 
-	switchTurn(player, opponent, s) {
-		if (s) {
+	switchTurn(player, opponent, s) 
+	{
+		if (s) 
+		{
 			player.setTint(0x1ed013);
 			opponent.clearTint();
 		}
-		else {
+		else 
+		{
 			opponent.setTint(0xe50000);
 			player.clearTint();
 		}

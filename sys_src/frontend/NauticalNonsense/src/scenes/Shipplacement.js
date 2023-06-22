@@ -389,28 +389,29 @@ class Shipplacement extends Phaser.Scene {
 
 	// Write more your code here
 
-	create() {
+	create() 
+	{
 
 		this.editorCreate();
 	}
 
-	playClick() {
+	playClick() 
+	{
 		this.click.play();
 	}
 
-	switchReady(red, green, s) {
-		if (s) {
+	switchReady(red, green, s) 
+	{
+		if (s) 
+		{
 			red.clearTint();
 			green.setTint(0x00ff00);
 		}
-		else {
+		else 
+		{
 			red.setTint(0xff0000);
 			green.clearTint();
 		}
-	}
-
-	Shoot() {
-		// insert here REST Call to backend or send game object via websocket
 	}
 
 	GetListOfPositions(ships, gridSize) {

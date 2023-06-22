@@ -60,6 +60,48 @@ class Waiting2 extends Phaser.Scene {
 		logo.on('pointerdown', function (event) {
 			self.playHorn();
 		});
+		
+		// waterAnimation
+		var water = this.add.sprite(295, 565, 'waterAnim', '0001.png');
+    	water.setScale(1, 0.5);
+		
+		var water1 = this.add.sprite(395, 565, 'waterAnim', '0001.png');
+    	water1.setScale(1, 0.5);
+		
+		var water2 = this.add.sprite(495, 565, 'waterAnim', '0001.png');
+    	water2.setScale(1, 0.5);
+		
+		var water3 = this.add.sprite(595, 565, 'waterAnim', '0001.png');
+    	water3.setScale(1, 0.5);
+		
+		var water4 = this.add.sprite(695, 565, 'waterAnim', '0001.png');
+    	water4.setScale(1, 0.5);
+		
+		var water5 = this.add.sprite(795, 565, 'waterAnim', '0001.png');
+    	water5.setScale(1, 0.5);
+		
+		var water6 = this.add.sprite(895, 565, 'waterAnim', '0001.png');
+    	water6.setScale(1, 0.5);
+		
+		var water7 = this.add.sprite(995, 565, 'waterAnim', '0001.png');
+    	water7.setScale(1, 0.5);
+		
+		var frameNames = this.anims.generateFrameNames('waterAnim', {
+                     start: 1, end: 250, zeroPad: 4,
+                     prefix: '', suffix: '.png'
+                 });
+		
+		this.anims.create({ key: 'wave', frames: frameNames, frameRate: 25, repeat: -1 });
+		
+		// play animations
+    	water.anims.play('wave');
+		water1.anims.play('wave');
+		water2.anims.play('wave');
+		water3.anims.play('wave');
+		water4.anims.play('wave');
+		water5.anims.play('wave');
+		water6.anims.play('wave');
+		water7.anims.play('wave');
 
 		this.events.emit("scene-awake");
 	}
@@ -68,20 +110,24 @@ class Waiting2 extends Phaser.Scene {
 
 	// Write more your code here
 
-	create() {
+	create() 
+	{
 
 		this.editorCreate();
 	}
 
-	playHorn() {
+	playHorn() 
+	{
 		this.horn.play();
 	}
 
-	stopHorn() {
+	stopHorn() 
+	{
 		this.horn.stop();
 	}
 
-	switchScene() {
+	switchScene() 
+	{
 		this.scene.start("Gameboard");
 	}
 	/* END-USER-CODE */
