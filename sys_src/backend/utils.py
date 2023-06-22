@@ -10,5 +10,8 @@ def is_valid_uuid(val: str) -> bool:
     except ValueError:
         return False
     
+# TODO this function only checks for horizontal ships, not vertical
+'''
 def is_incremental(my_l):
    return my_l == list(range(my_l[0], my_l[0] + len(my_l)))
+'''

@@ -19,7 +19,7 @@ class Statistics extends Phaser.Scene {
 		const statistics = this;
 
 		//define important variables
-		const mainUrl = "http://localhost:8000"; //mainUrl noch anpassen
+		const mainUrl = this.game.sharedData.backend_url;
 		const darkgrey = 0x3c3845;
 		const white = 0xffffff;
 		const boardsize = 100;
@@ -79,7 +79,6 @@ class Statistics extends Phaser.Scene {
 			statistics.sound.add("click").play();
 			this.clearTint();
 			statistics.scene.start('Options');
-			//boardShips[0].setFillStyle(boardShips[0].fillColor, 0.2);
 		})
 
 		//homeButton
@@ -101,14 +100,37 @@ class Statistics extends Phaser.Scene {
 			statistics.scene.start('Start');
 		})
 
+		//loading
+		const loadingStyle = {
+			width: 900,
+			height: 200,
+			radius: 20,
+			backgroundColor: darkgrey,
+			padding: 25,
+			textStyle: headingtext
+		}
+		const loading = this.add.graphics();
+		loading.fillStyle(loadingStyle.backgroundColor, 1);
+		loading.fillRoundedRect(1280 / 2 - loadingStyle.width / 2, 720 / 2 - loadingStyle.height / 2, loadingStyle.width, loadingStyle.height, loadingStyle.radius);
+
+		const txtLoading = this.add.text(1280 / 2, 720 / 2 - loadingStyle.height / 2 + loadingStyle.padding, "Loading...", loadingStyle.textStyle);
+		txtLoading.setOrigin(0.5, 0);
+
+		const logoLoading = this.add.image(1280 / 2, 720/2+25, "logoWhite");
+		logoLoading.setOrigin(0.5, 0.5);
+		logoLoading.setScale(0.5);
 
 		// get stats via backend API
-		//const stats = dummy;
 		fetch(mainUrl + "/stats")
 			.then((response) => {
 				return response.json();
 			})
 			.then((stats) => {
+				//remove loading elements
+				loading.setVisible(false);
+				txtLoading.setVisible(false);
+				logoLoading.setVisible(false);
+
 				//number of games and average shots
 				const gamesStyle = {
 					x: 35,
@@ -275,6 +297,28 @@ class Statistics extends Phaser.Scene {
 			})
 			.catch((err) => {
 				console.error(err);
+
+				background.setDepth(10);
+				returnButton.setDepth(10);
+				homeButton.setDepth(10);
+
+				const errorStyle = {
+					width: 900,
+					height: 200,
+					radius: 20,
+					backgroundColor: darkgrey,
+					padding: 25,
+					textStyle: normaltext
+				}
+				const error = this.add.graphics();
+				error.fillStyle(errorStyle.backgroundColor, 1);
+				error.fillRoundedRect(1280 / 2 - errorStyle.width / 2, 720 / 2 - errorStyle.height / 2, errorStyle.width, errorStyle.height, errorStyle.radius);
+				error.setDepth(10);
+
+				const errormessage = "Unfortunately an error occurred while loading gamestatistics.\n\nPlease try again later."
+				const txtError = this.add.text(1280 / 2, 720/2 - errorStyle.height/2 + errorStyle.padding, errormessage, errorStyle.textStyle);
+				txtError.setOrigin(0.5, 0);
+				txtError.setDepth(10);
 			});
 
 
@@ -303,6 +347,7 @@ class Statistics extends Phaser.Scene {
 		this.load.image("cruiserStatsRed", "assets/ships/cruiser/cruiser_stats_red.png");
 		this.load.image("destroyerStatsRed", "assets/ships/destroyer/destroyer_stats_red.png");
 		this.load.image("submarineStatsRed", "assets/ships/submarine/submarine_stats_red.png");
+		this.load.image("logoWhite", "assets/battleship_logo_white.png");
 	}
 
 	makeBoard(boardStyle, title, data, tooltipStyle) {

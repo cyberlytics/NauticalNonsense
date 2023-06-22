@@ -26,7 +26,7 @@ class Gameboard extends Phaser.Scene {
 		var sent = 0;
 		while (sent < 5) {
 			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
-				var jsonMessage = JSON.stringify({"Fire" : message,"GameID":sharedData.game_id});
+				var jsonMessage = JSON.stringify({"Fire" : message,"GameID": sharedData.game_id});
 				sharedData.socket.send(jsonMessage);
 				console.log(jsonMessage);
 				sent = 5;
@@ -54,9 +54,72 @@ class Gameboard extends Phaser.Scene {
 			return false;
 		}
 	}
+
+	sendCapitulateMessage(sharedData) {
+		var sent = 0;
+		while (sent < 5) {
+			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
+				var jsonMessage = JSON.stringify({ "Capitulate": true, "GameID": sharedData.game_id });
+				sharedData.socket.send(jsonMessage);
+				console.log(jsonMessage);
+				sent = 5;
+				return true;
+			}
+			else {
+				console.error("WebSocket connection is not open");
+				sharedData.socket = new WebSocket(sharedData.websocket_url);
+				// Handle WebSocket events
+				sharedData.socket.onopen = function () {
+					console.log("WebSocket connection established");
+					// Perform any necessary actions when the connection is successfully established
+				};
+
+				sharedData.socket.onerror = function (error) {
+					console.error("WebSocket error:", error);
+					// Handle any errors that occur during the WebSocket connection
+				};
+
+				sharedData.socket.onclose = function () {
+					console.log("WebSocket connection closed");
+					// Perform any necessary actions when the connection is closed
+				};
+				sent++;
+			}
+			return false;
+		}
+	}
+
 	/** @returns {void} */
 	editorCreate() {
 		var sharedData = this.game.sharedData;
+
+		sharedData.socket.onmessage = function (event) {
+			console.log("Received message:", event.data);
+			var message = JSON.parse(event.data);
+			message = message['message'];
+			console.log("Parsed message:", message);
+			sharedData.finished = message.finished;
+			if (message.finished) {
+				sharedData.gameover = message.gameover;
+				self.scene.start('Gameover');
+			}
+
+			if (sharedData.its_your_turn) {
+				self.UpdateGameboardColors(message.board,"enemy");
+				if (!message.hit) {
+					sharedData.its_your_turn = false;
+					self.switchTurn(readyLamp,opponentLamp,false)
+				}
+			}else{
+				self.UpdateGameboardColors(message.board,"player");
+				if (!message.hit) {
+					sharedData.its_your_turn = true;
+					self.switchTurn(readyLamp, opponentLamp, true);
+
+				}
+			}
+		};
+
 
 		const self = this;
 		this.selectedCell = -1;
@@ -123,25 +186,26 @@ class Gameboard extends Phaser.Scene {
 				cell.on('pointerdown', () => {
 					self.playClick();
 					//self.DrawDemoBoard("enemy");
-
-					if (isCellSelected) {
-						self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
-						if (selectedRow === row && selectedCol === col) {
-							selectedRow = -1;
-							selectedCol = -1;
-							isCellSelected = false;
-						}
-						else{
+					if (sharedData.its_your_turn) {
+						if (isCellSelected) {
+							self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
+							if (selectedRow === row && selectedCol === col) {
+								selectedRow = -1;
+								selectedCol = -1;
+								isCellSelected = false;
+							}
+							else{
+								cell.setAlpha(0.5);
+								selectedRow = row;
+								selectedCol = col;
+								isCellSelected = true;
+							}
+						}else{
 							cell.setAlpha(0.5);
 							selectedRow = row;
 							selectedCol = col;
 							isCellSelected = true;
-						}
-					}else{
-						cell.setAlpha(0.5);
-						selectedRow = row;
-						selectedCol = col;
-						isCellSelected = true;
+						}	
 					}
 				});
 				this.enemyGrid[row][col] = cell;
@@ -192,7 +256,12 @@ class Gameboard extends Phaser.Scene {
 		fireButton.scaleY = 0.9;
 
 		fireButton.on('pointerover', function (event) {
-			this.setTint(0xe50000);
+			if (sharedData.its_your_turn) {
+				this.setTint(0x1ed013);
+			} else {
+				
+				this.setTint(0xe50000);
+			}
 		});
 
 		fireButton.on('pointerout', function (event) {
@@ -201,13 +270,14 @@ class Gameboard extends Phaser.Scene {
 
 		fireButton.on('pointerdown', function (event) {
 			self.playClick();
-			if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
-				self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
-				selectedCol = -1;
-				selectedRow = -1;
-				isCellSelected = false;
+			if(sharedData.its_your_turn){
+				if(self.Shoot(selectedRow,selectedCol,self.gridSize,sharedData)){
+					self.enemyGrid[selectedRow][selectedCol].setAlpha(1);
+					selectedCol = -1;
+					selectedRow = -1;
+					isCellSelected = false;
+				}
 			}
-			
 			this.clearTint();
 		});
 
@@ -235,7 +305,8 @@ class Gameboard extends Phaser.Scene {
 		capitulateButton.on('pointerdown', function (event) {
 			self.playClick();
 			this.clearTint();
-			self.scene.start("Gameover");
+			//evtl Popup
+			self.sendCapitulateMessage(sharedData);
         });
 		
 		// capitulateButtonText
@@ -288,18 +359,50 @@ class Gameboard extends Phaser.Scene {
 			}
 		}
 
+		var carrierSprite = this.add.sprite(1125, 180, 'carrier');
+		carrierSprite.setScale(0.2);
+		carrierSprite.setDepth(1);
+
+		var battleshipSprite = this.add.sprite(1125, 290, 'battleship');
+		battleshipSprite.setScale(0.35);
+		battleshipSprite.setDepth(1);
+
+		var cruiserSprite = this.add.sprite(1125, 400, 'cruiser');
+		cruiserSprite.setScale(0.25);
+		cruiserSprite.setDepth(1);
+
+		var destroyerSprite = this.add.sprite(1125 - 50, 510, 'destroyer');
+		destroyerSprite.setScale(0.25);
+		destroyerSprite.setDepth(1);
+
+		var destroyerSprite1 = this.add.sprite(1125 + 50, 510, 'destroyer');
+		destroyerSprite1.setScale(0.25);
+		destroyerSprite1.setDepth(1);
+
+		var submarineSprite = this.add.sprite(1125 - 50, 620, 'submarine');
+		submarineSprite.setScale(0.23);
+		submarineSprite.setDepth(1);
+
+		var submarineSprite1 = this.add.sprite(1125 + 50, 620, 'submarine');
+		submarineSprite1.setScale(0.23);
+		submarineSprite1.setDepth(1);
+
+		var shipSprites = [battleshipSprite, carrierSprite, cruiserSprite, destroyerSprite, destroyerSprite1, submarineSprite, submarineSprite1];
 		//ships
-		for (let index = 0; index < sharedData.sprites.length; index++) {
-			sharedData.sprites[index].setVisible(true);
-			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
-			this.add.existing(sharedData.sprites[index]);
+		for (let index = 0; index < shipSprites.length; index++) {
+			//sharedData.sprites[index].setVisible(true);
+			shipSprites[index].angle = sharedData.sprites[index].angle;
+			shipSprites[index].y = sharedData.sprites[index].y;
+			shipSprites[index].x = sharedData.sprites[index].x + 210;
+			//this.add.existing(sharedData.sprites[index]);
 			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
 			}
 			
-			sharedData.socket.onmessage = function(event) {
-			var message = JSON.parse(event.data);
-			console.log("Message received:", message)
-			};
+			
+			// sharedData.socket.onmessage = function(event) {
+			// var message = JSON.parse(event.data);
+			// console.log("Message received:", message)
+			//};
 
 	}
 
@@ -395,16 +498,13 @@ class Gameboard extends Phaser.Scene {
 		this.click.play();
 	}
 
-	switchTurn(player, opponent, s) 
-	{
-		if (s) 
-		{
-			player.setTint(0x1ed013);
+	switchTurn(player, opponent, s) {
+		if (s) {
+			player.setTint(0x00ff00);
 			opponent.clearTint();
 		}
-		else 
-		{
-			opponent.setTint(0xe50000);
+		else {
+			opponent.setTint(0xff0000);
 			player.clearTint();
 		}
 	}
@@ -424,7 +524,6 @@ class Gameboard extends Phaser.Scene {
 			}
 		}
 	}
-
 	/* END-USER-CODE */
 }
 

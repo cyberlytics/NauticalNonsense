@@ -1,3 +1,14 @@
+variables:
+  CYPRESS_CACHE_FOLDER: 'cache/Cypress/'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm
+    - sys_src/frontend/NauticalNonsense/cache/Cypress
+    - sys_src/frontend/NauticalNonsense/node_modules
+
+
 lint-js:
   stage: validate
   image: node:latest
@@ -12,32 +23,39 @@ lint-js:
 
 build-js:
   stage: build
-  image: node:latest
+  image: cypress/base:16.16.0
   script:
     - cd sys_src/frontend/NauticalNonsense
-    - npm install
-  cache:
-    paths:
-      - sys_src/frontend/NauticalNonsense/node_modules/
-  artifacts:
-    expire_in: 1 days
-    when: on_success
-    paths:
-      - sys_src/frontend/NauticalNonsense/node_modules/
+    # - npm install
+    - npm ci
+    # show where the Cypress test runner binaries are cached
+    # - $(npm bin)/cypress cache path
+    # # show all installed versions of Cypress binary
+    # - $(npm bin)/cypress cache list
+    # - $(npm bin)/cypress verify
+    - npx cypress cache path
+    - npx cypress cache list
+    - npx cypress verify
   rules:
     - changes:
       - sys_src/frontend/**/*
 
 coverage-js:
   stage: unit-test
-  image: node:latest
+  image: cypress/browsers:node16.16.0-chrome107-ff107-edge
   coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  timeout: 10 minutes
+  variables:
+    ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu'
   dependencies:
     - build-js
   script:
     - cd sys_src/frontend/NauticalNonsense
-    - mkdir public/
-    - npm test
+    - mkdir -p public/src
+    - npm start &
+    - npx cypress run --browser chrome
+    
+    # - npm test
   artifacts:
     when: always
     reports:

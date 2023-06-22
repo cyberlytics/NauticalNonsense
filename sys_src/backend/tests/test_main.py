@@ -10,6 +10,7 @@ import asyncio
 from unittest.mock import patch, AsyncMock
 import pytest
 from fastapi import WebSocket
+from database.models import LeaderboardWithRank, Stat
 
 
 from main import app
@@ -201,3 +202,14 @@ async def test_websocket_disconnect():
     # Ensure the clients have been disconnected
     assert second_client_id not in manager.all_websockets()
     assert first_client_id not in manager.all_websockets()
+
+
+def test_leaderboard():
+    response = client.get("/leaderboard")
+    assert response.status_code == 200
+    LeaderboardWithRank.parse_obj(response.json())
+
+def test_stats():
+    response = client.get("/stats")
+    assert response.status_code == 200
+    Stat.parse_obj(response.json())

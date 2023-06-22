@@ -429,6 +429,7 @@ class Shipplacement extends Phaser.Scene {
 		var sent = 0;
 		while (sent < 5) {
 			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
+				console.log("GAME_ID: ", sharedData.game_id)
 				var jsonMessage = JSON.stringify({"Shiplist" : message,"GameID":sharedData.game_id});
 				sharedData.socket.send(jsonMessage);
 				console.log(jsonMessage);
