@@ -98,24 +98,25 @@ class Gameboard extends Phaser.Scene {
 			var message = JSON.parse(event.data);
 			message = message['message'];
 			console.log("Parsed message:", message);
-			sharedData.finished = message.finished;
 			if (message.finished) {
+				sharedData.finished = message.finished;
 				sharedData.gameover = message.gameover;
 				self.scene.start('Gameover');
 			}
+			else {
+				if (sharedData.its_your_turn) {
+					self.UpdateGameboardColors(message.board, "enemy");
+					if (!message.hit) {
+						sharedData.its_your_turn = false;
+						self.switchTurn(readyLamp, opponentLamp, false)
+					}
+				} else {
+					self.UpdateGameboardColors(message.board, "player");
+					if (!message.hit) {
+						sharedData.its_your_turn = true;
+						self.switchTurn(readyLamp, opponentLamp, true);
 
-			if (sharedData.its_your_turn) {
-				self.UpdateGameboardColors(message.board,"enemy");
-				if (!message.hit) {
-					sharedData.its_your_turn = false;
-					self.switchTurn(readyLamp,opponentLamp,false)
-				}
-			}else{
-				self.UpdateGameboardColors(message.board,"player");
-				if (!message.hit) {
-					sharedData.its_your_turn = true;
-					self.switchTurn(readyLamp, opponentLamp, true);
-
+					}
 				}
 			}
 		};

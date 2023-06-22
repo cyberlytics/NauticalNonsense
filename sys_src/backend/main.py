@@ -95,12 +95,15 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     if data.get('Fire', False):
         move = data['Fire']
         game_id = data['GameID']
+
         data['lose'], data['hit'], data['board'] = make_move(move, partner_id, game_id)
-        if data['lose'] == True:
+
+        if lose:
+
             end_state = get_current_state(game_id)
             data['finished'] = True
             data['gameover'] = {}
-            set_gameover_fields(client_id, end_state, True, data['gameover'])
+            set_gameover_fields(client_id, end_state, False, data['gameover'])
         return None
 
     if data.get('Capitulate', False):
@@ -144,7 +147,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 
             if data.get('finished', False):
                 end_state = get_current_state(data['GameID'])
-                set_gameover_fields(partner_id, end_state, False, data['gameover'])
+                if data.get('Capitulate', False):
+                    set_gameover_fields(partner_id, end_state, False, data['gameover'])
+                else:
+                    set_gameover_fields(partner_id, end_state, True, data['gameover'])
                 response = {"message": data}
                 await manager.send_personal_message(response, client_id)
 
