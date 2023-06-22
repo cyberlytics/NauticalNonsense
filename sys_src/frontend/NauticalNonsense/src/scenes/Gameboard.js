@@ -315,11 +315,42 @@ class Gameboard extends Phaser.Scene {
 			}
 		}
 
+		var carrierSprite = this.add.sprite(1125, 180, 'carrier');
+		carrierSprite.setScale(0.2);
+		carrierSprite.setDepth(1);
+
+		var battleshipSprite = this.add.sprite(1125, 290, 'battleship');
+		battleshipSprite.setScale(0.35);
+		battleshipSprite.setDepth(1);
+
+		var cruiserSprite = this.add.sprite(1125, 400, 'cruiser');
+		cruiserSprite.setScale(0.25);
+		cruiserSprite.setDepth(1);
+
+		var destroyerSprite = this.add.sprite(1125 - 50, 510, 'destroyer');
+		destroyerSprite.setScale(0.25);
+		destroyerSprite.setDepth(1);
+
+		var destroyerSprite1 = this.add.sprite(1125 + 50, 510, 'destroyer');
+		destroyerSprite1.setScale(0.25);
+		destroyerSprite1.setDepth(1);
+
+		var submarineSprite = this.add.sprite(1125 - 50, 620, 'submarine');
+		submarineSprite.setScale(0.23);
+		submarineSprite.setDepth(1);
+
+		var submarineSprite1 = this.add.sprite(1125 + 50, 620, 'submarine');
+		submarineSprite1.setScale(0.23);
+		submarineSprite1.setDepth(1);
+
+		var shipSprites = [battleshipSprite, carrierSprite, cruiserSprite, destroyerSprite, destroyerSprite1, submarineSprite, submarineSprite1];
 		//ships
-		for (let index = 0; index < sharedData.sprites.length; index++) {
-			sharedData.sprites[index].setVisible(true);
-			sharedData.sprites[index].x = sharedData.sprites[index].x + 210;
-			this.add.existing(sharedData.sprites[index]);
+		for (let index = 0; index < shipSprites.length; index++) {
+			//sharedData.sprites[index].setVisible(true);
+			shipSprites[index].angle = sharedData.sprites[index].angle;
+			shipSprites[index].y = sharedData.sprites[index].y;
+			shipSprites[index].x = sharedData.sprites[index].x + 210;
+			//this.add.existing(sharedData.sprites[index]);
 			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
 			}
 			
