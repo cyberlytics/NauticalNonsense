@@ -211,7 +211,6 @@ class Gameover extends Phaser.Scene
 
 	create() 
 	{
-
 		this.editorCreate();
 	}
 	
