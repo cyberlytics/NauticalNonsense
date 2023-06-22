@@ -1,9 +1,9 @@
-from database.database import get_map, get_partner, get_ships, get_board, update_game_with_playermove, update_ship_list
+from database.database import get_map, get_partner
 from database.models import State
 
 from datetime import datetime
 
-#from utils import is_incremental
+from utils import is_incremental
 
 import uuid
 
@@ -58,17 +58,23 @@ def new_game_init(
     game_state = State(
         game_id=game_id,
         player1=player_1_id,
+        player1Name="",
         player2=player_2_id,
+        player2Name="",
         next_player=player_1_id,
         gameMode=game_mode,
+        gameStatus="place",
         isFinished=False,
         winner="",
         step=0,
         board1=game_field_player_1,
         board2=game_field_player_2,
         ships1=player_1_ships,
+        moves1=0,
         ships2=player_2_ships,
+        moves2=0,
         timestamp=datetime.utcnow()
+
     )
 
     return game_state
@@ -129,10 +135,9 @@ def _create_game_field(
 
         if not all([isinstance(coord, int) for coord in ship]):
             raise ValueError("Ship coordinates are not integers")
-        
-        # TODO first correct this function bevore use
-        #if not is_incremental(ship):
-            #raise ValueError("Ship coordinates are not one apart")
+
+        if not is_incremental(ship):
+            raise ValueError("Ship coordinates are not one apart")
 
         for coord in ship:
             if coord < len(game_field) and coord >= 0:
@@ -169,7 +174,7 @@ def _check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     return game_field
 
 
-def _check_win(partner_id, ships: list[list[int]]) -> str:
+def _check_win(ships: list[list[int]]) -> str:
     """
     Check if the game has been won.
 
@@ -180,15 +185,15 @@ def _check_win(partner_id, ships: list[list[int]]) -> str:
         str: return the id of the partner
     """
     if all([all([coord >= 100 for coord in ship]) for ship in ships]):
-        return partner_id
+        return True
     else:
         return False
 
 
 def make_move(
     move: int, 
-    partner_id: str,
-    game_id: str
+    game_field: list[int],
+    ships: list[list[int]],
     ) -> tuple[bool, bool, list[int]]:
     """
     Make a move on the game field.
@@ -206,9 +211,6 @@ def make_move(
         ValueError: If the move has been played before
         AssertionError: If the move is not an integer or out of range
     """
-    ships = get_ships(partner_id, game_id)
-    game_field = get_board(partner_id, game_id)
-
     if not isinstance(move, int):
         raise AssertionError("Move is not an integer")
     
@@ -226,28 +228,20 @@ def make_move(
         hit = True
 
         # We only have to check for sinking if a ship was hit
-        for ship in ships[0]:
+        for ship in ships:
             if move in ship:
                 ship[ship.index(move)] += 100     
-                # save the shiplist to the database
-                update_ship_list(partner_id, game_id, ships[0])
                 game_field = _check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
         print("Die Shipliste vor check win ist:")
         print(str(ships))
-        lose = _check_win(partner_id, ships[0])
+        lose = _check_win(ships)
     else:
         # TODO das raus machen? Program soll doch nicht abstürzen wenn gleicher move bereits gemacht wurde?!
         raise ValueError("Move has been played before")
-    
-    # save results in db
-    update_game_with_playermove(partner_id, game_id, game_field, lose)
 
-    # delete all ship positions from the board, because client shouldnt know the position of opponent ships
-    board = [0 if i == 1 else i for i in game_field]
-
-    return lose, hit, board
+    return lose, hit, game_field, ships
 
 
 def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: dict) -> None:
