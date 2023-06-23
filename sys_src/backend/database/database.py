@@ -30,7 +30,7 @@ def save_state(state: State) -> State:
     return state
 
 # todo unbennen in anderen Namen, man bekommt ja effektiv den Spielernamen zurück, nicht die map data
-def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
+def get_map(client_id: str, playername: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
     '''
     return map_id for the connection in websockets.
     if there is no map with a player waiting create a new map
@@ -42,7 +42,7 @@ def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None)
     elif mode == 'random':
         map_data = games.find_one({"game_id": {"$exists": True, "$ne": ""}, "gameMode": mode, "player1": {"$exists": True, "$ne": ""}, "player2": {"$exists": True, "$eq": ""}})
         if map_data:
-            games.update_one({"_id": map_data["_id"]}, {"$set": {"player2": client_id}})
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"player2": client_id, "player2Name": playername}})
             # player2 is client_id, because this if-statement is only executed with player2, so client_id is the id of player2
             # in addition is the map_data still the old one before games.update_one(), so if you query the same way as player1,
             # you get an empty string
@@ -51,17 +51,17 @@ def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None)
                        "game_id": State.parse_obj(map_data).game_id}
             return {"ready": ret_obj}
         else:
-            game_id = create_map(client_id, mode)
+            game_id = create_map(client_id, playername, mode)
             map_data = games.find_one({"game_id": str(game_id), "gameMode": mode, "player1": {"$exists": True, "$ne": ""}, "player2": {"$exists": ""}})
             return {"ready": False, "game_id": State.parse_obj(map_data).game_id}
     
 
-def create_map(client_id: uuid, mode: str) -> uuid:
+def create_map(client_id: uuid, playername: str, mode: str) -> uuid:
     game_id = uuid.uuid4()
     map_data = {
         "game_id": str(game_id),
         "player1": str(client_id),
-        "player1Name": "",
+        "player1Name": playername,
         "player2": "",
         "player2Name": "",
         "next_player": "",
@@ -158,6 +158,7 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
 
         # Define the field names
         board_field = 'board1' if game_state['player1'] == client_id else 'board2'
+        moves_field = 'moves2' if game_state['player1'] == client_id else 'moves1'
 
         update_fields = {
             board_field: game_field
@@ -167,13 +168,13 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
         if lose:
             update_fields.update({
                 'isFinished': True,
-                'winner': client_id
+                'winner': game_state['player1Name'] if game_state['player2'] == client_id else game_state['player2Name']
             })
 
         # Update the game state
         games.update_one(
             {'_id': game_state['_id']},
-            {'$set': update_fields, '$inc': {'step': 1}}
+            {'$set': update_fields, '$inc': {'step': 1}, '$inc': {moves_field: 1}}
         )
     else:
         print(f"No game found with game_id: {game_id}")

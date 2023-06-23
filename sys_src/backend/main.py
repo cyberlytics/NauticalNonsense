@@ -45,10 +45,15 @@ def play(user_input: dict):
             status_code=404,
             content={"message": "invalid data"},
         )
+    if 'playername' not in user_input:
+        return JSONResponse(
+            status_code=404,
+            content={"message": "invalid data"},
+        )
     
     # init to wait/play against random
     # if frontend gets two player_ids, then it should use websockets
-    ready = prepare_room(user_input['client_id'], user_input['mode'], user_input['friend'])
+    ready = prepare_room(user_input['client_id'], user_input['playername'], user_input['mode'], user_input['friend'])
     return ready
 
 @app.get("/mongo_entries")
