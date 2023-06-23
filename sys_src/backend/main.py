@@ -5,7 +5,7 @@ import uuid
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
-from database.database import get_current_state, get_leaderboard, add_rank, add_placement, get_stat, get_ships, get_board, update_game_with_playermove, update_ship_list, update_game_capitulation
+from database.database import get_current_state, get_leaderboard, insert_winner_to_leaderboard, add_rank, add_placement, get_stat, update_stats, get_ships, get_board, update_game_with_playermove, update_ship_list, update_game_capitulation
 from database.models import LeaderboardWithRank, Stat
 import datetime
 
@@ -115,6 +115,8 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         if lose:
             data['lose'] = partner_id
             end_state = get_current_state(game_id)
+            insert_winner_to_leaderboard(end_state, False)
+            update_stats(end_state, False)
             data['finished'] = True
             data['gameover'] = {}
             set_gameover_fields(client_id, end_state, False, data['gameover'])
@@ -123,6 +125,8 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
     if data.get('Capitulate', False):
         game_id = data['GameID']
         end_state = update_game_capitulation(client_id, game_id)
+        insert_winner_to_leaderboard(end_state, True)
+        update_stats(end_state, True)
         data['finished'] = True
         data['gameover'] = {}
         set_gameover_fields(client_id, end_state, True, data['gameover'])

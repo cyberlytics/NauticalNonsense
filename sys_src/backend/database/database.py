@@ -226,12 +226,12 @@ def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: in
         leaders.append(Winner.parse_obj(winner))
     return leaders
 
-def insert_winner(current_state: State, capitulation: bool) -> Winner:
+def insert_winner_to_leaderboard(current_state: State, capitulation: bool) -> Winner:
     name = current_state.winner
     if name == current_state.player1Name:
         moves = current_state.moves1
     else:
-        moves = current_State.moves2
+        moves = current_state.moves2
     if current_state.gameMode == "pc":
         againstComputer = True
     else:
@@ -294,9 +294,9 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     stat.moves = [sum(p) for p in zip(stat.moves, moves1)]
     stat.moves = [sum(p) for p in zip(stat.moves, moves2)]
     
-    firstMoves = get_first_moves(end_state.game_id)
-    for move in firstMoves:
-        stat.firstMoves[move] += 1
+    #firstMoves = get_first_moves(end_state.game_id)
+    #for move in firstMoves:
+    #    stat.firstMoves[move] += 1
         
     if end_state.winner == end_state.player1Name:
         ships_winner = end_state.ships1
