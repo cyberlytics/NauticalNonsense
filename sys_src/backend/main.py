@@ -92,7 +92,7 @@ async def handle_websocket_data(manager: ConnectionManager, data: dict, client_i
         data['message'] = ["ship_placement_ready", player_which_starts]
         return None
 
-    if data.get('Fire', False):
+    if type(data.get('Fire', False)) != bool:
         move = data['Fire']
         game_id = data['GameID']
         ships = get_ships(partner_id, game_id)
