@@ -76,13 +76,20 @@ In den weiteren Abschnitten dieses Dokuments wird auf die technischen Details de
 \subsection{Frontend}\label{subsec:frontend}
 
 \subsubsection{Kommunikation mit Backend}\label{subsec:comwithbackend}
+
 Beim Aufrufen der Webseite sendet der Client einen HTTP-GET-Request an \glqq localhost:8000\grqq{} und erhält ein JSON-Objekt mit der Client-ID. Diese ID wird der globalen Variable \textit{sharedData.clientID} zugewiesen.
 
-Die Websocket-Verbindungs-URL wird durch das Hinzufügen der Client-ID zu  \textit{sharedData.websocket\_url} erstellt.
+Die Websocket-Verbindungs-URL wird durch das Hinzufügen der Client-ID zu \textit{sharedData.websocket\_url} erstellt.
 
 Wenn der Client in der Start-Szene \glqq Spiel gegen Random\grqq{} auswählt, erfolgt ein HTTP-POST-Request an \glqq localhost:8000/play\grqq{} mit Informationen wie der Client-ID, dem ausgewählten Modus und dem Spielernamen. Die empfangene Game-ID wird in \textit{sharedData.game\_id} gespeichert.
 
-Die Websocket-Verbindung wird erst nach erfolgreicher Ausführung dieses Befehls initialisiert, bevor zur Szene \glqq Waiting1\grqq{} gewechselt wird.
+Die Websocket-Verbindung wird erst nach erfolgreicher Ausführung dieses Befehls initialisiert, bevor zur Szene \glqq Waiting1\grqq{} gewechselt wird. Dieser Websocket existiert ebenfalls als globale Variable namens \textit{sharedData.socket}.
+
+In allen Szenen ist die Methode \textit{onmessage} implementiert, die es ermöglicht, über Websockets eingehende Nachrichten vom Backend zu empfangen. Diese Methode ist Bestandteil des JavaScript-Objekts \textit{WebSocket}.
+
+Wenn sich ein zweiter Client auf der Webseite verbindet und die Option \glqq Spiele gegen Random\grqq{} auswählt, sendet das Backend über die Websocket-Verbindung ein \glqq ready\grqq{}-Flag an beide Clients. In Folge dessen wird die Variable \textit{sharedData.ready} auf den Wert \glqq true\grqq{} gesetzt und es erfolgt ein nahtloser Wechsel zur Szene \glqq Shipplacement\grqq{}.
+
+
 
 
 
