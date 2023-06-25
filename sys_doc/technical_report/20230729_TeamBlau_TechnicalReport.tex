@@ -75,6 +75,15 @@ In den weiteren Abschnitten dieses Dokuments wird auf die technischen Details de
 
 \subsection{Frontend}\label{subsec:frontend}
 
+\subsubsection{Kommunikation mit Backend}\label{subsec:comwithbackend}
+Beim Aufrufen der Webseite sendet der Client einen HTTP-GET-Request an \glqq localhost:8000\grqq{} und erhält ein JSON-Objekt mit der Client-ID. Diese ID wird der globalen Variable \textit{sharedData.clientID} zugewiesen.
+
+Die Websocket-Verbindungs-URL wird durch das Hinzufügen der Client-ID zu  \textit{sharedData.websocket\_url} erstellt.
+
+Wenn der Client in der Start-Szene \glqq Spiel gegen Random\grqq{} auswählt, erfolgt ein HTTP-POST-Request an \glqq localhost:8000/play\grqq{} mit Informationen wie der Client-ID, dem ausgewählten Modus und dem Spielernamen. Die empfangene Game-ID wird in \textit{sharedData.game\_id} gespeichert.
+
+Die Websocket-Verbindung wird erst nach erfolgreicher Ausführung dieses Befehls initialisiert, bevor zur Szene \glqq Waiting1\grqq{} gewechselt wird.
+
 
 
 \subsection{Infrastruktur}\label{subsec:infrastruktur}
