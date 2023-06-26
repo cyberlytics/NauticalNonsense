@@ -26,6 +26,7 @@ window.addEventListener('load', function () {
 		its_your_turn: false,
 		finished: false,
 		gameover: {
+			capitulation: false,
 			won: false,
 			shots: 0,
 			hits: 0,

@@ -82,10 +82,39 @@ class Leaderboard extends Phaser.Scene {
 			this.playClick();
 			this.scene.start('Options');
 		});
+
+		//loading
+		const loadingStyle = {
+			width: 900,
+			height: 200,
+			radius: 20,
+			backgroundColor: 0x3c3845,
+			padding: 25,
+			textStyle: {
+				fontSize: '28px',
+				fill: '#ffffff',
+				fontFamily: "GodOfWar"
+			}
+		}
+		const loading = this.add.graphics();
+		loading.fillStyle(loadingStyle.backgroundColor, 1);
+		loading.fillRoundedRect(1280 / 2 - loadingStyle.width / 2, 720 / 2 - loadingStyle.height / 2, loadingStyle.width, loadingStyle.height, loadingStyle.radius);
+
+		const txtLoading = this.add.text(1280 / 2, 720 / 2 - loadingStyle.height / 2 + loadingStyle.padding, "Loading...", loadingStyle.textStyle);
+		txtLoading.setOrigin(0.5, 0);
+
+		const logoLoading = this.add.image(1280 / 2, 720 / 2 + 25, "logoWhite");
+		logoLoading.setOrigin(0.5, 0.5);
+		logoLoading.setScale(0.5);
 		
 		fetch(mainUrl + '/leaderboard').then((response) => {
 			return response.json();
 		}).then((data) => {
+			//remove loading elements
+			loading.setVisible(false);
+			txtLoading.setVisible(false);
+			logoLoading.setVisible(false);
+
 			const resultHuman = [];
 			const leadersHuman = data.leadersHuman;
 			const resultComputer = [];

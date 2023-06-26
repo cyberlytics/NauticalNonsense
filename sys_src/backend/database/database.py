@@ -75,6 +75,8 @@ def create_map(client_id: uuid, playername: str, mode: str) -> uuid:
         "board2": [],
         "ships1": [],
         "ships2": [],
+        "firstmove1": -1,
+        "firstmove2": -1,
         "timestamp": datetime.datetime.now()
     }
 
@@ -148,7 +150,7 @@ def get_board(client_id, game_id):
     
     return None
 
-def update_game_with_playermove(client_id: str, game_id: str, game_field: list[int], lose: bool = None) -> None:
+def update_game_with_playermove(move: int, client_id: str, game_id: str, game_field: list[int], lose: bool = None) -> None:
     filter = {'game_id': game_id}
     count = games.count_documents(filter)
     result = games.find(filter).sort('step', -1).limit(1)
@@ -176,6 +178,18 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
             {'_id': game_state['_id']},
             {'$set': update_fields, '$inc': {'step': 1}, '$inc': {moves_field: 1}}
         )
+
+        if game_state['player1'] == client_id and game_state['firstmove2'] == -1:
+            games.update_one(
+            {'_id': game_state['_id']},
+            {'$set': {'firstmove2': move}}
+            )
+        elif game_state['player2'] == client_id and game_state['firstmove1'] == -1:
+            games.update_one(
+            {'_id': game_state['_id']},
+            {'$set': {'firstmove1': move}}
+            )            
+
     else:
         print(f"No game found with game_id: {game_id}")
 
@@ -251,6 +265,14 @@ def add_rank(leaders = list[Winner]) -> list[WinnerWithRank]:
         leaders_rank.append(WinnerWithRank(name=leader.name,moves=leader.moves,rank=rank))
     return leaders_rank
 
+def get_rank(moves: int, againstComputer: bool, capitulation: bool = False) -> int:
+    better_moves = []
+    leaders = leaderboard.find({"againstComputer": againstComputer, "capitulation": capitulation, "moves": {"$lt": moves}})
+    for leader in leaders:
+        better_moves.append(Winner.parse_obj(leader).moves)
+    better_moves_unique = list(set(better_moves))
+    return len(better_moves_unique) + 1
+
 
 #Gamestatistics
 def get_stat() -> Stat:
@@ -297,6 +319,10 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     #firstMoves = get_first_moves(end_state.game_id)
     #for move in firstMoves:
     #    stat.firstMoves[move] += 1
+    if end_state.firstmove1 != -1:
+        stat.firstMoves[end_state.firstmove1] += 1
+    if end_state.firstmove2 != -1:
+        stat.firstMoves[end_state.firstmove2] += 1
         
     if end_state.winner == end_state.player1Name:
         ships_winner = end_state.ships1

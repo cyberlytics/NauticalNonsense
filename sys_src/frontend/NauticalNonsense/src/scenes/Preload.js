@@ -55,6 +55,7 @@ class Preload extends Phaser.Scene {
 		this.load.image("gbRedCross", "assets/gameboard/redCross.png");
 		this.load.image("gbExplosionStar", "assets/gameboard/explosionStar.png");
 		this.load.image("goBackground", "assets/gameover/background.png");
+		this.load.image("goBackgroundShort", "assets/gameover/background_short.png");
 		this.load.image("goExitWin", "assets/gameover/exitWin.png");
 		this.load.image("goExitLose", "assets/gameover/exitLose.png");
 		this.load.pack("asset-pack", "assets/asset-pack.json");
@@ -67,7 +68,7 @@ class Preload extends Phaser.Scene {
 		this.load.image("optionsMute", "assets/options/muteButton.png");
 		this.load.image("optionsUnmute", "assets/options/unmuteButton.png");
 		this.load.multiatlas('waterAnim', 'assets/water/water.json', 'assets/water');
-
+		this.load.image("logoWhite", "assets/battleship_logo_white.png");
 	}
 
 	/** @returns {void} */

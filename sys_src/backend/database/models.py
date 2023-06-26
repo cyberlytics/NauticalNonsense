@@ -18,6 +18,8 @@ class State(BaseModel):
     board2: list[int] = Field(..., description = "Playing board owned by player2")
     ships1: list[list[int]] = Field(..., description = "Ships owned by player1")
     ships2: list[list[int]] = Field(..., description = "Ships owned by player2")
+    firstmove1: int = Field(..., description = "Field auf first move of player 1")
+    firstmove2: int = Field(..., description = "Field auf first move of player 2")
     timestamp: datetime.datetime = Field(..., description = "Current utc date and time")
 
 class Winner(BaseModel):

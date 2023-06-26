@@ -1,4 +1,4 @@
-from database.database import get_map, get_partner
+from database.database import get_map, get_partner, get_rank
 from database.models import State
 
 from datetime import datetime
@@ -73,6 +73,8 @@ def new_game_init(
         moves1=0,
         ships2=player_2_ships,
         moves2=0,
+        firstmove1=-1,
+        firstmove2=-1,
         timestamp=datetime.utcnow()
 
     )
@@ -244,9 +246,10 @@ def make_move(
     return lose, hit, game_field, ships
 
 
-def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: dict) -> None:
+def set_gameover_fields(partner_id: str, end_state: State, capitulation: bool, win: bool, gameover: dict) -> None:
+    gameover['capitulation'] = capitulation
     gameover['won'] = win
-    gameover['totalMoves'] = end_state.step
+    gameover['totalMoves'] = end_state.moves1 + end_state.moves2
     if partner_id == end_state.player1:
         gameover['shots'] = end_state.moves2
         gameover['hits'] = count_hits(end_state.ships1)
@@ -254,7 +257,14 @@ def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: 
         gameover['shots'] = end_state.moves1
         gameover['hits'] = count_hits(end_state.ships2)
     gameover['misses'] = gameover['shots'] - gameover['hits']
-    gameover['rank'] = 0
+    if capitulation:
+        gameover['rank'] = 0
+    else:
+        if win:
+            againstComputer = True if end_state.gameMode == "pc" else False
+            gameover['rank'] = get_rank(gameover['shots'], againstComputer)
+        else:
+            gameover['rank'] = 0
 
 def count_hits(ships: list[list[int]]) -> int:
     hits = 0

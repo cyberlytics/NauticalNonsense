@@ -16,7 +16,7 @@ class Statistics extends Phaser.Scene {
 	editorCreate() {
 
 		//reference to this statistics scene
-		const statistics = this;
+		const self = this;
 
 		//define important variables
 		const mainUrl = this.game.sharedData.backend_url;
@@ -76,9 +76,9 @@ class Statistics extends Phaser.Scene {
 		})
 
 		returnButton.on('pointerdown', function (event) {
-			statistics.sound.add("click").play();
+			self.sound.add("click").play();
 			this.clearTint();
-			statistics.scene.start('Options');
+			self.scene.start('Options');
 		})
 
 		//homeButton
@@ -95,9 +95,9 @@ class Statistics extends Phaser.Scene {
 		})
 
 		homeButton.on('pointerdown', function (event) {
-			statistics.sound.add("click").play();
+			self.sound.add("click").play();
 			this.clearTint();
-			statistics.scene.start('Start');
+			self.scene.start('Start');
 		})
 
 		//loading
@@ -347,7 +347,6 @@ class Statistics extends Phaser.Scene {
 		this.load.image("cruiserStatsRed", "assets/ships/cruiser/cruiser_stats_red.png");
 		this.load.image("destroyerStatsRed", "assets/ships/destroyer/destroyer_stats_red.png");
 		this.load.image("submarineStatsRed", "assets/ships/submarine/submarine_stats_red.png");
-		this.load.image("logoWhite", "assets/battleship_logo_white.png");
 	}
 
 	makeBoard(boardStyle, title, data, tooltipStyle) {
