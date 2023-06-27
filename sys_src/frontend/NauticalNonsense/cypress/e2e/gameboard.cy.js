@@ -20,7 +20,7 @@ describe('Testing switch to Gameboard', () => {
                     game_id: "27dcb94f-8080-4457-bcca-7ac38c500318"
                 }
             }
-        })
+        });
 
         cy.viewport(1280, 720)
         // cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/public/index.html');
@@ -31,7 +31,7 @@ describe('Testing switch to Gameboard', () => {
         });
     });
 
-    it('switches to placement scene', () => {
+    it('switches to gameboard scene', () => {
 
         cy.wait(1000);
         // click into name field
@@ -45,41 +45,16 @@ describe('Testing switch to Gameboard', () => {
                 cy.get('canvas').click(845, 575, { force: true });
                 cy.wait(1000).then(() => {
                     cy.window().then((win) => {
-                        game = win.game;
-                        // check if scene is left
-                        cy.expect(game.scene.keys['Start'].sys.settings['active']).to.be.false;
-                        // check if in placement scene
-                        cy.expect(game.scene.keys['Shipplacement'].sys.settings['active']).to.be.true;
-                    });
-                });
-            });
-        });
-    });
-    it('should not change into Gameboard scene', () => {
-        
-        cy.wait(1000);
-        // click into name field
-        cy.get('canvas').click(560, 550, { force: true });
-        cy.log("clicked")
-        cy.wait(100).then(() => {
-            // write playername into field
-            cy.get('canvas').realType("player1");
-            cy.wait(100).then(() => {
-                // press start
-                cy.get('canvas').click(845, 575, { force: true });
-                cy.wait(1000).then(() => {
-                    cy.window().then((win) => {
-                        // check if continue without ship placement is possible
-                        cy.get('canvas').click(1280 / 2 - 485 + 5, 720 / 2 - 30 + 5, { force: true});
-                        cy.wait(1000).then(() => {
-                            game = win.game;
-                            cy.expect(game.scene.keys['Shipplacement'].sys.settings['active']).to.be.true;
-                        });
-                        // press random button
+                        // press random placement button
                         cy.get('canvas').click(1280 / 2 - 485 + 5, 720 / 2 + 54 + 5, { force: true});
                         cy.wait(1000).then(() => {
-                            game = win.game;
-                            cy.expect(game.scene.keys['Shipplacement'].sys.settings['active']).to.be.true;
+                            // press confirm button
+                            cy.get('canvas').click(1280 / 2 - 485 + 5, 720 / 2 - 30 + 5, { force: true});
+                            cy.wait(1000).then(() => {
+                                game = win.game;
+                                cy.expect(game.scene.keys['Shipplacement'].sys.settings['active']).to.be.false;
+                                cy.expect(game.scene.keys['Gameboard'].sys.settings['active']).to.be.true;
+                            });
                         });
                     });
                 });

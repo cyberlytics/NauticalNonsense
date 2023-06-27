@@ -26,9 +26,9 @@ wsServer.on("connection", function connection(ws) {
 
     // on victory this is expected: {"message": {"Fire": 15, "GameID": "8ab90b66-1921-4ea1-9bb0-b17a35afe46e", "lose": "40703f36-f1b8-47be-966b-e170668bfedd", "hit": true, "board": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 4, 4, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 4, 4, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}}
 
-    let msg = JSON.parse(data.data)
+    let msg = JSON.parse(data)
     console.log(msg);
-    if (msg.message.Fire != undefined) {
+    if (msg && msg.message && 'Fire' in msg.message) {
       console.log("in If not undefined:");
       console.log(msg.message.Fire);
 
