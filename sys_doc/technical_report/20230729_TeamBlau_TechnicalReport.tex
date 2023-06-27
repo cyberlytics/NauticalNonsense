@@ -8,10 +8,16 @@
 \usepackage{graphicx}
 \usepackage[ngerman]{babel}
 \usepackage[style=ieee]{biblatex}
+\usepackage[nolist]{acronym}
+
 
 \addbibresource{references.bib}
 
 \graphicspath{ {./images/} }
+
+  \begin{acronym}
+    \acro{uuid}[UUID]{Universally Unique Identifier}
+  \end{acronym}
 
 \begin{document}
 
@@ -78,7 +84,7 @@ ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschrei
 
 
 \subsection{Backend}\label{subsec:backend}
-Das Backend ist mit Python und den Framework FastAPI umgesetzt. Das Frontend kommuniziert mit dem Backend über zwei Schnittstellen. Zum einen über die RESTful-API, zum anderen über eine Websocket Verbindung. Die RESTful-API übernimmt alle Anfragen des Frontends, welche nicht die Kommunikation zwischen zwei Spieler betrifft. Somit dient die RESTful-API hauptsächlich als Knotenpunkt zur Datenbank. Die Websocket Schnittstelle dient zur Kommunikation zwischen zwei Frontends. Die Kommunikationsdaten der Websocket-Verbindung werden im Backend aufbereitet, validiert und in der Datenbank gespeichert. Darauf folgt eine sofortige Antwort an beide Frontends, um diese über den neuen Spielschritt zu informieren.
+Das Backend ist mit Python und den Framework FastAPI~\cite{fastapi} umgesetzt. Das Frontend kommuniziert mit dem Backend über zwei Schnittstellen. Zum einen über die RESTful-API, zum anderen über eine Websocket Verbindung. Die RESTful-API übernimmt alle Anfragen des Frontends, welche nicht die Kommunikation zwischen zwei Spieler betrifft. Somit dient die RESTful-API hauptsächlich als Knotenpunkt zur Datenbank. Die Websocket Schnittstelle dient zur Kommunikation zwischen zwei Frontends. Die Kommunikationsdaten der Websocket-Verbindung werden im Backend aufbereitet, validiert und in der Datenbank gespeichert. Darauf folgt eine sofortige Antwort an beide Frontends, um diese über den neuen Spielschritt zu informieren.
 
 Folgende HTTP-Endpunkte, in Tabelle~\ref{tab:api}, stellt die API im Backend für das Frontend zur Verfügung:
 
@@ -97,8 +103,8 @@ Folgende HTTP-Endpunkte, in Tabelle~\ref{tab:api}, stellt die API im Backend fü
     \end{center}
 \end{table}
 
-%TODO Routen in andere Schriftart, uuid als \ac
-Die /-Route gibt eine UUID als String zurück, welche das Frontend nutzen kann, um den Spieler gegenüber des Backends bei nachfolgenden Anfragen eindeutig zu bestimmen. Ein Spiel wird mit der /play-Route gestartet. Diese Route nimmt ein JSON-Objekt entgegen, in welchen spezifiziert wird, welchen Spielmodus der Spieler spielen möchte. Als Rückgabe bekommt das jeweilige Frontend eine Ready-Flag und die UUID der beiden Kontrahenten. Nachdem ein Spiel bereit ist, wird die Websocket Verbindung über die /ws/-Route aufgebaut. Über diese Route läuft die komplette Kommunikation bis zum Spielende.
+
+Die \texttt{/}-Route gibt eine \ac{uuid} als String zurück, welche das Frontend nutzen kann, um den Spieler gegenüber des Backends bei nachfolgenden Anfragen eindeutig zu bestimmen. Ein Spiel wird mit der \texttt{/play}-Route gestartet. Diese Route nimmt ein JSON-Objekt entgegen, in welchen spezifiziert wird, welchen Spielmodus der Spieler spielen möchte. Als Rückgabe bekommt das jeweilige Frontend eine Ready-Flag und die \ac{uuid} der beiden Kontrahenten. Nachdem ein Spiel bereit ist, wird die Websocket Verbindung über die \texttt{/ws/}-Route aufgebaut. Über diese Route läuft die komplette Kommunikation bis zum Spielende.
 
 %TODO Websocket Diagramm hier passend
 
@@ -134,6 +140,9 @@ Wenn sich ein zweiter Client auf der Webseite verbindet und die Option \glqq Spi
 
 
 \subsection{Backend}\label{subsec:backend-dev-tools}
+Das Backend wird hauptsächlich mit FastAPI implementiert, einem Framework, das auf "Starlette"~\cite{starlette} und "Pydantic"~\cite{pydantic} aufbaut. Starlette stellt Funktionen wie WebSockets zur Verfügung, während Pydantic die Validierung von Datenmodellen ermöglicht, die von FastAPI verwendet werden. Dank Starlette kann auch das Test-Framework "Pytest"~\cite{pytest} direkt für Unit-Tests eingesetzt werden. Der Asynchronous Server Gateway Interface (ASGI) Server "Uvicorn"~\cite{unvicorn} wird für die Bereitstellung genutzt.
+%TODO @Fabi willst da vllt noch was dazu schreiben?
+Für den Zugriff auf die Mongo-Datenbank wird das Framework PyMongo genutzt. 
 
 
 
