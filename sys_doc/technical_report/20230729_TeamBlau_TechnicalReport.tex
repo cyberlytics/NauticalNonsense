@@ -80,8 +80,27 @@ ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschrei
 
 
 \subsection{Datenbank}\label{subsec:datenbank}
+Zur dauerhaften Speicherung aller Daten, die während des Spiels anfallen, wird die NoSQL-Datenbank \textit{MongoDB} verwendet. Um den Implementierungsaufwand zu reduzieren, wird dabei auf das Cloudangebot \textit{MongoDB Atlas} zurückgegriffen. In der Datenbank werden JSON-artige Dokumente in einzelnen Collections abgelegt, die für je eine bestimmte Funktion zuständig sind. Tabelle~\ref{tab:collections} zeigt eine Übersicht über die vorhandenen Collections.
 
+\begin{table}[h!]
+    \begin{center}
+        \caption{Collections}
+        \label{tab:collections}
+        \begin{tabular}{|l|l|}
+            \textbf{collection} & \textbf{Beschreibung}\\
+            \hline
+            \texttt{games}				& Aktuelle Spielzustände\\
+            \texttt{leaderboard}					& Bestenliste\\
+            \texttt{stats}	& Spielstatistiken\\
+        \end{tabular}
+    \end{center}
+\end{table}
 
+In \texttt{games} werden die aktuellen Spielstände jedes Spiels gespeichert. Hierzu gehören neben einer eindeutigen Game-ID Informationen zu den Spielern, deren momentane Spielfelder sowie getroffene und versenkte Schiffe.
+
+Ist ein Spiel zu Ende, wird der Gewinner zusammen mit seiner benötigten Zuganzahl in \texttt{leaderboard} gespeichert. Außerdem werden Daten zu Kapitulation und Gegner (Mensch oder Computer) ergänzt, sodass im Frontend zwei getrennte Bestenlisten angezeigt werden können.
+
+Die Spielstatistiken werden ebenso nach jedem beendeten Spiel aktualisiert. Ein Dokument in \texttt{stats} enthält dabei Daten zu bereits abgeschlossenen Spielen, wie Spielanzahl und durchschnittliche Schusszahl - getrennt nach Mensch- und Computergegner. Zusätzlich werden häufige Schiffs- und Schusspositionen sowie die Abschussquote der einzelnen Schiffstypen protokolliert.
 
 \subsection{Backend}\label{subsec:backend}
 Das Backend ist mit Python und den Framework FastAPI~\cite{fastapi} umgesetzt. Das Frontend kommuniziert mit dem Backend über zwei Schnittstellen. Zum einen über die RESTful-API, zum anderen über eine Websocket Verbindung. Die RESTful-API übernimmt alle Anfragen des Frontends, welche nicht die Kommunikation zwischen zwei Spieler betrifft. Somit dient die RESTful-API hauptsächlich als Knotenpunkt zur Datenbank. Die Websocket Schnittstelle dient zur Kommunikation zwischen zwei Frontends. Die Kommunikationsdaten der Websocket-Verbindung werden im Backend aufbereitet, validiert und in der Datenbank gespeichert. Darauf folgt eine sofortige Antwort an beide Frontends, um diese über den neuen Spielschritt zu informieren.
@@ -99,6 +118,7 @@ Folgende HTTP-Endpunkte, in Tabelle~\ref{tab:api}, stellt die API im Backend fü
             \texttt{POST /play}					& Starten eines neuen Spiels\\
             \texttt{WEBSOCKET /ws/}\detokenize{{client_id}}	& Kommunikation der Spieler\\
             \texttt{GET /leaderboard}	& Daten für das Leaderboard\\
+	    \texttt{GET /stats}	& Daten für Spielstatistiken\\
         \end{tabular}
     \end{center}
 \end{table}
