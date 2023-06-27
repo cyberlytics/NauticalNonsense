@@ -79,23 +79,24 @@ def test_play_against_random():
     client_id1 = str(uuid.uuid4())
     client_id2 = str(uuid.uuid4())
 
-    mock_data_player1 = {"client_id": client_id1, "mode": "random", "friend": None}
-    mock_data_player2 = {"client_id": client_id2, "mode": "random", "friend": None}
+    mock_data_player1 = {"client_id": client_id1, "playername": "Bob", "mode": "random", "friend": None}
+    mock_data_player2 = {"client_id": client_id2, "playername": "Franz", "mode": "random", "friend": None}
 
     response = client.post(f"/play", json=mock_data_player1)
 
     # need this check, if an imbalance in database is. because a open random game could hinder this unit-test
-    if response.json()['ready'] == False:
+    if response.json().get('ready', False):
         assert response.status_code == 200
-        assert response.json() == {"ready": False}
-
-        response = client.post(f"/play", json=mock_data_player2)
-        assert response.status_code == 200
-        assert set(response.json()['ready'].values()) == {client_id1, client_id2}
+        assert client_id1 in response.json()['ready'].values()
 
     else:
         assert response.status_code == 200
+        assert False in response.json().values()
+
+        response = client.post(f"/play", json=mock_data_player2)
+        assert response.status_code == 200
         assert client_id1 in response.json()['ready'].values()
+        assert client_id2 in response.json()['ready'].values()
 
 '''
 Hier ist folgendes Problem:
@@ -146,8 +147,8 @@ async def test_websocket_init():
     client_id1 = str(uuid.uuid4())
     client_id2 = str(uuid.uuid4())
 
-    mock_data_player1 = {"client_id": client_id1, "mode": "random", "friend": None}
-    mock_data_player2 = {"client_id": client_id2, "mode": "random", "friend": None}
+    mock_data_player1 = {"client_id": client_id1, "playername": "Bob", "mode": "random", "friend": None}
+    mock_data_player2 = {"client_id": client_id2, "playername": "Franz", "mode": "random", "friend": None}
 
     response = client.post(f"/play", json=mock_data_player1)
 
@@ -202,6 +203,15 @@ async def test_websocket_disconnect():
     # Ensure the clients have been disconnected
     assert second_client_id not in manager.all_websockets()
     assert first_client_id not in manager.all_websockets()
+
+@pytest.mark.asyncio
+async def test_continue_game():
+    client = TestClient(app)
+    player_id = 1
+    response = client.get(f"/continue?player_id={player_id}")
+    assert response.status_code == 501
+    assert response.json() == {"detail": f"The 'continue_game' function for player_id: {player_id} is yet to be implemented"}
+
 
 
 def test_leaderboard():
