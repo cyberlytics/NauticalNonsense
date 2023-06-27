@@ -14,7 +14,6 @@ from database.models import LeaderboardWithRank, Stat
 
 
 from main import app
-from utils import is_valid_uuid
 
 client = TestClient(app)
 
@@ -34,19 +33,29 @@ def test_play_no_data():
     assert response.status_code == 422
 
 
+def test_play_no_playername():
+    response = client.post("/play", json={"client_id": "some_id", "mode": "random", "friend": "some_friend"})
+    assert response.status_code == 404
+    assert response.json() == {"message": "invalid data"}
+
+
 def test_play_false_data():
-    response = client.post("/play", json={"false1": 1, "false2": 3, "false3": 3})
+    response = client.post("/play", json={"false1": 1, "false2": 3, "false3": 3, "false4": 4})
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
 
     response = client.post("/play", json=123)
     assert response.status_code == 422
 
-    response = client.post("/play", json=["client_id", "mode", "friend"])
+    response = client.post("/play", json=["client_id", "mode", "friend", "playername"])
     assert response.status_code == 422
 
     response = client.post("/play", content=b"test")
     assert response.status_code == 422
+
+    response = client.post("/play", json={"playername": 14})
+    assert response.status_code == 404
+
 
 
 def test_play_incomplete_data():
@@ -54,11 +63,11 @@ def test_play_incomplete_data():
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
     
-    response = client.post("/play", json={"mode": "random"})
+    response = client.post("/play", json={"mode": "random", "playername": "Bob"})
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
 
-    response = client.post("/play", json={"friend": "some_name"})
+    response = client.post("/play", json={"friend": "some_name", "playername": "Bob"})
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
 
@@ -66,13 +75,46 @@ def test_play_incomplete_data():
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
 
-    response = client.post("/play", json={"friend": "some_name", "mode": "random"})
+    response = client.post("/play", json={"friend": "some_name", "mode": "random", "playername": "Bob"})
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
 
-    response = client.post("/play", json={"friend": "some_name", "client_id": "some_id"})
+    response = client.post("/play", json={"friend": "some_name", "client_id": "some_id", "playername": "Bob"})
     assert response.status_code == 404
     assert response.json() == {"message": "invalid data"}
+
+
+def test_map_creation():
+    client_id1 = str(uuid.uuid4())
+    client_id2 = str(uuid.uuid4())
+
+    mock_data_player1 = {"client_id": client_id1, "playername": "Bob", "mode": "random", "friend": None}
+    mock_data_player2 = {"client_id": client_id2, "playername": "Franz", "mode": "random", "friend": None}
+
+    client.post(f"/play", json=mock_data_player1)
+    post_response = client.post(f"/play", json=mock_data_player2)
+
+    assert post_response.status_code == 200
+    post_json = post_response.json()
+    assert "ready" in post_json and "game_id" in post_json['ready']
+
+    game_id = post_json['ready']["game_id"]
+
+    all_entries_response = client.get("/mongo_entries")
+
+    assert all_entries_response.status_code == 200
+    all_entries = all_entries_response.json()
+
+    assert isinstance(all_entries, list)
+    assert len(all_entries) == 2
+
+    games_string, num_games = all_entries
+    assert isinstance(games_string, str)
+    assert isinstance(num_games, int)
+
+    assert game_id in games_string, f"Game id {game_id} not found in entries"
+
+
 
 
 def test_play_against_random():

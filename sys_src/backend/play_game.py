@@ -5,7 +5,6 @@ from datetime import datetime
 
 from utils import is_incremental
 
-import uuid
 
 def prepare_room(client_id: str, playername: str, game_mode: str, friend: str = None) -> dict:
     '''

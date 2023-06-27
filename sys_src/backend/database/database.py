@@ -1,7 +1,6 @@
 import pymongo
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
-import math
 from database.models import State, Winner, WinnerWithRank, Stat
 import uuid
 import datetime
@@ -29,7 +28,7 @@ def save_state(state: State) -> State:
     games.insert_one(state.dict())
     return state
 
-# todo unbennen in anderen Namen, man bekommt ja effektiv den Spielernamen zurück, nicht die map data
+
 def get_map(client_id: str, playername: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
     '''
     return map_id for the connection in websockets.
