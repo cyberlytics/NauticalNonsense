@@ -233,7 +233,7 @@ def update_ship_list(client_id: str, game_id: str, ships: list[list[int]]) -> No
 
 
 #Leaderboard
-def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: int = 10) -> list[Winner]:
+def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: int = 100) -> list[Winner]:
     leaders = []
     winners = leaderboard.find({"againstComputer": againstComputer, "capitulation": capitulation}, sort=[("moves",pymongo.ASCENDING), ("name",pymongo.ASCENDING)], limit=limit)
     for winner in winners:
@@ -286,16 +286,17 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     #make new stats
     stat = stat_old.copy()
     
+    totalmoves = end_state.moves1 + end_state.moves2
     stat.gamesCount += 1
-    stat.totalMoves += end_state.step    
+    stat.totalMoves += totalmoves
     if end_state.gameMode == "pc":
         stat.gamesCountComputer += 1
-        stat.totalMovesComputer += end_state.step
+        stat.totalMovesComputer += totalmoves
         if end_state.winner == "pc":
             winCountComputer += 1            
     else:
         stat.gamesCountHuman += 1
-        stat.totalMovesHuman += end_state.step
+        stat.totalMovesHuman += totalmoves
     if stat.gamesCount !=0:
         stat.averageMoves = stat.totalMoves / stat.gamesCount
     if stat.gamesCountHuman != 0:
