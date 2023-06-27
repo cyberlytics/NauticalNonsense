@@ -106,8 +106,12 @@ Folgende HTTP-Endpunkte, in Tabelle~\ref{tab:api}, stellt die API im Backend fü
 
 Die \texttt{/}-Route gibt eine \ac{uuid} als String zurück, welche das Frontend nutzen kann, um den Spieler gegenüber des Backends bei nachfolgenden Anfragen eindeutig zu bestimmen. Ein Spiel wird mit der \texttt{/play}-Route gestartet. Diese Route nimmt ein JSON-Objekt entgegen, in welchen spezifiziert wird, welchen Spielmodus der Spieler spielen möchte. Als Rückgabe bekommt das jeweilige Frontend eine Ready-Flag und die \ac{uuid} der beiden Kontrahenten. Nachdem ein Spiel bereit ist, wird die Websocket Verbindung über die \texttt{/ws/}-Route aufgebaut. Über diese Route läuft die komplette Kommunikation bis zum Spielende.
 
-%TODO Websocket Diagramm hier passend
-
+\begin{figure}[thp]
+    \centering
+    \includegraphics[width=\linewidth]{websocket_comm}
+    \caption{Websocket Kommunikation}
+    \label{fig:websocket_comm}
+\end{figure}
 
 \subsection{Frontend}\label{subsec:frontend}
 
