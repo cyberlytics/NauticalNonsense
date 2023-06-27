@@ -53,13 +53,21 @@ Dieser Technical Report beschreibt die Architektur von dem Cloud Native Browser-
 
 
 \section{Einleitung}
-Schiffeversenken ist seit je her ein beliebtes Spiel, egal, ob für jung oder alt. Hauptsächlich wird dieses Spiel jedoch als Brettspiel in Präsenz gespielt. Als 2019 die Corona-Pandemie startete, mussten zwangsweise die Kontakte reduziert werden. Dies ruf eine massive Veränderung in der Lebensweise der Menschen hervor. Besonders im Bereich der Unterhaltung entwickelten sich in kurzer Zeit viele Lösungen, um Aktivitäten, welche zuvor in Präsenz waren, in den Online-Raum zu migrieren. Inspiriert von dieser Entwicklung entstand die Idee, ein Cloud-Nativ Schiffeversenken zu erstellen.\\
+Schiffeversenken ist seit je her ein beliebtes Spiel. Hauptsächlich wird dieses Spiel jedoch als Brettspiel in Präsenz gespielt. Als 2019 die Corona-Pandemie startete, mussten zwangsweise die Kontakte reduziert werden. Dies ruf eine massive Veränderung in der Lebensweise der Menschen hervor. Besonders im Bereich der Unterhaltung entwickelten sich in kurzer Zeit viele Lösungen, um Aktivitäten, welche zuvor in Präsenz waren, in den Online-Raum zu migrieren. Inspiriert von dieser Entwicklung entstand die Idee, ein Cloud-Nativ Schiffeversenken zu erstellen.\\
 In den weiteren Abschnitten dieses Dokuments wird auf die technischen Details des Vorhabens eingegangen. Abschnitt II enthält dabei die Vorgehensweise, welche sicherstellt, dass die Projektziele erreicht werden. Es folgt Abschnitt III, welches einen Überblick über die einzelnen Bausteine gibt und Abschnitt IV, worin die Entwicklungswerkzeuge erläutert werden. Abschließend wird in Abschnitt V auf das Fazit und den Ausblick eingegangen.
 
 
 \section{Vorgehensweise}\label{sec:vorgehensweise}
+Da \textit{Nautical Nonsense} als Cloud-Nativ Browser-Game Anwendung konzipiert ist, ergaben sich bei der Vorgehensweise einige Punkte, welche die Grundlegende Struktur des Projektes und die Umsetzung beeinflusst haben.\\
 
+\textbf{keine Datenpersitenz im Backend} Die Lösungsstrategie im Backend war es eine Kommunikation zu ermöglichen ohne größere Datenmengen darin zu speichern. Da \textit{Nautical Nonsense} als Cloud-Native Anwendung konzipiert wurde, durfte die persitenz der Daten nicht im Backend gehalten werden. Dies wurde gelöst, indem die Verarbeitung der Daten im Backend erfolgt, jedoch direkt im Anschluss eine Speicherung in der Datenbank vorgenommen wird. 
 
+\textbf{Herausforderungen im Frontend} 
+ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschreibt\\
+\textbf{Herausforderungen in der Datenbank} 
+ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschreibt\\
+\textbf{Herausforderungen in der Infrastruktur} 
+ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschreibt\\
 
 \section{Bausteinsicht}\label{sec:bausteinsicht}
 
@@ -70,7 +78,29 @@ In den weiteren Abschnitten dieses Dokuments wird auf die technischen Details de
 
 
 \subsection{Backend}\label{subsec:backend}
+Das Backend ist mit Python und den Framework FastAPI umgesetzt. Das Frontend kommuniziert mit dem Backend über zwei Schnittstellen. Zum einen über die RESTful-API, zum anderen über eine Websocket Verbindung. Die RESTful-API übernimmt alle Anfragen des Frontends, welche nicht die Kommunikation zwischen zwei Spieler betrifft. Somit dient die RESTful-API hauptsächlich als Knotenpunkt zur Datenbank. Die Websocket Schnittstelle dient zur Kommunikation zwischen zwei Frontends. Die Kommunikationsdaten der Websocket-Verbindung werden im Backend aufbereitet, validiert und in der Datenbank gespeichert. Darauf folgt eine sofortige Antwort an beide Frontends, um diese über den neuen Spielschritt zu informieren.
 
+Folgende HTTP-Endpunkte, in Tabelle~\ref{tab:api}, stellt die API im Backend für das Frontend zur Verfügung:
+
+\begin{table}[h!]
+    \begin{center}
+        \caption{RESTful-API}
+        \label{tab:api}
+        \begin{tabular}{|l|l|}
+            \textbf{Endpunkt} & \textbf{Beschreibung}\\
+            \hline
+            \texttt{GET \, /}				& Startseite\\
+            \texttt{POST /play}					& Starten eines neuen Spiels\\
+            \texttt{WEBSOCKET /ws/}\detokenize{{client_id}}	& Kommunikation der Spieler\\
+            \texttt{GET /leaderboard}	& Daten für das Leaderboard\\
+        \end{tabular}
+    \end{center}
+\end{table}
+
+%TODO Routen in andere Schriftart, uuid als \ac
+Die /-Route gibt eine UUID als String zurück, welche das Frontend nutzen kann, um den Spieler gegenüber des Backends bei nachfolgenden Anfragen eindeutig zu bestimmen. Ein Spiel wird mit der /play-Route gestartet. Diese Route nimmt ein JSON-Objekt entgegen, in welchen spezifiziert wird, welchen Spielmodus der Spieler spielen möchte. Als Rückgabe bekommt das jeweilige Frontend eine Ready-Flag und die UUID der beiden Kontrahenten. Nachdem ein Spiel bereit ist, wird die Websocket Verbindung über die /ws/-Route aufgebaut. Über diese Route läuft die komplette Kommunikation bis zum Spielende.
+
+%TODO Websocket Diagramm hier passend
 
 
 \subsection{Frontend}\label{subsec:frontend}
