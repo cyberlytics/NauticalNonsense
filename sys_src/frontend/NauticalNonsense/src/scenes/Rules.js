@@ -197,7 +197,6 @@ class Rules extends Phaser.Scene
 
 	create() 
 	{
-
 		this.editorCreate();
 	}
 	

@@ -26,8 +26,6 @@ class Preload extends Phaser.Scene {
 		this.load.image("matchButton", "assets/start/matchSelectionbutton.png");
 		this.load.image("background", "assets/0001.png");
 		this.load.image("matchInputFriend", "assets/start/matchSelectionFriend.png");
-		//this.load.image("idInput", "assets/start/IdInput.png");
-		//this.load.image("idInputBox", "assets/start/IdInputBox.png");
 		this.load.image("friendInputBox", "assets/start/friendInputBox.png");
 		this.load.image("rulesBackground", "assets/rules/rulesBackground.png");
 		this.load.image("rulesRight", "assets/rules/buttonRight.png");
@@ -59,6 +57,16 @@ class Preload extends Phaser.Scene {
 		this.load.image("goBackground", "assets/gameover/background.png");
 		this.load.image("goExitWin", "assets/gameover/exitWin.png");
 		this.load.image("goExitLose", "assets/gameover/exitLose.png");
+		this.load.pack("asset-pack", "assets/asset-pack.json");
+		this.load.pack("asset-pack", "assets/options-asset-pack.json");
+		this.load.audio("clicksound", ["assets/select.mp3"]);
+		this.load.image("0001", "assets/0001.png");
+		this.load.image("optionsBackground", "assets/options/background.png");
+		this.load.image("optionsBack", "assets/options/backButton.png");
+		this.load.image("optionsButtons", "assets/options/button.png");
+		this.load.image("optionsMute", "assets/options/muteButton.png");
+		this.load.image("optionsUnmute", "assets/options/unmuteButton.png");
+		this.load.multiatlas('waterAnim', 'assets/water/water.json', 'assets/water');
 
 	}
 

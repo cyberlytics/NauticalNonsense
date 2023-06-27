@@ -18,9 +18,10 @@ class Gameover extends Phaser.Scene
 	/** @returns {void} */
 	editorCreate() 
 	{
-		
+		var sharedData = this.game.sharedData;
+		var gameover = sharedData.gameover;
+
 		const self = this;
-		var won = false;
 		
 		//sounds
 		this.click = this.sound.add("click");
@@ -135,7 +136,7 @@ class Gameover extends Phaser.Scene
 		posValue.setOrigin(0, 0.5);
 		posValue.setStyle({ "align": "center", "color": "#ffffff", "fontFamily": "GodOfWar", "fontSize": "20px" });
 		
-		this.setStats(shotsValue, hitsValue, missesValue, movesValue, posValue);
+		this.setStats(shotsValue, hitsValue, missesValue, movesValue, posValue, gameover.shots, gameover.hits, gameover.misses, gameover.totalMoves, gameover.rank);
 		
 		// exitWin
 		const exitWin = this.add.image(1280/2, 720/2 + 210, "goExitWin").setInteractive({ useHandCursor: true  });
@@ -156,6 +157,7 @@ class Gameover extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
+			self.deleteGameover(gameover);
 			self.scene.start("Start");
         });
 		
@@ -186,6 +188,7 @@ class Gameover extends Phaser.Scene
         {
 			self.playClick();
 			this.clearTint();
+			self.deleteGameover(gameover);
 			self.scene.start("Start");
         });
 		
@@ -197,7 +200,7 @@ class Gameover extends Phaser.Scene
 		exitLoseText.text = "Exit";
 		exitLoseText.setStyle({ "align": "center", "color": "#990000", "fontFamily": "GodOfWar", "fontSize": "30px" });
 		
-		this.setWin(winText, loseText, exitWin, exitLose, exitWinText, exitLoseText, won);
+		this.setWin(winText, loseText, exitWin, exitLose, exitWinText, exitLoseText, gameover.won);
 
 		this.events.emit("scene-awake");
 	}
@@ -208,7 +211,6 @@ class Gameover extends Phaser.Scene
 
 	create() 
 	{
-
 		this.editorCreate();
 	}
 	
@@ -217,13 +219,13 @@ class Gameover extends Phaser.Scene
 		this.click.play();
 	}
 	
-	setStats(shots, hits, misses, moves, pos)
+	setStats(shots, hits, misses, moves, pos, shotsCount, hitsCount, missesCount, movesCount, posCount)
 	{
-		shots.text = "34";
-		hits.text = "18";
-		misses.text = "16";
-		moves.text = "56";
-		pos.text = "#1"; 
+		shots.text = shotsCount.toString();
+		hits.text = hitsCount.toString();
+		misses.text = missesCount.toString();
+		moves.text = movesCount.toString();
+		pos.text = posCount.toString();
 	}
 	
 	setWin(winTitle, loseTitle, win, lose, winTxt, loseTxt, s)
@@ -247,6 +249,15 @@ class Gameover extends Phaser.Scene
 			winTxt.setVisible(false);
 			loseTxt.setVisible(true);
 		}
+	}
+
+	deleteGameover(gameover) {
+		gameover.won = false;
+		gameover.shots = 0;
+		gameover.hits = 0;
+		gameover.misses = 0;
+		gameover.totalMoves = 0;
+		gameover.rank = 0;
 	}
 
 	/* END-USER-CODE */

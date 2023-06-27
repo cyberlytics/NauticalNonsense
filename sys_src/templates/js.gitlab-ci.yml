@@ -36,10 +36,9 @@ build-js:
     - npx cypress cache path
     - npx cypress cache list
     - npx cypress verify
-
-  # rules:
-  #   - changes:
-  #     - sys_src/frontend/**/*
+  rules:
+    - changes:
+      - sys_src/frontend/**/*
 
 coverage-js:
   stage: unit-test
@@ -65,6 +64,6 @@ coverage-js:
       coverage_report:
         coverage_format: cobertura
         path: coverage/cobertura-coverage.xml
-  # rules:
-  #   - changes:
-  #     - sys_src/frontend/**/*
+  rules:
+    - changes:
+      - sys_src/frontend/**/*
