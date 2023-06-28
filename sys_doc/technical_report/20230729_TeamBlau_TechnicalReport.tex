@@ -199,7 +199,7 @@ In dieser Szene wird die Platzierung der Schiffe (Positionen) und die Game-ID an
 
 \subsection{Infrastruktur}\label{subsec:infrastruktur}
 
-Für die Bereitstellung der Anwendung in der Cloud wird ein Kubernetes-Cluster\cite{kubernetes} verwendet. 
+Für die Bereitstellung der Anwendung in der Cloud wird ein Kubernetes-Cluster\cite{k8s} verwendet. 
 Um eine nachvollziehbare und deklarative Konfiguration zu gewährleisten, wurde Terraform\cite{terraform} als Infrastructure-as-Code-Tool verwendet. 
 Alle Bestandteile des Setups können somit über eine CI/CD-Pipeline, welche per Weboberfläche in Gitlab ausgelöst wird, direkt deployt werden.
 Als Cloud-Anbieter wurde Amazon Web Services gewählt. Die einzelnen Komponenten werden im Folgenden näher erläutert und sind in Abbildung~\ref{fig:infrastruktur} dargestellt.
@@ -237,6 +237,7 @@ Um das Frontend zu realisieren wird Phaser3 verwendet. Dabei handelt es sich um 
 
 Als Entwicklungsumgebung wird der Phaser Editor 2D eingesetzt. Dieser erlaubt das Erzeugen einer Projektgrundstruktur, die im Verlauf der Arbeit immer weiter angepasst und ausgebaut wird.  
 
+Für die Tests im Frontend werden eine vielzahl an Werkzeugen genutzt. Die Verwaltung dieser erfolgt über npm~\cite{npm}. Phaser3 benötigt zur Problemfreien Funktion ein Document-Object-Modell (DOM). Das Frontend-Test Framework Cypress\cite{cypress} bietet mit seinem End-to-End Modus ein solches DOM und erlaubt damit das automatisierte testen des Frontends. Um die Testabdeckung zu messsen kommt istanbul \cite{istanbul} zum Einsatz.
 
 
 
