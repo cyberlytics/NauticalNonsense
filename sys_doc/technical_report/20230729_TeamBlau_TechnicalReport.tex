@@ -101,7 +101,7 @@ Um die Anwendung Cloud-Nativ zu gestalten, wurde auf die Verwendung eines Kubern
 
 
 \subsection{Datenbank}\label{subsec:datenbank}
-Zur dauerhaften Speicherung aller Daten, die während des Spiels anfallen, wird die NoSQL-Datenbank \textit{MongoDB} verwendet. Um den Implementierungsaufwand zu reduzieren, wird dabei auf das Cloudangebot \textit{MongoDB Atlas} zurückgegriffen. In der Datenbank werden JSON-artige Dokumente in einzelnen Collections abgelegt, die für je eine bestimmte Funktion zuständig sind. Tabelle~\ref{tab:collections} zeigt eine Übersicht über die vorhandenen Collections.
+Zur dauerhaften Speicherung aller Daten, die während des Spiels anfallen, wird die NoSQL-Datenbank \textit{MongoDB} verwendet. Um den Implementierungsaufwand zu reduzieren, wird dabei auf das Cloudangebot \textit{MongoDB Atlas} zurückgegriffen. In der Datenbank werden JSON-artige Dokumente in einzelnen Collections abgelegt, die für je eine bestimmte Funktion zuständig sind. Tabelle \ref{tab:collections} zeigt eine Übersicht über die vorhandenen Collections.
 
 \begin{table}[h!]
     \begin{center}
@@ -124,9 +124,9 @@ Ist ein Spiel zu Ende, wird der Gewinner zusammen mit seiner benötigten Zuganza
 Die Spielstatistiken werden ebenso nach jedem beendeten Spiel aktualisiert. Ein Dokument in \texttt{stats} enthält dabei Daten zu bereits abgeschlossenen Spielen, wie Spielanzahl und durchschnittliche Schusszahl - getrennt nach Mensch- und Computergegner. Zusätzlich werden häufige Schiffs- und Schusspositionen sowie die Abschussquote der einzelnen Schiffstypen protokolliert.
 
 \subsection{Backend}\label{subsec:backend}
-Das Backend ist mit Python und den Framework FastAPI~\cite{fastapi} umgesetzt. Das Frontend kommuniziert mit dem Backend über zwei Schnittstellen. Zum einen über die RESTful-API, zum anderen über eine Websocket Verbindung. Die RESTful-API übernimmt alle Anfragen des Frontends, welche nicht die Kommunikation zwischen zwei Spieler betrifft. Somit dient die RESTful-API hauptsächlich als Knotenpunkt zur Datenbank. Die Websocket Schnittstelle dient zur Kommunikation zwischen zwei Frontends. Die Kommunikationsdaten der Websocket-Verbindung werden im Backend aufbereitet, validiert und in der Datenbank gespeichert. Darauf folgt eine sofortige Antwort an beide Frontends, um diese über den neuen Spielschritt zu informieren.
+Das Backend ist mit Python und den Framework FastAPI \cite{fastapi} umgesetzt. Das Frontend kommuniziert mit dem Backend über zwei Schnittstellen. Zum einen über die RESTful-API, zum anderen über eine Websocket Verbindung. Die RESTful-API übernimmt alle Anfragen des Frontends, welche nicht die Kommunikation zwischen zwei Spieler betrifft. Somit dient die RESTful-API hauptsächlich als Knotenpunkt zur Datenbank. Die Websocket Schnittstelle dient zur Kommunikation zwischen zwei Frontends. Die Kommunikationsdaten der Websocket-Verbindung werden im Backend aufbereitet, validiert und in der Datenbank gespeichert. Darauf folgt eine sofortige Antwort an beide Frontends, um diese über den neuen Spielschritt zu informieren.
 
-Folgende HTTP-Endpunkte, in Tabelle~\ref{tab:api}, stellt die API im Backend für das Frontend zur Verfügung:
+Folgende HTTP-Endpunkte, in Tabelle \ref{tab:api}, stellt die API im Backend für das Frontend zur Verfügung:
 
 \begin{table}[h!]
     \begin{center}
@@ -200,10 +200,10 @@ In dieser Szene wird die Platzierung der Schiffe (Positionen) und die Game-ID an
 
 \subsection{Infrastruktur}\label{subsec:infrastruktur}
 
-Für die Bereitstellung der Anwendung in der Cloud wird ein Kubernetes-Cluster\cite{k8s} verwendet. 
-Um eine nachvollziehbare und deklarative Konfiguration zu gewährleisten, wurde Terraform\cite{terraform} als Infrastructure-as-Code-Tool verwendet. 
+Für die Bereitstellung der Anwendung in der Cloud wird ein Kubernetes-Cluster \cite{k8s} verwendet. 
+Um eine nachvollziehbare und deklarative Konfiguration zu gewährleisten, wurde Terraform \cite{terraform} als Infrastructure-as-Code-Tool verwendet. 
 Alle Bestandteile des Setups können somit über eine CI/CD-Pipeline, welche per Weboberfläche in Gitlab ausgelöst wird, direkt deployt werden.
-Als Cloud-Anbieter wurde Amazon Web Services gewählt. Die einzelnen Komponenten werden im Folgenden näher erläutert und sind in Abbildung~\ref{fig:infrastruktur} dargestellt.
+Als Cloud-Anbieter wurde Amazon Web Services gewählt. Die einzelnen Komponenten werden im Folgenden näher erläutert und sind in Abbildung \ref{fig:infra} dargestellt.
 Der erste Schritt beinhaltet die Erstellung einer Virtual Private Cloud (VPC) mit privaten und öffentlichen Subnetzen in verschiedenen Availability Zones (AZs).
 Anschließend werden die privaten Subnetze für die Provisionierung des Kubernetes-Clusters verwendet, während in eines der öffentlichen Subnetze ein NAT-Gateway für den Internetzugriff der Pods erstellt wird.
 Zusätlich werden die benötigten IAM-Rollen und Policies für den Zugriff auf die AWS-Ressourcen erstellt.
@@ -225,7 +225,7 @@ Hierfür werden Docker-Container verwendet, die erstellt werden, wenn ein Tag au
 
 
 \subsection{Backend}\label{subsec:backend-dev-tools}
-Das Backend wird hauptsächlich mit FastAPI implementiert, einem Framework, das auf "Starlette"~\cite{starlette} und "Pydantic"~\cite{pydantic} aufbaut. Starlette stellt Funktionen wie WebSockets zur Verfügung, während Pydantic die Validierung von Datenmodellen ermöglicht, die von FastAPI verwendet werden. Dank Starlette kann auch das Test-Framework "Pytest"~\cite{pytest} direkt für Unit-Tests eingesetzt werden. Der Asynchronous Server Gateway Interface (ASGI) Server "Uvicorn"~\cite{unvicorn} wird für die Bereitstellung genutzt.
+Das Backend wird hauptsächlich mit FastAPI implementiert, einem Framework, das auf Starlette \cite{starlette} und Pydantic \cite{pydantic} aufbaut. Starlette stellt Funktionen wie WebSockets zur Verfügung, während Pydantic die Validierung von Datenmodellen ermöglicht, die von FastAPI verwendet werden. Dank Starlette kann auch das Test-Framework Pytest \cite{pytest} direkt für Unit-Tests eingesetzt werden. Der Asynchronous Server Gateway Interface (ASGI) Server Uvicorn \cite{uvicorn} wird für die Bereitstellung genutzt.
 %TODO @Fabi willst da vllt noch was dazu schreiben?
 Für den Zugriff auf die Mongo-Datenbank wird das Framework PyMongo genutzt. 
 
@@ -238,7 +238,7 @@ Um das Frontend zu realisieren wird Phaser3 verwendet. Dabei handelt es sich um 
 
 Als Entwicklungsumgebung wird der Phaser Editor 2D eingesetzt. Dieser erlaubt das Erzeugen einer Projektgrundstruktur, die im Verlauf der Arbeit immer weiter angepasst und ausgebaut wird.  
 
-Für die Tests im Frontend werden eine vielzahl an Werkzeugen genutzt. Die Verwaltung dieser erfolgt über npm~\cite{npm}. Phaser3 benötigt zur Problemfreien Funktion ein Document-Object-Modell (DOM). Das Frontend-Test Framework Cypress\cite{cypress} bietet mit seinem End-to-End Modus ein solches DOM und erlaubt damit das automatisierte testen des Frontends. Um die Testabdeckung zu messsen kommt istanbul \cite{istanbul} zum Einsatz.
+Für die Tests im Frontend werden eine vielzahl an Werkzeugen genutzt. Die Verwaltung dieser erfolgt über npm \cite{npm}. Phaser3 benötigt zur Problemfreien Funktion ein Document-Object-Modell (DOM). Das Frontend-Test Framework Cypress \cite{cypress} bietet mit seinem End-to-End Modus ein solches DOM und erlaubt damit das automatisierte testen des Frontends. Um die Testabdeckung zu messsen kommt istanbul \cite{istanbul} zum Einsatz.
 
 
 
