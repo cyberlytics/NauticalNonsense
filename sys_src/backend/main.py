@@ -106,7 +106,7 @@ async def handle_websocket_data(data: dict, client_id: str, partner_id: str):
         # save the shiplist to the database
         update_ship_list(partner_id, game_id, ships)
 
-        update_game_with_playermove(partner_id, game_id, game_field, lose)
+        update_game_with_playermove(move, partner_id, game_id, game_field, lose)
 
         # delete all ship positions from the board, because client shouldnt know the position of opponent ships
         game_field = [0 if i == 1 else i for i in game_field]
@@ -119,7 +119,7 @@ async def handle_websocket_data(data: dict, client_id: str, partner_id: str):
             update_stats(end_state, False)
             data['finished'] = True
             data['gameover'] = {}
-            set_gameover_fields(client_id, end_state, False, data['gameover'])
+            set_gameover_fields(client_id, end_state, False, False, data['gameover'])
         return None
 
     if data.get('Capitulate', False):
@@ -129,7 +129,7 @@ async def handle_websocket_data(data: dict, client_id: str, partner_id: str):
         update_stats(end_state, True)
         data['finished'] = True
         data['gameover'] = {}
-        set_gameover_fields(client_id, end_state, True, data['gameover'])
+        set_gameover_fields(client_id, end_state, True, True, data['gameover'])
         return None
     
 
@@ -166,9 +166,9 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
             if data.get('finished', False):
                 end_state = get_current_state(data['GameID'])
                 if data.get('Capitulate', False):
-                    set_gameover_fields(partner_id, end_state, False, data['gameover'])
+                    set_gameover_fields(partner_id, end_state, True, False, data['gameover'])
                 else:
-                    set_gameover_fields(partner_id, end_state, True, data['gameover'])
+                    set_gameover_fields(partner_id, end_state, False, True, data['gameover'])
                 response = {"message": data}
                 await manager.send_personal_message(response, client_id)
 
@@ -180,6 +180,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 #Route for leaderboard
 @app.get("/leaderboard", response_model = LeaderboardWithRank)
 def get_leaderboard_api():
+    '''
+    Get the best players from the database (divided against human or against computer),
+    add rank and return leaderboard
+    '''
     leaders_human = get_leaderboard(againstComputer=False)
     leaders_human_rank = add_rank(leaders_human)
     leaders_computer = get_leaderboard(againstComputer=True)
@@ -189,5 +193,8 @@ def get_leaderboard_api():
 #Route for statistics
 @app.get("/stats", response_model = Stat)
 def get_stat_api():
+    '''
+    Get game statistics from database
+    '''
     stat = get_stat()
     return stat

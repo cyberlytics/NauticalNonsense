@@ -16,14 +16,13 @@ class Statistics extends Phaser.Scene {
 	editorCreate() {
 
 		//reference to this statistics scene
-		const statistics = this;
+		const self = this;
 
 		//define important variables
 		const mainUrl = this.game.sharedData.backend_url;
 		const darkgrey = 0x3c3845;
 		const white = 0xffffff;
 		const boardsize = 100;
-		//1280 x 720
 
 		//text styles
 		const normaltext = {
@@ -76,9 +75,9 @@ class Statistics extends Phaser.Scene {
 		})
 
 		returnButton.on('pointerdown', function (event) {
-			statistics.sound.add("click").play();
+			self.sound.add("click").play();
 			this.clearTint();
-			statistics.scene.start('Options');
+			self.scene.start('Options');
 		})
 
 		//homeButton
@@ -95,9 +94,9 @@ class Statistics extends Phaser.Scene {
 		})
 
 		homeButton.on('pointerdown', function (event) {
-			statistics.sound.add("click").play();
+			self.sound.add("click").play();
 			this.clearTint();
-			statistics.scene.start('Start');
+			self.scene.start('Start');
 		})
 
 		//loading
@@ -140,7 +139,6 @@ class Statistics extends Phaser.Scene {
 					radius: 20,
 					backgroundColor: darkgrey,
 					padding: 20,
-					//gapX: 11,
 					gapY: 15
 				}
 				const games = this.add.graphics();
@@ -292,12 +290,17 @@ class Statistics extends Phaser.Scene {
 				other.fillRoundedRect(otherStyle.x, otherStyle.y, otherStyle.width, otherStyle.height, otherStyle.radius);
 
 				const txtCapitulations = this.add.text(otherStyle.x + otherStyle.padding, otherStyle.y + otherStyle.padding, "Total Capitulations: " + stats.capitulations, otherStyle.textStyle);
-				const txtWinsPc = this.add.text(otherStyle.x + otherStyle.padding, otherStyle.y + otherStyle.padding + txtCapitulations.height + otherStyle.gapY, "Wins against PC: " + stats.winCountComputer + " or " + (100 * stats.winCountComputer / stats.gamesCountComputer).toFixed(1) + "%", otherStyle.textStyle);
-
+				if (stats.gamesCountComputer != 0) {
+					const txtWinsPc = this.add.text(otherStyle.x + otherStyle.padding, otherStyle.y + otherStyle.padding + txtCapitulations.height + otherStyle.gapY, "Wins against PC: " + stats.winCountComputer + " or " + (100 * stats.winCountComputer / stats.gamesCountComputer).toFixed(1) + "%", otherStyle.textStyle);
+				}
+				else {
+					const txtWinsPc = this.add.text(otherStyle.x + otherStyle.padding, otherStyle.y + otherStyle.padding + txtCapitulations.height + otherStyle.gapY, "Wins against PC: " + stats.winCountComputer + " or 0.0%", otherStyle.textStyle);
+				}
 			})
 			.catch((err) => {
 				console.error(err);
 
+				//in case of error hide other elements and display error message
 				background.setDepth(10);
 				returnButton.setDepth(10);
 				homeButton.setDepth(10);
@@ -347,7 +350,6 @@ class Statistics extends Phaser.Scene {
 		this.load.image("cruiserStatsRed", "assets/ships/cruiser/cruiser_stats_red.png");
 		this.load.image("destroyerStatsRed", "assets/ships/destroyer/destroyer_stats_red.png");
 		this.load.image("submarineStatsRed", "assets/ships/submarine/submarine_stats_red.png");
-		this.load.image("logoWhite", "assets/battleship_logo_white.png");
 	}
 
 	makeBoard(boardStyle, title, data, tooltipStyle) {
@@ -367,13 +369,15 @@ class Statistics extends Phaser.Scene {
 
 
 		for (let i = 1; i <= boardStyle.boardsize; i++) {
+			//white board as background
 			boardWhite[i - 1] = this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellBackground).setOrigin(0, 0);
 			boardWhite[i - 1].setInteractive();
+			//board with color set accordingly to data values
 			board[i - 1] = this.add.rectangle(cellX, cellY, boardStyle.cellsize - 1, boardStyle.cellsize - 1, boardStyle.cellColor).setOrigin(0, 0).setAlpha(data[i - 1] / dataMax);
 
+			//tooltips for displaying absolut data values
 			const tooltip = this.add.graphics();
 			tooltip.fillStyle(tooltipStyle.backgroundColor, 1);
-			//const tooltipWidth = tooltipStyle.width;
 			const digits = data[i - 1].toString().length;
 			const tooltipWidth = digits * 9 + 15;
 			tooltip.fillRoundedRect(cellX + 0.6 * boardStyle.cellsize, cellY + 0.6 * boardStyle.cellsize, tooltipWidth, tooltipStyle.height, 5);
@@ -412,21 +416,25 @@ class Statistics extends Phaser.Scene {
 		const text = this.add.text(shipboxX + shipboxStyle.width / 2, shipboxY + shipboxStyle.paddingTop, name, shipboxStyle.textStyle);
 		text.setOrigin(0.5, 0);
 
+		//normal (grey) ship image
 		const image = this.add.image(shipboxX + shipboxStyle.width / 2, text.y + text.height + 0.5 * (shipboxY + shipboxStyle.height - text.y - text.height), img);
 		image.setOrigin(0.5, 0.5);
 		image.setScale(0.22);
 		image.setInteractive();
 
+		//mask for displaying red part of ship accordingly to percentage hit
 		const rect = this.add.graphics();
 		rect.fillStyle(shipboxStyle.backgroundColor, 0);
 		rect.fillRect(image.x - 0.5 * image.displayWidth, image.y - 0.5 * image.displayHeight, hits * image.displayWidth, image.displayHeight);
 		const mask = rect.createGeometryMask();
 
+		//red ship image with mask
 		const imageRed = this.add.image(shipboxX + shipboxStyle.width / 2, text.y + text.height + 0.5 * (shipboxY + shipboxStyle.height - text.y - text.height), imgRed);
 		imageRed.setOrigin(0.5, 0.5);
 		imageRed.setScale(0.22);
 		imageRed.setMask(mask);
 
+		//tooltips for displaying percentage of ships hit
 		const tooltip = this.add.graphics();
 		tooltip.fillStyle(tooltipStyle.backgroundColor, 1);
 		tooltip.fillRoundedRect(image.x + 35, image.y, tooltipStyle.width, tooltipStyle.height, 5);

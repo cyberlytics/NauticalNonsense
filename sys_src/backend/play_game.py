@@ -1,4 +1,4 @@
-from database.database import get_map, get_partner
+from database.database import get_map, get_partner, get_rank
 from database.models import State
 
 from datetime import datetime
@@ -72,6 +72,8 @@ def new_game_init(
         moves1=0,
         ships2=player_2_ships,
         moves2=0,
+        firstmove1=-1,
+        firstmove2=-1,
         timestamp=datetime.utcnow()
 
     )
@@ -236,9 +238,20 @@ def make_move(
     return lose, hit, game_field, ships
 
 
-def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: dict) -> None:
+def set_gameover_fields(partner_id: str, end_state: State, capitulation: bool, win: bool, gameover: dict) -> None:
+    """
+    Set the gameover fields needed to display correct gameover scene in frontend
+
+    Args:
+        partner_id (str): The id of the playing partner
+        end_state (State): The end state of the game
+        capitulation (bool): Whether game ended by capitulation or not
+        win (bool): Whether game is won by player with partner_id
+        gameover (dict): gameover fields to be updated
+    """
+    gameover['capitulation'] = capitulation
     gameover['won'] = win
-    gameover['totalMoves'] = end_state.step
+    gameover['totalMoves'] = end_state.moves1 + end_state.moves2
     if partner_id == end_state.player1:
         gameover['shots'] = end_state.moves2
         gameover['hits'] = count_hits(end_state.ships1)
@@ -246,9 +259,25 @@ def set_gameover_fields(partner_id: str, end_state: State, win: bool, gameover: 
         gameover['shots'] = end_state.moves1
         gameover['hits'] = count_hits(end_state.ships2)
     gameover['misses'] = gameover['shots'] - gameover['hits']
-    gameover['rank'] = 0
+    if capitulation:
+        gameover['rank'] = 0
+    else:
+        if win:
+            againstComputer = True if end_state.gameMode == "pc" else False
+            gameover['rank'] = get_rank(gameover['shots'], againstComputer)
+        else:
+            gameover['rank'] = 0
 
 def count_hits(ships: list[list[int]]) -> int:
+    """
+    Count fields of ships which are hit
+
+    Args:
+        ships (list[list[int]]): The ships whose hits are being counted
+    
+    Returns:
+        int: number of hits
+    """
     hits = 0
     for ship in ships:
         for pos in ship:

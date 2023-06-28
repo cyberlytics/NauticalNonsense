@@ -19,14 +19,20 @@ class Gameboard extends Phaser.Scene {
 		console.log(col)
 		console.log(gridSize)
 		var shootPosition = row*gridSize+col;
-		return this.sendFireMessage(sharedData,shootPosition);
+		return this.sendMessage(sharedData, "fire", shootPosition);
 	}
 
-	sendFireMessage(sharedData, message) {
+	sendMessage(sharedData, type, message) {
 		var sent = 0;
 		while (sent < 5) {
 			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
-				var jsonMessage = JSON.stringify({"Fire" : message,"GameID": sharedData.game_id});
+				var jsonMessage = "";
+				if (type == "fire") {
+					jsonMessage = JSON.stringify({ "Fire": message, "GameID": sharedData.game_id });
+				}
+				else if (type == "capitulate") {
+					jsonMessage = JSON.stringify({ "Capitulate": message, "GameID": sharedData.game_id });
+				}
 				sharedData.socket.send(jsonMessage);
 				console.log(jsonMessage);
 				sent = 5;
@@ -55,39 +61,6 @@ class Gameboard extends Phaser.Scene {
 		}
 	}
 
-	sendCapitulateMessage(sharedData) {
-		var sent = 0;
-		while (sent < 5) {
-			if (sharedData.socket && sharedData.socket.readyState === WebSocket.OPEN) {
-				var jsonMessage = JSON.stringify({ "Capitulate": true, "GameID": sharedData.game_id });
-				sharedData.socket.send(jsonMessage);
-				console.log(jsonMessage);
-				sent = 5;
-				return true;
-			}
-			else {
-				console.error("WebSocket connection is not open");
-				sharedData.socket = new WebSocket(sharedData.websocket_url);
-				// Handle WebSocket events
-				sharedData.socket.onopen = function () {
-					console.log("WebSocket connection established");
-					// Perform any necessary actions when the connection is successfully established
-				};
-
-				sharedData.socket.onerror = function (error) {
-					console.error("WebSocket error:", error);
-					// Handle any errors that occur during the WebSocket connection
-				};
-
-				sharedData.socket.onclose = function () {
-					console.log("WebSocket connection closed");
-					// Perform any necessary actions when the connection is closed
-				};
-				sent++;
-			}
-			return false;
-		}
-	}
 
 	/** @returns {void} */
 	editorCreate() {
@@ -307,7 +280,7 @@ class Gameboard extends Phaser.Scene {
 			self.playClick();
 			this.clearTint();
 			//evtl Popup
-			self.sendCapitulateMessage(sharedData);
+			self.sendMessage(sharedData, "capitulate", true);
         });
 		
 		// capitulateButtonText
@@ -398,13 +371,6 @@ class Gameboard extends Phaser.Scene {
 			//this.add.existing(sharedData.sprites[index]);
 			this.highlightCells(sharedData.occupiedCells, this.playerGrid)
 			}
-			
-			
-			// sharedData.socket.onmessage = function(event) {
-			// var message = JSON.parse(event.data);
-			// console.log("Message received:", message)
-			//};
-
 	}
 
 	GetDummyGameboard() {
