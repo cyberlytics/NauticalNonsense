@@ -149,6 +149,10 @@ In allen Szenen ist die Methode \textit{onmessage} implementiert, die es ermögl
 
 Wenn sich ein zweiter Client auf der Webseite verbindet und die Option \glqq Spiele gegen Random\grqq{} auswählt, sendet das Backend über die Websocket-Verbindung ein \glqq ready\grqq{}-Flag an beide Clients. In Folge dessen wird die Variable \textit{sharedData.ready} auf den Wert \glqq true\grqq{} gesetzt und es erfolgt ein nahtloser Wechsel zur Szene \glqq Shipplacement\grqq{}.
 
+In dieser Szene wird die Platzierung der Schiffe (Positionen) und die Game-ID an das Backend über die Websocket-Verbindung übermittelt. Für das Senden wird zuerst überprüft, ob die Websocket-Verbindung steht und anschließend die Methode \textit{JSON.stringify} verwendet, um ein JSON-Objekt in einen JSON-String zu konvertieren. Dieser wird anschließend mittels \textit{sharedData.socket.send(JSON-String)} an das Backend gesendet.
+
+ Die grundlegende Vorgehensweise beim Empfangen und Senden von Nachrichten via Websockets ändert sich in den restlichen Szenen nicht. Es wurde lediglich die Verarbeitung der Daten auf den jeweiligen Use-Case angepasst. In Abbildung \ref{fig:websocket_comm} ist ein Schaubild der Websocket Kommunikation ersichtlich.
+
 
 
 
