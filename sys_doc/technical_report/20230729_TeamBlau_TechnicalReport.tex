@@ -88,8 +88,9 @@ Zusätzlich werden die Schiffe der Spieler als Liste von Listen bereitgestellt, 
     \end{center}
 \end{table}
 
-\textbf{Herausforderungen im Frontend} 
-ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschreibt\\
+\textbf{Synchronisation im Frontend}
+Wenn zwei menschliche Spieler gegeneinander spielen, ist es wichtig, den aktuellen Spielstand zwischen beiden Spielern synchron zu halten. Sobald ein Spieler eine Aktion ausführt und diese an das Backend sendet, muss dieses den zweiten Spieler über die Änderung informieren. Deshalb wird für die Kommunikation im Spiel zwischen Front- und Backend eine Websocket Verbindung genutzt.
+
 \textbf{Herausforderungen in der Datenbank} 
 ein Text welcher die Vorgehensweise, Herausforderungen und Lösungswege beschreibt\\
 \textbf{Provisionierung der Infrastruktur} 
