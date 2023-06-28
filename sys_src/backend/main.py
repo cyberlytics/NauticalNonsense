@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
 from database.database import get_current_state, get_leaderboard, insert_winner_to_leaderboard, add_rank, add_placement, get_stat, update_stats, get_ships, get_board, update_game_with_playermove, update_ship_list, update_game_capitulation
 from database.models import LeaderboardWithRank, Stat
-import datetime
+
 
 app = FastAPI()
 
@@ -58,6 +58,9 @@ def play(user_input: dict):
 
 @app.get("/mongo_entries")
 def mongo_entries():
+    '''
+    Dev-Tool: get all entry from database
+    '''
     games = get_all_games()
     games_list = []
     for i, x in enumerate(games):
@@ -65,11 +68,10 @@ def mongo_entries():
     return str(games_list), i
 
 
-# Diese Route wird vom Frontend aufgerufen, wenn die Verbindung bei den Websockets abbricht (ohne sieger)
 # reconnect to most recent game played with the player_id
 @app.get("/continue")
 def continue_game(player_id: int):
-    pass
+    raise HTTPException(status_code=501, detail=f"The 'continue_game' function for player_id: {player_id} is yet to be implemented")
 
 
 async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, client_id: str):
@@ -82,11 +84,9 @@ async def handle_websocket_disconnect(manager: ConnectionManager, data: dict, cl
         await manager.disconnect(client_id)
         
 
-async def handle_websocket_data(manager: ConnectionManager, data: dict, client_id: str, partner_id: str):
-    # get_uuid_from_websocket geht noch nicht
-    uuid_client = manager.get_uuid_from_websocket(manager)
+async def handle_websocket_data(data: dict, client_id: str, partner_id: str):
+
     # ship placement
-    # todo wenn beide ihr Schiffe versendet haben dann noch eine flag an beide senden
     if data.get('Shiplist', False) and len(data['Shiplist']) == 7:
         # validate ship placement
         game_id = data['GameID']
@@ -155,7 +155,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
                 partner_id = await get_partner_id(client_id)
 
             await handle_websocket_disconnect(manager, data, client_id)
-            await handle_websocket_data(manager, data, client_id, partner_id)
+            await handle_websocket_data(data, client_id, partner_id)
 
             response = {"message": data}
             await manager.send_personal_message(response, partner_id)
