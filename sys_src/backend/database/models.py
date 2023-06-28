@@ -29,9 +29,9 @@ class Winner(BaseModel):
     capitulation: bool = Field(..., description = "True if player won by capitulation")
 
     @validator('moves')
-    def moves_greater_zero(cls, moves):
-        if moves <= 0:
-            raise ValueError('moves must be greater than 0')
+    def moves_positive(cls, moves):
+        if moves < 0:
+            raise ValueError('moves must be positive')
         return moves
 
 class WinnerWithRank(BaseModel):
@@ -39,11 +39,17 @@ class WinnerWithRank(BaseModel):
     moves: int = Field(..., description = "Moves needed to win game")
     rank: int = Field(..., description = "Rank of player")
 
-    @validator('moves', 'rank')
-    def moves_rank_greater_zero(cls, value):
-        if value <= 0:
-            raise ValueError('moves and rank must be greater than 0')
-        return value
+    @validator('moves')
+    def moves_positive(cls, moves):
+        if moves < 0:
+            raise ValueError('moves must be positive')
+        return moves
+
+    @validator('rank')
+    def rank_greater_zero(cls, rank):
+        if rank <= 0:
+            raise ValueError('rank must be greater than 0')
+        return rank
 
 class LeaderboardWithRank(BaseModel):
     leadersHuman: list[WinnerWithRank] = Field(..., description = "Best players against other players")
@@ -59,7 +65,7 @@ class Stat(BaseModel):
     totalMovesComputer: int = Field(..., description = "Total number of moves against computer")
     averageMoves: float = Field(..., description = "Average number of moves until end of game")
     averageMovesHuman: float = Field(..., description = "Average number of moves until end of game against player")
-    averageMovesComputer: float = Field(..., description = "Average number of moves until end of game against computer") #vllt /2 ?
+    averageMovesComputer: float = Field(..., description = "Average number of moves until end of game against computer")
     capitulations: int = Field(..., description = "Total number of capitulations")
     shipPositions: list[int] = Field(..., description = "Total positions of ships")
     moves: list[int] = Field(..., description = "Total moves")

@@ -180,6 +180,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 #Route for leaderboard
 @app.get("/leaderboard", response_model = LeaderboardWithRank)
 def get_leaderboard_api():
+    '''
+    Get the best players from the database (divided against human or against computer),
+    add rank and return leaderboard
+    '''
     leaders_human = get_leaderboard(againstComputer=False)
     leaders_human_rank = add_rank(leaders_human)
     leaders_computer = get_leaderboard(againstComputer=True)
@@ -189,5 +193,8 @@ def get_leaderboard_api():
 #Route for statistics
 @app.get("/stats", response_model = Stat)
 def get_stat_api():
+    '''
+    Get game statistics from database
+    '''
     stat = get_stat()
     return stat

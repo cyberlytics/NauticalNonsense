@@ -21,6 +21,7 @@ class Gameover extends Phaser.Scene
 		var sharedData = this.game.sharedData;
 		var gameover = sharedData.gameover;
 
+		//reference to this gameover scene
 		const self = this;
 		
 		//sounds
@@ -34,11 +35,13 @@ class Gameover extends Phaser.Scene
 		
 		// gamoverBackground
 		if ((gameover.won) && (gameover.capitulation != true)) {
+			//with field for leaderboard position
 			const gamoverBackground = this.add.image(1280 / 2, 720 / 2, "goBackground");
 			gamoverBackground.scaleX = 1;
 			gamoverBackground.scaleY = 1;
 		}
 		else {
+			//without field for leaderboard position
 			const gamoverBackground = this.add.image(1280 / 2, 720 / 2, "goBackgroundShort");
 			gamoverBackground.scaleX = 1;
 			gamoverBackground.scaleY = 1;
@@ -170,6 +173,7 @@ class Gameover extends Phaser.Scene
 	}
 
 	deleteGameover(gameover) {
+		//reset gameover data
 		gameover.capitulation = false;
 		gameover.won = false;
 		gameover.shots = 0;

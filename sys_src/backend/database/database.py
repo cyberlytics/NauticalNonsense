@@ -333,13 +333,13 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     for ship in ships_winner:
         if any(pos > 100 for pos in ship):
             stat.totalShipsHit[len(ship)-1] += 1
-    stat.averageShipsHit = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShipsHit, shipsCount)]#oder gamesCountHuman
+    stat.averageShipsHit = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShipsHit, shipsCount)]
     
     for ship in ships_winner:
         for pos in ship:
             if pos > 100:
                 stat.totalShiphits[len(ship)-1] += 1                
-    stat.averageShiphits = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShiphits, shipsTiles)]#oder gamesCountHuman
+    stat.averageShiphits = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShiphits, shipsTiles)]
     
     stat.timestamp = datetime.datetime.utcnow()    
     

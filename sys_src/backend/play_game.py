@@ -247,6 +247,16 @@ def make_move(
 
 
 def set_gameover_fields(partner_id: str, end_state: State, capitulation: bool, win: bool, gameover: dict) -> None:
+    """
+    Set the gameover fields needed to display correct gameover scene in frontend
+
+    Args:
+        partner_id (str): The id of the playing partner
+        end_state (State): The end state of the game
+        capitulation (bool): Whether game ended by capitulation or not
+        win (bool): Whether game is won by player with partner_id
+        gameover (dict): gameover fields to be updated
+    """
     gameover['capitulation'] = capitulation
     gameover['won'] = win
     gameover['totalMoves'] = end_state.moves1 + end_state.moves2
@@ -267,6 +277,15 @@ def set_gameover_fields(partner_id: str, end_state: State, capitulation: bool, w
             gameover['rank'] = 0
 
 def count_hits(ships: list[list[int]]) -> int:
+    """
+    Count fields of ships which are hit
+
+    Args:
+        ships (list[list[int]]): The ships whose hits are being counted
+    
+    Returns:
+        int: number of hits
+    """
     hits = 0
     for ship in ships:
         for pos in ship:
