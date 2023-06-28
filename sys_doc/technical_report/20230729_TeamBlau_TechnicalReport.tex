@@ -155,6 +155,26 @@ Die \texttt{/}-Route gibt eine \ac{uuid} als String zurück, welche das Frontend
 
 \subsection{Frontend}\label{subsec:frontend}
 
+Zu Beginn des Spieles befindet sich der Spieler auf der Startseite, die es ihm ermöglicht einen Spielernamen und die Art des Spiels auszuwählen. Die Wahlmöglichkeiten sind dabei: 
+- Random: Spiel gegen einen zufälligen Gegner, 
+- Friend: Spiel gegen einen Freund unter Eingabe des entsprechenden Namens und 
+- AI: Spiel gegen einen Computergegner. 
+Außerdem kann der Nutzer auf die Optionen-Seite wechseln. Diese dient als "Hub" für weitere Szenen. Über die Optionen sind das Leaderboard, die Statistiken, die Spielanleitung und die Credits zu erreichen. 
+
+%TODO Leaderboard, Statistics, Spieleanleitung
+
+Sind alle nötigen Eingaben getroffen kann mit der Partie begonnen werden.
+
+Die nächste Szene erlaubt es dem Spieler die Schiffe auf dem Spielfeld zu platzieren. Dazu kann er jedes Schiff einzeln durch anklicken, oder alle auf einmal über den Random-Button platzieren. Die einzelnen Fahrzeuge können nach dem Anwählen durch einen Klick rotiert und verschoben werden. Der Reset-Knopf setzt die Schiffe an ihre ursprüngliche Position zurück. Sind alle Schiffe platziert, können die Positionen mit Confirm bestätigt werden.
+
+In der eigentlichen Spielszene wird das Spielfeld mit den zuvor platzierten Schiffen und eine Wahlmöglichkeit zum Platzieren von Schüssen auf die gegnerische Flotte angezeigt. Die beiden Spieler sind dabei abwechselnd am Zug. Die Treffer und Fehlschüsse werden entsprechend auf dem eigenen Spielfeld und dem Feld des Gegners angezeigt. Über den Capitulate-Button kann die Partie durch Aufgabe beendet werden. 
+
+Ist ein Spieldurchlauf beendet, entweder durch Kapitulation eines Spielers, oder durch Versenken aller Schiffe eines Teilnehmers, wird in eine entsprechende Gewinner- oder Verlierer Szene gewechselt.
+
+%TODO Endszene
+
+
+
 \subsubsection{Kommunikation mit Backend}\label{subsec:comwithbackend}
 
 Beim Aufrufen der Webseite sendet der Client einen HTTP-GET-Request an \glqq localhost:8000\grqq{} und erhält ein JSON-Objekt mit der Client-ID. Diese ID wird der globalen Variable \textit{sharedData.clientID} zugewiesen.
@@ -212,6 +232,11 @@ Für den Zugriff auf die Mongo-Datenbank wird das Framework PyMongo genutzt.
 
 
 \subsection{Frontend}\label{subsec:frontend-dev-tools}
+
+Um das Frontend zu realisieren wird Phaser3 verwendet. Dabei handelt es sich um ein Framework zur Realisierung von Browser-Spielen auf Desktop und mobilen Geräten. Phaser bietet dazu mehrere Funktionen, vom Erzeugen und Importieren verschiedener Canvas-Elemente und Assets, bis hin zu einfacher Physiksimulation und Szenenverwaltung.
+
+Als Entwicklungsumgebung wird der Phaser Editor 2D eingesetzt. Dieser erlaubt das Erzeugen einer Projektgrundstruktur, die im Verlauf der Arbeit immer weiter angepasst und ausgebaut wird.  
+
 
 
 
