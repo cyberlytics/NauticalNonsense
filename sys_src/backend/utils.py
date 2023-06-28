@@ -12,6 +12,8 @@ def is_valid_uuid(val: str) -> bool:
 
 
 def is_incremental(ship: list) -> bool:
+    if not ship:
+        return False
 
     start = ship[0]
     end = ship[-1] + 1

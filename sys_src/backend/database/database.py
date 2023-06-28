@@ -101,7 +101,6 @@ def add_placement(client_id: str, list_of_ships: list, board: list, game_id: str
         "game_id": game_id
     })
     if map_data:
-        # Wenn next_player noch nicht gesetzt ist, zufällig auswählen, welcher Spieler das Spiel beginnt.
         first_player = map_data["next_player"]
         if not first_player:
             first_player = random.choice([map_data["player1"], map_data["player2"]])

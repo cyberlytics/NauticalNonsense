@@ -1,6 +1,6 @@
 import pytest
 
-from play_game import _check_sink_ship, make_move, _check_win, _create_game_field, new_game_init
+from play_game import _check_sink_ship, make_move, _check_win, _create_game_field, new_game_init, count_hits
 
 from database.models import State
 
@@ -166,6 +166,11 @@ def test_create_game_field_invalid():
     with pytest.raises(ValueError, match="No ships given"):
         _create_game_field(ships, size=4, num_ships=0, expected_ships={})
 
+    ships = [[0, 1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14], [15, 16], [17], [19], [20]]
+
+    with pytest.raises(ValueError, match="Wrong amount of ships given"):
+        _create_game_field(ships, size=4, num_ships=0, expected_ships={})
+
     ships = [[0, 1], [0, 1]]
 
     with pytest.raises(ValueError, match="Ship coordinates overlap"):
@@ -186,6 +191,12 @@ def test_create_game_field_invalid():
     with pytest.raises(ValueError, match="Ship coordinates are not one apart"):
         _create_game_field(ships, size=4, num_ships=1, expected_ships={2: 1})
 
+    ships = [[0, 1, 2, 3, 4, 5], [6, 7, 8, 9], [10, 11, 12], [13, 14], [15, 16], [17], [18]]
+    expected_ships = {5: 1, 4: 1, 3: 1, 2: 2, 1: 2}
+
+    with pytest.raises(ValueError, match="Wrong amount of ships given"):
+        _create_game_field(ships, size=100, num_ships=7, expected_ships=expected_ships)
+
 
 def test_new_game_init():
 
@@ -204,3 +215,24 @@ def test_new_game_init():
     assert isinstance(game_state, State)
     assert game_state.board1 == [1, 1, 0, 0]
     assert game_state.board2 == [0, 0, 1, 1]
+
+
+def test_count_hits_no_hits():
+    ships = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    assert count_hits(ships) == 0
+
+def test_count_hits_some_hits():
+    ships = [[1, 2, 3], [100, 101, 102], [200, 201, 202]]
+    assert count_hits(ships) == 6
+
+def test_count_hits_all_hits():
+    ships = [[100, 101, 102], [200, 201, 202], [300, 301, 302]]
+    assert count_hits(ships) == 9
+
+def test_count_hits_empty_ships():
+    ships = []
+    assert count_hits(ships) == 0
+
+def test_count_hits_empty_positions():
+    ships = [[], [], []]
+    assert count_hits(ships) == 0

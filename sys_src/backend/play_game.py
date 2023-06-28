@@ -78,13 +78,6 @@ def new_game_init(
 
     return game_state
 
-def validate_move(client_json):
-    # check if the game_field key in client_json only changed in one position.
-    # check if all fields are the same (game_id, and more), only step and one position in game_field should be off.
-    # step size has to be one more then the previous, nothing else
-    # only one move per player, keep care that one player dont send more times a move
-    pass
-
 
 # hier von private auf public ändern
 def _create_game_field(

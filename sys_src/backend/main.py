@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database.examples import get_all_games
 from database.database import get_current_state, get_leaderboard, insert_winner_to_leaderboard, add_rank, add_placement, get_stat, update_stats, get_ships, get_board, update_game_with_playermove, update_ship_list, update_game_capitulation
 from database.models import LeaderboardWithRank, Stat
-import datetime
+
 
 app = FastAPI()
 
