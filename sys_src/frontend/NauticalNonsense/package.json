@@ -36,6 +36,7 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.7",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "cypress": "^12.14.0",
     "phasereditor2d-launcher": "^3.32.0",
     "ws": "^8.13.0",
@@ -43,6 +44,8 @@
     "cypress-real-events": "^1.8.1",
     "express": "^4.18.2"
 =======
+=======
+>>>>>>> 6f0bf0fc0f62ac82c3e08aad70524b23d340aa0b
     "cypress": "^12.15.0",
     "phasereditor2d-launcher": "^3.32.0"
 >>>>>>> aaca4e7 (Added first test for Leaderboard)
