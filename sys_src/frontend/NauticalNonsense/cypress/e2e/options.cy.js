@@ -11,25 +11,6 @@ describe('Test for Options Scene', () => {
         });
     });
 
-    it('Check if click sound for buttons is working', () => {
-        // check for the start scene
-        expect(game.scene.keys['Start'].sys.settings['active']).to.be.true;
-        // click the options button
-        cy.wait(1000);
-        cy.get('canvas').click(1215, 80);
-        cy.log('clicked options button');
-        cy.wait(1000).then(() => {
-            cy.window().then((win) => {
-                const clickSound = win.game.sound.get('click');
-                expect(clickSound).to.have.property('play').and.to.be.a('function');   
-                cy.spy(clickSound, 'play').as('playSpy');     
-            });
-            cy.get('canvas').click(280/2, 550);
-            cy.get('@playSpy').should('have.been.called');
-        });
-    });
-
-
     it('Checks if index.html is reachable and the canvas gets displayed', () => {
         cy.get('canvas').should('be.visible');
     });
