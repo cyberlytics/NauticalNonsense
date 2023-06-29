@@ -35,12 +35,17 @@
   "homepage": "https://github.com/PhaserEditor2D/starter-template-basic-javascript#readme",
   "devDependencies": {
     "@cypress/code-coverage": "^3.10.7",
+<<<<<<< HEAD
     "cypress": "^12.14.0",
     "phasereditor2d-launcher": "^3.32.0",
     "ws": "^8.13.0",
     "@badeball/cypress-cucumber-preprocessor": "^18.0.1",
     "cypress-real-events": "^1.8.1",
     "express": "^4.18.2"
+=======
+    "cypress": "^12.15.0",
+    "phasereditor2d-launcher": "^3.32.0"
+>>>>>>> aaca4e7 (Added first test for Leaderboard)
   },
   "dependencies": {
   }
