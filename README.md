@@ -10,14 +10,15 @@ Das Monorepo gliedert sich in folgende Unterordner
 - `backend` - Backend der Anwendung mit FastAPI
 - `frontend` - Frontend der Anwendung mit Phaser
 - `deployment` - Deployment der Anwendung mit Kubernetes
-- `infrastructure` - Deployment der Anwendung mit Kubernetes
-- `templates` - Deployment der Anwendung mit Kubernetes
+- `infrastructure` - Deployment der Infrastruktur mit Terraform
+- `templates` - CI/CD-Templates für GitLab
 
 ## Dokumentation
 Im Ordner `sys_doc` befinden sich drei Ordner, welche Informationen zum Projekt beinhalten:
 - `concept_paper`- Konzeptpapiert zeigt die zugrundeliegende Motivation und Idee des Projekts auf
 - `technical_report`- Der Technical Report beschreibt die Architektur und Details der Umsetzung
 - `Diagramme`- Diagramme, welche den Programm- und Spielablauf beschreiben
+- `mockup`- Enthält den grafischen Entwurf
 
 ## Installation
 ### Voraussetzungen
