@@ -388,3 +388,8 @@ def isOccupied(name: str) -> bool:
         return False
     else:
         return True
+    
+#Dev-Tool: Get all entries in collection
+def get_all_games():
+    all_games = games.find()
+    return all_games
