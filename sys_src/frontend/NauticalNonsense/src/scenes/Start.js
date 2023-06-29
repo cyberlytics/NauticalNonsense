@@ -336,7 +336,7 @@ class Start extends Phaser.Scene {
 							sharedData.ready = true;
 						}
 
-						if (message && message.includes("game_id")) {
+						if (message && ("GameID" in message || "game_id" in message)) {
 							var splitMessage = message.split(":");
 							var gameID = splitMessage[1].trim();
 							console.log("Game ID:", gameID);

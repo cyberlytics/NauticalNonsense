@@ -24,7 +24,7 @@ describe('Testing switch to Gameboard', () => {
 
         cy.viewport(1280, 720)
         // cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/public/index.html');
-        cy.visit('localhost:3000/');
+        cy.visit('localhost:3000/'); // when using live server
         cy.wait(10000);
         cy.window().then((win) => {
             game = win.game;

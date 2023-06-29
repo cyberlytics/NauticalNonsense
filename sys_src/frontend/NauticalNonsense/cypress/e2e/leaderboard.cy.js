@@ -3,8 +3,8 @@ describe('Test for Dashboard', () => {
   beforeEach(() => {
     cy.viewport(1280, 720)
     // cy.visit('http://localhost:5500/sys_src/frontend/NauticalNonsense/public/index.html');
-    // cy.visit('localhost:3000/'); // when using live server
-    cy.visit('localhost:8080/'); // when using docker 
+    cy.visit('localhost:3000/'); // when using live server
+    //cy.visit('localhost:8080/'); // when using docker 
     cy.wait(10000);
     cy.window().then((win) => {
       game = win.game;
