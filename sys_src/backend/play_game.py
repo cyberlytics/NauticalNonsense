@@ -1,19 +1,18 @@
-from database.database import get_map, get_partner, get_ships, get_board, update_game_with_playermove, update_ship_list
+from database.database import get_map, get_partner, get_rank
 from database.models import State
 
 from datetime import datetime
 
-#from utils import is_incremental
+from utils import is_incremental
 
-import uuid
 
-def prepare_room(client_id: str, game_mode: str, friend: str = None) -> dict:
+def prepare_room(client_id: str, playername: str, game_mode: str, friend: str = None) -> dict:
     '''
     Check in Database if a map exists, which the client can use.
     If not, construct a new map will be constructed.
     name is for name of friend
     '''
-    ready = get_map(client_id, game_mode, friend)
+    ready = get_map(client_id, playername, game_mode, friend)
     return ready
 
 async def get_partner_id(client_id: str):
@@ -58,27 +57,28 @@ def new_game_init(
     game_state = State(
         game_id=game_id,
         player1=player_1_id,
+        player1Name="",
         player2=player_2_id,
+        player2Name="",
         next_player=player_1_id,
         gameMode=game_mode,
+        gameStatus="place",
         isFinished=False,
         winner="",
         step=0,
         board1=game_field_player_1,
         board2=game_field_player_2,
         ships1=player_1_ships,
+        moves1=0,
         ships2=player_2_ships,
+        moves2=0,
+        firstmove1=-1,
+        firstmove2=-1,
         timestamp=datetime.utcnow()
+
     )
 
     return game_state
-
-def validate_move(client_json):
-    # check if the game_field key in client_json only changed in one position.
-    # check if all fields are the same (game_id, and more), only step and one position in game_field should be off.
-    # step size has to be one more then the previous, nothing else
-    # only one move per player, keep care that one player dont send more times a move
-    pass
 
 
 # hier von private auf public ändern
@@ -129,10 +129,9 @@ def _create_game_field(
 
         if not all([isinstance(coord, int) for coord in ship]):
             raise ValueError("Ship coordinates are not integers")
-        
-        # TODO first correct this function bevore use
-        #if not is_incremental(ship):
-            #raise ValueError("Ship coordinates are not one apart")
+
+        if not is_incremental(ship):
+            raise ValueError("Ship coordinates are not one apart")
 
         for coord in ship:
             if coord < len(game_field) and coord >= 0:
@@ -169,7 +168,7 @@ def _check_sink_ship(ship: list[int], game_field: list[int]) -> list[int]:
     return game_field
 
 
-def _check_win(partner_id, ships: list[list[int]]) -> str:
+def _check_win(ships: list[list[int]]) -> str:
     """
     Check if the game has been won.
 
@@ -180,15 +179,15 @@ def _check_win(partner_id, ships: list[list[int]]) -> str:
         str: return the id of the partner
     """
     if all([all([coord >= 100 for coord in ship]) for ship in ships]):
-        return partner_id
+        return True
     else:
         return False
 
 
 def make_move(
     move: int, 
-    partner_id: str,
-    game_id: str
+    game_field: list[int],
+    ships: list[list[int]],
     ) -> tuple[bool, bool, list[int]]:
     """
     Make a move on the game field.
@@ -206,9 +205,6 @@ def make_move(
         ValueError: If the move has been played before
         AssertionError: If the move is not an integer or out of range
     """
-    ships = get_ships(partner_id, game_id)
-    game_field = get_board(partner_id, game_id)
-
     if not isinstance(move, int):
         raise AssertionError("Move is not an integer")
     
@@ -226,25 +222,65 @@ def make_move(
         hit = True
 
         # We only have to check for sinking if a ship was hit
-        for ship in ships[0]:
+        for ship in ships:
             if move in ship:
                 ship[ship.index(move)] += 100     
-                # save the shiplist to the database
-                update_ship_list(partner_id, game_id, ships[0])
                 game_field = _check_sink_ship(ship, game_field)
 
         # We only have to check for winning if a ship was hit
         print("Die Shipliste vor check win ist:")
         print(str(ships))
-        lose = _check_win(partner_id, ships[0])
+        lose = _check_win(ships)
     else:
         # TODO das raus machen? Program soll doch nicht abstürzen wenn gleicher move bereits gemacht wurde?!
         raise ValueError("Move has been played before")
+
+    return lose, hit, game_field, ships
+
+
+def set_gameover_fields(partner_id: str, end_state: State, capitulation: bool, win: bool, gameover: dict) -> None:
+    """
+    Set the gameover fields needed to display correct gameover scene in frontend
+
+    Args:
+        partner_id (str): The id of the playing partner
+        end_state (State): The end state of the game
+        capitulation (bool): Whether game ended by capitulation or not
+        win (bool): Whether game is won by player with partner_id
+        gameover (dict): gameover fields to be updated
+    """
+    gameover['capitulation'] = capitulation
+    gameover['won'] = win
+    gameover['totalMoves'] = end_state.moves1 + end_state.moves2
+    if partner_id == end_state.player1:
+        gameover['shots'] = end_state.moves2
+        gameover['hits'] = count_hits(end_state.ships1)
+    else:
+        gameover['shots'] = end_state.moves1
+        gameover['hits'] = count_hits(end_state.ships2)
+    gameover['misses'] = gameover['shots'] - gameover['hits']
+    if capitulation:
+        gameover['rank'] = 0
+    else:
+        if win:
+            againstComputer = True if end_state.gameMode == "pc" else False
+            gameover['rank'] = get_rank(gameover['shots'], againstComputer)
+        else:
+            gameover['rank'] = 0
+
+def count_hits(ships: list[list[int]]) -> int:
+    """
+    Count fields of ships which are hit
+
+    Args:
+        ships (list[list[int]]): The ships whose hits are being counted
     
-    # save results in db
-    update_game_with_playermove(partner_id, game_id, game_field, lose)
-
-    # delete all ship positions from the board, because client shouldnt know the position of opponent ships
-    board = [0 if i == 1 else i for i in game_field]
-
-    return lose, hit, board
+    Returns:
+        int: number of hits
+    """
+    hits = 0
+    for ship in ships:
+        for pos in ship:
+            if pos >= 100:
+                hits += 1
+    return hits

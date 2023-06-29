@@ -1,7 +1,6 @@
 import pymongo
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
-import math
 from database.models import State, Winner, WinnerWithRank, Stat
 import uuid
 import datetime
@@ -10,7 +9,6 @@ import random
 mongo_url = "mongodb+srv://nn_user:nn_bsyjntss@nauticalnonsens.lflmzfg.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(mongo_url, server_api=ServerApi('1'))
 db = client.NauticalNonsens
-gamestates = db.gamestates
 stats = db.stats
 leaderboard = db.leaderboard
 games = db.games
@@ -19,19 +17,19 @@ currentNames = db.currentNames
 shipsCount = [2,2,1,1,1] #number of ships per type
 shipsTiles = [2,4,3,4,5] #number of tiles per shiptype
 
-#Gamestates
+#games
 def get_current_state(game_id: str) -> State:
-    current_state = gamestates.find_one({"game_id": game_id}, sort=[("timestamp",pymongo.DESCENDING)])
+    current_state = games.find_one({"game_id": game_id}, sort=[("timestamp",pymongo.DESCENDING)])
     if not current_state:
         return None
     return State.parse_obj(current_state)
 
 def save_state(state: State) -> State:
-    gamestates.insert_one(state.dict())
+    games.insert_one(state.dict())
     return state
 
-# todo unbennen in anderen Namen, man bekommt ja effektiv den Spielernamen zurück, nicht die map data
-def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
+
+def get_map(client_id: str, playername: str, mode: str, friend: str = None, game_id: uuid = None) -> dict:
     '''
     return map_id for the connection in websockets.
     if there is no map with a player waiting create a new map
@@ -43,7 +41,7 @@ def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None)
     elif mode == 'random':
         map_data = games.find_one({"game_id": {"$exists": True, "$ne": ""}, "gameMode": mode, "player1": {"$exists": True, "$ne": ""}, "player2": {"$exists": True, "$eq": ""}})
         if map_data:
-            games.update_one({"_id": map_data["_id"]}, {"$set": {"player2": client_id}})
+            games.update_one({"_id": map_data["_id"]}, {"$set": {"player2": client_id, "player2Name": playername}})
             # player2 is client_id, because this if-statement is only executed with player2, so client_id is the id of player2
             # in addition is the map_data still the old one before games.update_one(), so if you query the same way as player1,
             # you get an empty string
@@ -52,17 +50,17 @@ def get_map(client_id: str, mode: str, friend: str = None, game_id: uuid = None)
                        "game_id": State.parse_obj(map_data).game_id}
             return {"ready": ret_obj}
         else:
-            game_id = create_map(client_id, mode)
+            game_id = create_map(client_id, playername, mode)
             map_data = games.find_one({"game_id": str(game_id), "gameMode": mode, "player1": {"$exists": True, "$ne": ""}, "player2": {"$exists": ""}})
             return {"ready": False, "game_id": State.parse_obj(map_data).game_id}
     
 
-def create_map(client_id: uuid, mode: str) -> uuid:
+def create_map(client_id: uuid, playername: str, mode: str) -> uuid:
     game_id = uuid.uuid4()
     map_data = {
         "game_id": str(game_id),
         "player1": str(client_id),
-        "player1Name": "",
+        "player1Name": playername,
         "player2": "",
         "player2Name": "",
         "next_player": "",
@@ -76,6 +74,8 @@ def create_map(client_id: uuid, mode: str) -> uuid:
         "board2": [],
         "ships1": [],
         "ships2": [],
+        "firstmove1": -1,
+        "firstmove2": -1,
         "timestamp": datetime.datetime.now()
     }
 
@@ -103,7 +103,6 @@ def add_placement(client_id: str, list_of_ships: list, board: list, game_id: str
         "game_id": game_id
     })
     if map_data:
-        # Wenn next_player noch nicht gesetzt ist, zufällig auswählen, welcher Spieler das Spiel beginnt.
         first_player = map_data["next_player"]
         if not first_player:
             first_player = random.choice([map_data["player1"], map_data["player2"]])
@@ -128,9 +127,9 @@ def get_ships(client_id, game_id):
         game_state = result.next()
 
         if game_state['player1'] == client_id:
-            return game_state['ships1'], game_state['board1']
+            return game_state['ships1']
         elif game_state['player2'] == client_id:
-            return game_state['ships2'], game_state['board2']
+            return game_state['ships2']
     
     return None
 
@@ -149,7 +148,7 @@ def get_board(client_id, game_id):
     
     return None
 
-def update_game_with_playermove(client_id: str, game_id: str, game_field: list[int], lose: bool = None) -> None:
+def update_game_with_playermove(move: int, client_id: str, game_id: str, game_field: list[int], lose: bool = None) -> None:
     filter = {'game_id': game_id}
     count = games.count_documents(filter)
     result = games.find(filter).sort('step', -1).limit(1)
@@ -159,6 +158,7 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
 
         # Define the field names
         board_field = 'board1' if game_state['player1'] == client_id else 'board2'
+        moves_field = 'moves2' if game_state['player1'] == client_id else 'moves1'
 
         update_fields = {
             board_field: game_field
@@ -168,17 +168,40 @@ def update_game_with_playermove(client_id: str, game_id: str, game_field: list[i
         if lose:
             update_fields.update({
                 'isFinished': True,
-                'winner': client_id
+                'winner': game_state['player1Name'] if game_state['player2'] == client_id else game_state['player2Name']
             })
 
         # Update the game state
         games.update_one(
             {'_id': game_state['_id']},
-            {'$set': update_fields, '$inc': {'step': 1}}
+            {'$set': update_fields, '$inc': {'step': 1}, '$inc': {moves_field: 1}}
         )
+
+        if game_state['player1'] == client_id and game_state['firstmove2'] == -1:
+            games.update_one(
+            {'_id': game_state['_id']},
+            {'$set': {'firstmove2': move}}
+            )
+        elif game_state['player2'] == client_id and game_state['firstmove1'] == -1:
+            games.update_one(
+            {'_id': game_state['_id']},
+            {'$set': {'firstmove1': move}}
+            )            
+
     else:
         print(f"No game found with game_id: {game_id}")
 
+def update_game_capitulation(client_id: str, game_id: str) -> State:
+    current_state = get_current_state(game_id)
+    new_state = current_state.copy()
+    new_state.gameStatus = "finished"
+    new_state.timestamp = datetime.datetime.utcnow()
+    if client_id == new_state.player1:
+        new_state.winner = new_state.player2Name
+    else:
+        new_state.winner = new_state.player1Name
+    save_state(new_state)
+    return new_state
 
 def update_ship_list(client_id: str, game_id: str, ships: list[list[int]]) -> None:
     filter = {'game_id': game_id}
@@ -208,19 +231,19 @@ def update_ship_list(client_id: str, game_id: str, ships: list[list[int]]) -> No
 
 
 #Leaderboard
-def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: int = 10) -> list[Winner]:
+def get_leaderboard(againstComputer: bool, capitulation: bool = False, limit: int = 100) -> list[Winner]:
     leaders = []
     winners = leaderboard.find({"againstComputer": againstComputer, "capitulation": capitulation}, sort=[("moves",pymongo.ASCENDING), ("name",pymongo.ASCENDING)], limit=limit)
     for winner in winners:
         leaders.append(Winner.parse_obj(winner))
     return leaders
 
-def insert_winner(current_state: State, capitulation: bool) -> Winner:
+def insert_winner_to_leaderboard(current_state: State, capitulation: bool) -> Winner:
     name = current_state.winner
     if name == current_state.player1Name:
         moves = current_state.moves1
     else:
-        moves = current_State.moves2
+        moves = current_state.moves2
     if current_state.gameMode == "pc":
         againstComputer = True
     else:
@@ -240,6 +263,14 @@ def add_rank(leaders = list[Winner]) -> list[WinnerWithRank]:
         leaders_rank.append(WinnerWithRank(name=leader.name,moves=leader.moves,rank=rank))
     return leaders_rank
 
+def get_rank(moves: int, againstComputer: bool, capitulation: bool = False) -> int:
+    better_moves = []
+    leaders = leaderboard.find({"againstComputer": againstComputer, "capitulation": capitulation, "moves": {"$lt": moves}})
+    for leader in leaders:
+        better_moves.append(Winner.parse_obj(leader).moves)
+    better_moves_unique = list(set(better_moves))
+    return len(better_moves_unique) + 1
+
 
 #Gamestatistics
 def get_stat() -> Stat:
@@ -253,16 +284,17 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     #make new stats
     stat = stat_old.copy()
     
+    totalmoves = end_state.moves1 + end_state.moves2
     stat.gamesCount += 1
-    stat.totalMoves += end_state.step    
+    stat.totalMoves += totalmoves
     if end_state.gameMode == "pc":
         stat.gamesCountComputer += 1
-        stat.totalMovesComputer += end_state.step
+        stat.totalMovesComputer += totalmoves
         if end_state.winner == "pc":
             winCountComputer += 1            
     else:
         stat.gamesCountHuman += 1
-        stat.totalMovesHuman += end_state.step
+        stat.totalMovesHuman += totalmoves
     if stat.gamesCount !=0:
         stat.averageMoves = stat.totalMoves / stat.gamesCount
     if stat.gamesCountHuman != 0:
@@ -283,9 +315,13 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     stat.moves = [sum(p) for p in zip(stat.moves, moves1)]
     stat.moves = [sum(p) for p in zip(stat.moves, moves2)]
     
-    firstMoves = get_first_moves(end_state.game_id)
-    for move in firstMoves:
-        stat.firstMoves[move] += 1
+    #firstMoves = get_first_moves(end_state.game_id)
+    #for move in firstMoves:
+    #    stat.firstMoves[move] += 1
+    if end_state.firstmove1 != -1:
+        stat.firstMoves[end_state.firstmove1] += 1
+    if end_state.firstmove2 != -1:
+        stat.firstMoves[end_state.firstmove2] += 1
         
     if end_state.winner == end_state.player1Name:
         ships_winner = end_state.ships1
@@ -295,13 +331,13 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
     for ship in ships_winner:
         if any(pos > 100 for pos in ship):
             stat.totalShipsHit[len(ship)-1] += 1
-    stat.averageShipsHit = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShipsHit, shipsCount)]#oder gamesCountHuman
+    stat.averageShipsHit = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShipsHit, shipsCount)]
     
     for ship in ships_winner:
         for pos in ship:
             if pos > 100:
                 stat.totalShiphits[len(ship)-1] += 1                
-    stat.averageShiphits = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShiphits, shipsTiles)]#oder gamesCountHuman
+    stat.averageShiphits = [total / (factor*stat.gamesCount) for total, factor in zip(stat.totalShiphits, shipsTiles)]
     
     stat.timestamp = datetime.datetime.utcnow()    
     
@@ -312,11 +348,11 @@ def update_stats(end_state: State, capitulation: bool) -> Stat:
 def get_first_moves(game_id: str) -> list[int]:
     firstMoves = []
 
-    start_state = State.parse_obj(gamestates.find_one({"game_id": game_id, "step": 0}, sort=[("timestamp",pymongo.DESCENDING)]))
+    start_state = State.parse_obj(games.find_one({"game_id": game_id, "step": 0}, sort=[("timestamp",pymongo.DESCENDING)]))
     board1Start = start_state.board1
     board2Start = start_state.board2
     
-    cursor = gamestates.find({"game_id": game_id, "step": { "$gte": 1 }}, sort=[("timestamp",pymongo.ASCENDING)], limit=18)
+    cursor = games.find({"game_id": game_id, "step": { "$gte": 1 }}, sort=[("timestamp",pymongo.ASCENDING)], limit=18)
     states = [State.parse_obj(c) for c in cursor]
     
     for state in states:
@@ -352,3 +388,8 @@ def isOccupied(name: str) -> bool:
         return False
     else:
         return True
+    
+#Dev-Tool: Get all entries in collection
+def get_all_games():
+    all_games = games.find()
+    return all_games

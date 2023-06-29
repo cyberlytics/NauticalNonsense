@@ -71,10 +71,6 @@ class Start extends Phaser.Scene {
 			});
 	}
 
-
-
-
-
 	/** @returns {void} */
 	async editorCreate() {
 		const self = this;
@@ -300,7 +296,7 @@ class Start extends Phaser.Scene {
 				this.setTint(0x1ed013);
 			}
 
-			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0)) {
+			else if ((nameInputBoxText.text.length !== 0) && (showId === true)) {
 				this.setTint(0x1ed013);
 			}
 
@@ -318,7 +314,7 @@ class Start extends Phaser.Scene {
 
 		startButton.on('pointerdown', function (event) {
 			sharedData.playername = nameInputBoxText.text;
-			if ((nameInputBoxText.text.length !== 0) && (showId === false)) {
+			if ((nameInputBoxText.text.length !== 0)) {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
@@ -340,7 +336,7 @@ class Start extends Phaser.Scene {
 							sharedData.ready = true;
 						}
 
-						if (message && message.includes("game_id")) {
+						if (message && ("GameID" in message || "game_id" in message)) {
 							var splitMessage = message.split(":");
 							var gameID = splitMessage[1].trim();
 							console.log("Game ID:", gameID);
@@ -362,7 +358,7 @@ class Start extends Phaser.Scene {
 				
 			}
 
-			else if ((nameInputBoxText.text.length !== 0) && (showId === true) && (idInputBoxText.text.length !== 0)) {
+			else if ((nameInputBoxText.text.length !== 0) && (showId === true)) {
 				this.clearTint();
 				self.stopHorn();
 				self.playClick();
@@ -380,18 +376,6 @@ class Start extends Phaser.Scene {
 
 	create() {
 		this.editorCreate();
-	}
-
-	preload() {
-		this.load.pack("asset-pack", "assets/asset-pack.json");
-		this.load.pack("asset-pack", "assets/options-asset-pack.json");
-		this.load.audio("clicksound", ["assets/select.mp3"]);
-		this.load.image("0001", "assets/0001.png");
-		this.load.image("optionsBackground", "assets/options/background.png");
-		this.load.image("optionsBack", "assets/options/backButton.png");
-		this.load.image("optionsButtons", "assets/options/button.png");
-		this.load.image("optionsMute", "assets/options/muteButton.png");
-		this.load.image("optionsUnmute", "assets/options/unmuteButton.png");
 	}
 
 	playClick() {
