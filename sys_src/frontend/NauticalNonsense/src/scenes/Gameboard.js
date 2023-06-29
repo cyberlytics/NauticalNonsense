@@ -327,7 +327,7 @@ class Gameboard extends Phaser.Scene {
 				cell.setInteractive();
 				cell.on('pointerdown', (pointer) => {
 					self.playClick();
-					self.DrawDemoBoard("player");
+					//self.DrawDemoBoard("player");
 				});
 				this.playerGrid[row][col] = cell;
 			}
