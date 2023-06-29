@@ -66,6 +66,8 @@ In den weiteren Abschnitten dieses Dokuments wird auf die technischen Details de
 \section{Vorgehensweise}\label{sec:vorgehensweise}
 Da \textit{Nautical Nonsense} als Cloud-Nativ Browser-Game Anwendung konzipiert ist, ergaben sich bei der Vorgehensweise einige Punkte, welche die Grundlegende Struktur des Projektes und die Umsetzung beeinflusst haben.\\
 
+\textbf{Container} Da die Anwendung als Cloud-Nativ Anwendung konzipiert ist, ist das Frontend und Backend jeweils in einem eigenen Container. Bei der Datenbank wurde sich gegen einen separaten Container entschieden, da die verwendete Datenbank bereits eine Option zur Skalierung bereitstellt und eine Ausfallsicherheit garantiert. \\
+
 \textbf{keine Persistenz im Backend} Die Lösungsstrategie im Backend war es eine Kommunikation zu ermöglichen ohne größere Datenmengen darin zu speichern. Da \textit{Nautical Nonsense} als Cloud-Native Anwendung konzipiert wurde, durfte die Persitenz der Daten nicht im Backend gehalten werden. Dies wurde gelöst, indem die Verarbeitung der Daten im Backend erfolgt, jedoch direkt im Anschluss eine Speicherung in der Datenbank vorgenommen wird. \\
 
 \textbf{Kodierung des Spielzustandes} 
@@ -158,12 +160,7 @@ In Grafik \ref{fig:websocket_comm} wird die Kommunikation zwischen zwei Spielern
 
 \subsection{Frontend}\label{subsec:frontend}
 
-Zu Beginn des Spieles befindet sich der Spieler auf der Startseite, die es ihm ermöglicht, einen Spielernamen und die Art des Spiels auszuwählen. Die Wahlmöglichkeiten sind dabei: 
-%TODO das hier vllt schön als bulletpoints oder so? Aktuell siehts eher nicht so toll aus im pdf
-- Random: Spiel gegen einen zufälligen Gegner, 
-- Friend: Spiel gegen einen Freund unter Eingabe des entsprechenden Namens und 
-- AI: Spiel gegen einen Computergegner. 
-Außerdem kann der Nutzer auf die Optionen-Seite wechseln. Diese dient als "Hub" für weitere Szenen. Über die Optionen sind das Leaderboard, die Statistiken, die Spielanleitung und die Credits zu erreichen. 
+Zu Beginn des Spieles befindet sich der Spieler auf der Startseite, die es ihm ermöglicht, einen Spielernamen und die Art des Spiels auszuwählen. Zusätzlich kann der Nutzer auf die Optionen-Seite wechseln. Diese dient als "Hub" für weitere Szenen. Über die Optionen sind das Leaderboard, die Statistiken, die Spielanleitung und die Credits zu erreichen. 
 
 %TODO Leaderboard, Statistics, Spieleanleitung
 
@@ -228,9 +225,7 @@ Hierfür werden Docker-Container verwendet, die erstellt werden, wenn ein Tag au
 
 
 \subsection{Backend}\label{subsec:backend-dev-tools}
-Das Backend wird hauptsächlich mit FastAPI implementiert, einem Framework, das auf Starlette \cite{starlette} und Pydantic \cite{pydantic} aufbaut. Starlette stellt Funktionen wie WebSockets zur Verfügung, während Pydantic die Validierung von Datenmodellen ermöglicht, die von FastAPI verwendet werden. Dank Starlette kann auch das Test-Framework Pytest \cite{pytest} direkt für Unit-Tests eingesetzt werden. Der Asynchronous Server Gateway Interface (ASGI) Server Uvicorn \cite{uvicorn} wird für die Bereitstellung genutzt.
-%TODO @Fabi willst da vllt noch was dazu schreiben?
-Für den Zugriff auf die Mongo-Datenbank wird das Framework PyMongo \cite{pymongo} genutzt. 
+Das Backend wird hauptsächlich mit FastAPI implementiert, einem Framework, das auf Starlette \cite{starlette} und Pydantic \cite{pydantic} aufbaut. Starlette stellt Funktionen wie WebSockets zur Verfügung, während Pydantic die Validierung von Datenmodellen ermöglicht, die von FastAPI verwendet werden. Dank Starlette kann auch das Test-Framework Pytest \cite{pytest} direkt für Unit-Tests eingesetzt werden. Der Asynchronous Server Gateway Interface (ASGI) Server Uvicorn \cite{uvicorn} wird für die Bereitstellung genutzt. Für den Zugriff auf die Mongo-Datenbank wird das Framework PyMongo \cite{pymongo} genutzt. 
 
 
 
