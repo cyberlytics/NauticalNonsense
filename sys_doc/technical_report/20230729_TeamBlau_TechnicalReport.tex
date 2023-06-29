@@ -64,7 +64,7 @@ In den weiteren Abschnitten dieses Dokuments wird auf die technischen Details de
 
 
 \section{Vorgehensweise}\label{sec:vorgehensweise}
-\textit{Nautical Nonsense} wurde als Cloud-Nativ Browser-Game Anwendung konzipiert, weshalb sich bei der Vorgehensweise einige Punkte ergaben, welche die grundlegende Struktur des Projektes und die Umsetzung beeinflussten..\\
+\textit{Nautical Nonsense} wurde als Cloud-Nativ Browser-Game Anwendung konzipiert, weshalb sich bei der Vorgehensweise einige Punkte ergaben, welche die grundlegende Struktur des Projektes und die Umsetzung beeinflussten.\\
 
 \textbf{Container} Das Frontend und das Backend ist jeweils in einen extra Container. Bei der Datenbank wurde sich gegen einen separaten Container entschieden, da die verwendete Datenbank bereits eine Option zur Skalierung bereitstellt und eine Ausfallsicherheit garantiert. \\
 
@@ -154,39 +154,40 @@ Die \texttt{/}-Route gibt eine \ac{uuid} als String zurück, welche das Frontend
     \label{fig:websocket_comm}
 \end{figure}
 
-In Grafik \ref{fig:websocket_comm} wird die Kommunikation zwischen zwei Spielern und dem Backend während des Spielverlaufs ersichtlich. Im ersten Schritt wird bei erfolgreichen Verbindungsaufbau der beiden Spieler ein \texttt{ready}-Flag vom Backend gesendet. Daraufhin können die Clients ihre Schiffe platzieren und die Position dem Backend übermitteln. Erst wenn beide Spieler ihre Schiffe platziert haben, wird das \texttt{ship\_placement\_ready}-Flag vom Backend auf True gesetzt und der Spielablauf beginnt. Hier übermitteln die Spieler jeweils eine Reihe an Parametern, damit das Backend den Spielfluss steuern kann. Das Spiel endet, wenn ein Spieler alle Schiffe des gegenüber versenkt hat. Darauf folgt, dass der Rückgabewert für lose gesetzt wird. Es folgt lediglich vom Backend die Spielstatistik über das gespielte Spiel. Danach wird die Websocket-Verbindung von den Spielern aufgelöst.
+In Grafik \ref{fig:websocket_comm} wird die Kommunikation zwischen zwei Spielern und dem Backend während des Spielverlaufs ersichtlich. Im ersten Schritt wird bei erfolgreichen Verbindungsaufbau der beiden Spieler ein \texttt{ready}-Flag vom Backend gesendet. Daraufhin können die Clients ihre Schiffe platzieren und die Position dem Backend übermitteln. Erst wenn beide Spieler ihre Schiffe platziert haben, wird das \texttt{ship\_placement\_ready}-Flag vom Backend auf True gesetzt und der Spielablauf beginnt. Hier übermitteln die Spieler jeweils eine Reihe an Parametern, damit das Backend den Spielfluss steuern kann. Das Spiel endet, wenn ein Spieler alle Schiffe des gegenüber versenkt hat. Darauf folgt, dass der Rückgabewert für \texttt{lose} gesetzt wird. Es folgt lediglich vom Backend die Spielstatistik über das gespielte Spiel. Danach wird die Websocket-Verbindung von den Spielern aufgelöst.
 
 \subsection{Frontend}\label{subsec:frontend}
-
-Zu Beginn des Spieles befindet sich der Spieler auf der Startseite, die es ihm ermöglicht, einen Spielernamen und die Art des Spiels auszuwählen. Zusätzlich kann der Nutzer auf die Optionen-Seite wechseln. Diese dient als "Hub" für weitere Szenen. Über die Optionen sind das Leaderboard, die Statistiken, die Spielanleitung und die Credits zu erreichen. 
-
-Im Leaderboard werden die besten Spieler aufgeführt~\textendash~es gibt eine Liste für Spiele gegen andere Spieler und eine für Spiele gegen Computergegner. Als Auswahlkriterium wird hierbei die benötigte Schussanzahl herangezogen.
-
-Die Statistikszene bietet eine Übersicht über bereits gespielte Partien. Neben der Anzahl bisheriger Spiele und durchschnittlicher Schüsse werden drei Heatmaps dargestellt. Diese zeigen die meistgenutzten Schiffspositionen, häufige Schussfelder sowie die beliebtesten Felder für einen ersten Schussversuch. Außerdem gibt es eine Übersicht über den Trefferanteil der Schiffe nach Schiffstyp.
-
-Sind alle nötigen Eingaben in der Startszene getroffen kann mit der Partie begonnen werden.
-
-Die nächste Szene erlaubt es dem Spieler, die Schiffe auf dem Spielfeld zu platzieren. Dazu kann er jedes Schiff einzeln durch anklicken oder alle auf einmal über den Random-Button platzieren. Die einzelnen Fahrzeuge können nach dem Anwählen durch einen Klick rotiert und verschoben werden. Der Reset-Knopf setzt die Schiffe an ihre ursprüngliche Position zurück. Sind alle Schiffe platziert, können die Positionen mit Confirm bestätigt werden.
-
-In der eigentlichen Spielszene wird das Spielfeld mit den zuvor platzierten Schiffen und eine Wahlmöglichkeit zum Platzieren von Schüssen auf die gegnerische Flotte angezeigt. Die beiden Spieler sind dabei abwechselnd am Zug. Die Treffer und Fehlschüsse werden entsprechend auf dem eigenen Spielfeld und dem Feld des Gegners angezeigt. Über den Capitulate-Button kann die Partie durch Aufgabe beendet werden. 
-
-Ist ein Spieldurchlauf beendet, entweder durch Kapitulation eines Spielers oder durch Versenken aller Schiffe eines Teilnehmers, wird in eine entsprechende Gewinner- bzw. Verliererszene gewechselt. In dieser wird dem Spieler eine Zusammenfassung seiner Spielbilanz angezeigt. Dazu gehört eine Übersicht über die eigenen Treffer und Fehlschüsse, die Gesamtzuganzahl sowie für den Gewinner~\textendash~sofern keine Kapitulation stattgefunden hat~\textendash~die aktuelle Position im Leaderboard.
 
 Beim Aufrufen der Webseite sendet der Client einen HTTP-GET-Request an die Startseite und erhält ein JSON-Objekt mit der Client-ID. Diese ID wird der globalen Variable \textit{sharedData.clientID} zugewiesen.
 
 Die Websocket-Verbindungs-URL wird durch das Hinzufügen der Client-ID zu \textit{sharedData.websocket\_url} erstellt.
 
+Zu Beginn des Spiels befindet sich der Spieler auf der Startseite, die es ihm ermöglicht, einen Spielernamen und die Art des Spiels auszuwählen. Zusätzlich kann der Nutzer auf die Optionen-Seite wechseln. Diese dient als "Hub"\ für weitere Szenen. Von dort aus sind das Leaderboard, die Statistiken, die Spielanleitung und die Credits zu erreichen. 
+
+Im Leaderboard werden die besten Spieler aufgeführt~\textendash~es gibt eine Liste für Spiele gegen andere Spieler und eine für Spiele gegen Computergegner. Als Auswahlkriterium wird hierbei die benötigte Schussanzahl herangezogen.
+
+Die Statistikszene bietet eine Übersicht über bereits gespielte Partien. Neben der Anzahl bisheriger Spiele und durchschnittlicher Schüsse werden drei Heatmaps dargestellt. Diese zeigen die meistgenutzten Schiffspositionen, häufige Schussfelder sowie die beliebtesten Felder für einen ersten Schussversuch. Außerdem gibt es eine Übersicht über den Trefferanteil der Schiffe nach Schiffstyp.
+
+Sind alle nötigen Eingaben in der Startszene getroffen kann mit der Partie begonnen werden. 
 Wenn der Client in der Start-Szene \glqq Spiel gegen Random\grqq{} auswählt, erfolgt ein HTTP-POST-Request an die \texttt{/play}-Route mit Informationen wie der Client-ID, dem ausgewählten Modus und dem Spielernamen. Die empfangene Game-ID wird in \textit{sharedData.game\_id} gespeichert.
 
 Die Websocket-Verbindung wird erst nach erfolgreicher Ausführung dieses Befehls initialisiert, bevor zur Szene \glqq Waiting1\grqq{} gewechselt wird. Dieser Websocket existiert ebenfalls als globale Variable namens \textit{sharedData.socket}.
 
 In allen Szenen ist die Methode \textit{onmessage} implementiert, die es ermöglicht, über Websockets eingehende Nachrichten vom Backend zu empfangen. Diese Methode ist Bestandteil des JavaScript-Objekts \textit{WebSocket}.
 
-Wenn sich ein zweiter Client auf der Webseite verbindet und die Option \glqq Spiele gegen Random\grqq{} auswählt, sendet das Backend über die Websocket-Verbindung ein \glqq ready\grqq{}-Flag an beide Clients. In Folge dessen wird die Variable \textit{sharedData.ready} auf den Wert \glqq true\grqq{} gesetzt und es erfolgt ein nahtloser Wechsel zur Szene \glqq Shipplacement\grqq{}.
 
-In dieser Szene wird die Platzierung der Schiffe (Positionen) und die Game-ID an das Backend über die Websocket-Verbindung übermittelt. Für das Senden wird zuerst überprüft, ob die Websocket-Verbindung steht und anschließend die Methode \textit{JSON.stringify} verwendet, um ein JSON-Objekt in einen JSON-String zu konvertieren. Dieser wird anschließend mittels \textit{sharedData.socket.send(JSON-String)} an das Backend gesendet.
+Wenn sich ein zweiter Client auf die Webseite verbindet und die Option \glqq Spiele gegen Random\grqq{} auswählt, sendet das Backend über die Websocket-Verbindung ein \glqq ready\grqq{}-Flag an beide Clients. In Folge dessen wird die Variable \textit{sharedData.ready} auf den Wert \glqq true\grqq{} gesetzt und es erfolgt ein nahtloser Wechsel zur Szene \glqq Shipplacement\grqq{}.
 
- Die grundlegende Vorgehensweise beim Empfangen und Senden von Nachrichten via Websockets ändert sich in den restlichen Szenen nicht. Es wurde lediglich die Verarbeitung der Daten auf den jeweiligen Use-Case angepasst. In Abbildung \ref{fig:websocket_comm} ist ein Schaubild der Websocket-Kommunikation ersichtlich.
+Die nächste Szene erlaubt es dem Spieler, die Schiffe auf dem Spielfeld zu platzieren. Dazu kann er jedes Schiff einzeln durch anklicken oder alle auf einmal über den Random-Button platzieren. Schiffe können durch einen Klick angewählt und über die Tastatur bewegt und rotiert werden. Der Reset-Knopf setzt die Schiffe an ihre ursprüngliche Position zurück. Sind alle Schiffe platziert, können die Positionen mit dem Confirm-Button bestätigt werden.
+Dadurch wird die Platzierung der Schiffe (Positionen) und die Game-ID an das Backend über die Websocket-Verbindung übermittelt. Für das Senden wird zuerst überprüft, ob die Websocket-Verbindung steht und anschließend die Methode \textit{JSON.stringify} verwendet, um ein JSON-Objekt in einen JSON-String zu konvertieren. Dieser wird anschließend mittels \textit{sharedData.socket.send(JSON-String)} an das Backend gesendet.
+
+Die grundlegende Vorgehensweise beim Empfangen und Senden von Nachrichten via Websockets ändert sich in den restlichen Szenen nicht. Es wurde lediglich die Verarbeitung der Daten auf den jeweiligen Use-Case angepasst. In Abbildung \ref{fig:websocket_comm} ist ein Schaubild der Websocket-Kommunikation ersichtlich.
+
+In der eigentlichen Spielszene wird das Spielfeld mit den zuvor platzierten Schiffen und einer Wahlmöglichkeit zum Platzieren von Schüssen auf die gegnerische Flotte angezeigt. Die Treffer und Fehlschüsse werden entsprechend auf dem eigenen Spielfeld und dem Feld des Gegners angezeigt. Über den Capitulate-Button kann die Partie vorzeitig beendet werden. 
+
+Ist ein Spieldurchlauf beendet, entweder durch Kapitulation eines Spielers oder durch Versenken aller Schiffe eines Teilnehmers, wird in eine entsprechende Gewinner- bzw. Verliererszene gewechselt. In dieser wird dem Spieler eine Zusammenfassung seiner Spielbilanz angezeigt. Dazu gehört eine Übersicht über die eigenen Treffer und Fehlschüsse, die Gesamtzuganzahl sowie für den Gewinner~\textendash~sofern keine Kapitulation stattgefunden hat~\textendash~die aktuelle Position im Leaderboard.
+
+
 
 
 
@@ -205,7 +206,7 @@ Zuletzt erfolgt die Erstellung eines AWS Load Balancer Controllers als Ingress C
 Nach dem Aufsetzen der Infrastruktur wird über die CI/CD-Pipeline ein Test-Deployment durchgeführt, um die Erreichbarkeit des Clusters zu überprüfen und den erfolgreichen Ablauf aller Operationen zu gewährleisten.
 Des Weiteren wird das Kubernetes Dashboard installiert, um die einzelnen Komponenten des Clusters zu überwachen.
 Ebenfalls ist es möglich, über eine zweite Pipeline ein manuelles Deployment der Anwendung durchzuführen.
-Hierfür werden Docker-Container verwendet, die erstellt werden, wenn ein Tag auf dem default-Branch erstellt wird.
+Hierfür werden Docker-Container \cite{docker} verwendet, die erstellt werden, wenn ein Tag auf dem default-Branch erstellt wird.
 
 \begin{figure}[thp]
     \centering
@@ -230,7 +231,7 @@ Um das Frontend zu realisieren, wird Phaser3 \cite{phaser} verwendet. Dabei hand
 
 Als Entwicklungsumgebung wird der Phaser Editor 2D eingesetzt. Dieser erlaubt das Erzeugen einer Projektgrundstruktur, die im Verlauf der Arbeit immer weiter angepasst und ausgebaut wird.  
 
-Für die Tests im Frontend werden eine Vielzahl an Werkzeugen genutzt. Die Verwaltung dieser erfolgt über npm \cite{npm}. Phaser3 benötigt zur problemfreien Funktion ein Document-Object-Modell (DOM). Das Frontend-Test Framework Cypress \cite{cypress} bietet mit seinem End-to-End Modus ein solches DOM und erlaubt damit das automatisierte testen des Frontends. Um die Testabdeckung zu messen kommt istanbul \cite{istanbul} zum Einsatz.
+Für die Tests im Frontend wird eine Vielzahl an Werkzeugen genutzt. Die Verwaltung dieser erfolgt über npm \cite{npm}. Phaser3 benötigt zur problemfreien Funktion ein Document-Object-Modell (DOM). Das Frontend-Test Framework Cypress \cite{cypress} bietet mit seinem End-to-End Modus ein solches DOM und erlaubt damit das automatisierte testen des Frontends. Um die Testabdeckung zu messen kommt istanbul \cite{istanbul} zum Einsatz.
 
 
 
