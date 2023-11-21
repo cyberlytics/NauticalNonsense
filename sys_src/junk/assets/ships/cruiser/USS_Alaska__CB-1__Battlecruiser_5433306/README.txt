@@ -1,1 +1,0 @@
-USS Alaska (CB-1) Battlecruiser by JerrySmith_598 on Thingiverse: https://www.thingiverse.com/thing:5433306
